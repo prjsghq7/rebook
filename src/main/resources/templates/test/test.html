@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>reBook</title>
+    <link rel="stylesheet" href="/test/assets/styles/rebook.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
+    <script defer src="/test/assets/scripts/rebook.js" type="module"></script>
+</head>
+<body>
+
+<main id="main" data-rb-reference="main">
+
+    <section class="content best-seller" data-rb-reference="content" data-rb-name="bestSeller" data-rb-visible>
+        <h2 class="title">베스트 셀러</h2>
+        <form id="bestForm" class="best-form" novalidate>
+
+        </form>
+    </section>
+
+    <!-- 키워드 선택 영역 -->
+    <section class="content keyword-recommend"
+             data-rb-reference="content"
+             data-rb-name="keywordRecommend"
+             data-rb-visible>
+        <h2 class="title">관심 키워드 기반 도서 추천</h2>
+
+        <form id="keywordForm" class="keyword-form" novalidate>
+            <ul class="keyword-list">
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="심리학"><span class="caption">심리학</span></label>
+                </li>
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="자기계발"><span class="caption">자기계발</span></label>
+                </li>
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="인문학"><span class="caption">인문학</span></label>
+                </li>
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="공포"><span class="caption">공포</span></label>
+                </li>
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="판타지"><span class="caption">판타지</span></label>
+                </li>
+                <li class="item">
+                    <label><input type="checkbox" name="keywords" value="로맨스"><span class="caption">로맨스</span></label>
+                </li>
+            </ul>
+        </form>
+
+        <div class="keyword-counter" data-rb-reference="counter" id="keywordCounter">0/5</div>
+
+        <div class="button-container">
+            <button type="button"
+                    id="submitKeywords"
+                    data-rb-object="button"
+                    data-rb-color="green">
+                도서 추천받기
+            </button>
+        </div>
+    </section>
+
+    <!-- 책 슬라이더 결과 -->
+    <section class="content book-carousel hidden"
+             data-rb-reference="content"
+             data-rb-name="bookCarousel"
+             id="bookCarouselWrapper">
+        <div class="book-slider" data-rb-reference="carousel" id="bookSlider">
+            <!-- JS에서 .book-card가 여기에 append됨 -->
+        </div>
+
+        <div class="slider-controls" data-rb-reference="slider-controls">
+            <button class="nav left"
+                    id="prevSlide"
+                    data-rb-object="button"
+                    data-rb-color="white">
+                &larr;
+            </button>
+
+            <div class="dots" id="paginationDots" data-rb-reference="pagination-dots"></div>
+
+            <button class="nav right"
+                    id="nextSlide"
+                    data-rb-object="button"
+                    data-rb-color="white">
+                &rarr;
+            </button>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

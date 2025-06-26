@@ -1,0 +1,192 @@
+/* rebook.css – 키워드 랜덤 배치, 카드 뒤집기, 미니멀 스타일링 */
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Noto Sans KR', sans-serif;
+    background: white;
+    overflow-x: hidden;
+}
+
+/* 키워드 선택 영역 */
+.keyword-recommend {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5vh;
+}
+
+.keyword-form {
+    width: 100%;
+    height: 70vh;
+    position: relative;
+}
+
+.keyword-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.keyword-list .item {
+    position: absolute;
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.keyword-list .item label {
+    display: flex;
+    align-items: center;
+    border: 2px solid teal;
+    border-radius: 30px;
+    padding: 6px 14px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.keyword-list .item input[type="checkbox"] {
+    display: none;
+}
+
+.keyword-list .item input:checked + .caption {
+    background-color: teal;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.keyword-counter {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: teal;
+    align-self: flex-end;
+    padding-right: 2rem;
+}
+
+.button-container {
+    margin-top: 20px;
+}
+
+#submitKeywords {
+    padding: 10px 20px;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#submitKeywords:hover {
+    background-color: #007070;
+}
+
+/* 카드 캐러셀 */
+.book-carousel {
+    padding: 5vh 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.book-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 20px;
+    padding: 0 10vw;
+    width: 100vw;
+    box-sizing: border-box;
+}
+
+.book-card {
+    width: 200px;
+    height: 300px;
+    perspective: 1000px;
+    flex-shrink: 0;
+}
+
+.book-card .book-cover,
+.book-card .book-info {
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    transition: transform 0.6s ease;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
+}
+
+.book-card .book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.book-card .book-info {
+    transform: rotateY(180deg);
+}
+
+.book-card.flipped .book-cover {
+    transform: rotateY(180deg);
+}
+
+.book-card.flipped .book-info {
+    transform: rotateY(0);
+}
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav {
+    background: teal;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: lightgray;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: teal;
+}
+
+/* 숨김 */
+.hidden {
+    display: none !important;
+}
