@@ -1,15 +1,90 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/user/assets/styles/register.css" rel="stylesheet" type="text/css">
+    <link href="/user/assets/styles/register.css" rel="stylesheet" type="text/css">
+    <script src="/user/assets/scripts/register.js"></script>
 </head>
 <body>
-<strong th:text="${name}"></strong>님
-<strong th:text="${provider}"></strong> 계정 인증이 확인 되었습니다.<br>
-인증 이메일 : <strong th:text="${email}"></strong>
+
+<form novalidate id="registerForm">
+    <h1 class="title">회원가입</h1>
+    <ul class="step">
+        <li class="item -selected">
+            <span class="number">1</span>
+            <span class="caption">이메일 인증</span>
+        </li>
+        <li class="item -selected">
+            <span class="number">2</span>
+            <span class="caption">개인정보 입력</span>
+        </li>
+        <li class="item">
+            <span class="number">3</span>
+            <span class="caption">약관 동의</span>
+        </li>
+        <li class="item">
+            <span class="number">4</span>
+            <span class="caption">완료</span>
+        </li>
+    </ul>
+
+    <div class="container email" data-rb-visible>
+        <div class="wrapper oauth" th:if="${session.oauthUser != null}">
+            <strong th:text="${name}"></strong>님
+            <strong th:text="${provider}"></strong> 계정 인증이 확인 되었습니다.<br>
+            인증 이메일 : <strong th:text="${email}"></strong>
+        </div>
+        <div class="wrapper local" th:if="${session.oauthUser == null}">
+            <input hidden name="emailSalt" type="hidden">
+            <label for="emailInput">email</label>
+            <input type="email" name="email" id="emailInput">
+            <button type="button" name="emailCodeSendButton">인증코드 전송</button>
+
+            <label for="emailCodeInput">인증번호</label>
+            <input type="text" name="emailCode" id="emailCodeInput">
+            <button disabled class="--object-button -color-green" name="emailCodeVerifyButton" type="button">인증번호 확인</button>
+
+            <label for="passwordInput">password</label>
+            <input type="password" name="password" id="passwordInput">
+            <label for="passwordCheckInput">password 재입력</label>
+            <input type="password" name="passwordCheck" id="passwordCheckInput">
+        </div>
+    </div>
+
+    <div class="container info">
+        container info
+    </div>
+
+    <div class="container term">
+        container term
+    </div>
+
+    <div class="container complete">
+        container complete
+    </div>
+
+    <div class="button-container">
+        <a href="/user/login" class="--object-button -color-gray">
+            <img alt="" class="---icon" src="/user/assets/images/register/register-form.cancel.png">
+            <span class="---caption">취소</span>
+        </a>
+        <div class="-flex-stretch" role="none"></div>
+        <button disabled class="--object-button -color-gray" name="previous" type="button">
+            <img alt="" class="---icon" src="/user/assets/images/register/register-form.previous.png">
+            <span class="---caption">이전</span>
+        </button>
+        <button class="--object-button -color-green" name="submit" type="submit">
+            <img alt="" class="---icon" src="/user/assets/images/register/register-form.next.png">
+            <span class="---caption">다음</span>
+        </button>
+    </div>
+</form>
+
 </body>
 </html>

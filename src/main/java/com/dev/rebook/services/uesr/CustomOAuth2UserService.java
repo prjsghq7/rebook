@@ -46,7 +46,6 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
             case "kakao":
                 nameAttributeKey = "id";
                 providerId = Long.toString(oauthUser.getAttribute(nameAttributeKey));
-                System.out.println();
                 Map<String, Object> kakaoAccount = oauthUser.getAttribute("kakao_account");
                 email = (String) kakaoAccount.get("email");
                 Map<String, Object> properties = oauthUser.getAttribute("properties");
@@ -54,11 +53,12 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 picture = (String) properties.get("profile_image");
                 break;
             case "naver":
-                nameAttributeKey = "temp";
-                providerId = oauthUser.getAttribute(nameAttributeKey);
-                email = oauthUser.getAttribute("email");
-                name = oauthUser.getAttribute("name");
-                picture = oauthUser.getAttribute("picture");
+                nameAttributeKey = "response";
+                Map<String, Object> response = oauthUser.getAttribute(nameAttributeKey);
+                providerId = (String) response.get("id");
+                email = (String) response.get("email");
+                name = (String) response.get("name");
+                picture = (String) response.get("profile_image");
                 break;
             default:
                 nameAttributeKey = null;

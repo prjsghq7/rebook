@@ -1,0 +1,96 @@
+@charset "UTF-8";
+
+body {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    justify-content: flex-start;
+}
+
+
+#registerForm {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    justify-content: flex-start;
+    width: 30rem;
+    align-self: center;
+    padding: 2rem;
+}
+
+#registerForm > .title {
+    font-size: 1.75rem;
+    font-weight: 200;
+    margin-bottom: 1rem;
+}
+
+#registerForm > .step {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+}
+
+#registerForm > .step > .item {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    justify-content: flex-start;
+}
+
+#registerForm > .step > .item:not(:last-child)::after {
+    width: 0.5rem;
+    height: 0.125rem;
+    background-color: #caccce;
+    content: "";
+    display: inline-block;
+    margin: 0 0.5rem;
+}
+#registerForm > .step > .item.-selected > .number {
+    background-color: #1abc9c;
+    color: #fafcfe;
+}
+#registerForm > .step > .item.-selected > .caption {
+    color: #1abc9c;
+    font-weight: 600;
+}
+#registerForm > .step > .item > .number {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0;
+    justify-content: center;
+    width: 1.625rem;
+    aspect-ratio: 1/1;
+    background-color: #eaecee;
+    border-radius: 50%;
+    color: #9a9c9e;
+    font-size: 1rem;
+    margin-right: 0.375rem;
+}
+
+#registerForm > .step > .item > .caption {
+    font-size: 0.9375rem;
+    color: #7a7c7e;
+}
+
+#registerForm > .container {
+    align-items: stretch;
+    display: none;
+    flex-direction: column;
+    gap: 0.375rem;
+    justify-content: flex-start;
+}
+#registerForm > .container[data-rb-visible] {
+    display: flex;
+}
+
+#registerForm > .container.term > .wrapper > .title {
+    font-size: 1rem;
+    font-weight: 200;
+}

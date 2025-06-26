@@ -6,16 +6,40 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="/user/assets/styles/login.css" rel="stylesheet" type="text/css">
+    <script src="/user/assets/scripts/login.js"></script>
 </head>
 <body>
-<div>
+<div id="loginArea">
+    <form id="loginForm" novalidate>
+        <label for="emailInput">email</label>
+        <input type="email" id="emailInput">
+
+        <label for="passwordInput">password</label>
+        <input type="password" id="passwordInput">
+
+        <button type="submit">로그인</button>
+    </form>
+
+
+    <!-- Google 로그인 버튼 -->
     <a href="/oauth2/authorization/google" class="-object-button --symbol-google --light">
         Google 계정으로 로그인
     </a>
 
-    <!-- ✅ KaKao 로그인 버튼 -->
+    <!-- KaKao 로그인 버튼 -->
     <a href="/oauth2/authorization/kakao" class="-object-button --symbol-kakao --gold">
         KAKAO 계정으로 로그인
+    </a>
+
+    <!-- KaKao 로그인 버튼 -->
+    <a href="/oauth2/authorization/naver" class="-object-button --symbol-naver --green">
+        NAVER 계정으로 로그인 (미구현)
+    </a>
+
+    <!-- 일반회원 회원가입 -->
+    <a href="/user/register?t=n" class="-object-button --symbol-google --light">
+        일반계정 회원가입
     </a>
 </div>
 </body>
