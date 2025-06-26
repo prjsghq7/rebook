@@ -1,0 +1,40 @@
+@charset "UTF-8";
+
+.--object-button {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.25rem;
+    justify-content: center;
+
+    border-radius: 2.5rem;
+    cursor: pointer;
+    color: #ffffff;
+    font: inherit;
+    font-size: 1.125rem;
+    font-weight: 500;
+
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+}
+
+.--object-button:active {
+    position: relative;
+    top: 0.0625rem;
+}
+
+.--object-button.-color-blue {
+    background-color: #268dfa;
+}
+
+.--object-button.-color-blue:hover {
+    background-color: #1b64b2;
+}
+
+.--object-button.-color-black {
+    background-color: #08080a;
+}
+
+.--object-button.-color-black:hover {
+    background-color: #454546;
+}
