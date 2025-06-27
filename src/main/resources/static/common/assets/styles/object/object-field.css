@@ -1,0 +1,28 @@
+@charset "UTF-8";
+
+.-object-field {
+    background-color: #ffffff;
+    border: 0.0625rem solid #e0e2e4;
+    border-radius: 2.5rem;
+    padding: 0.5rem 1rem;
+    transition-duration: 175ms;
+    transition-property: border-color, color;
+    transition-timing-function: ease;
+}
+
+.-object-field:hover {
+    border-color: rgb(196.7413793103, 200.5, 204.2586206897);
+    color: hsl(210, 5.7142857143%, -1.2745098039%);
+}
+
+.-object-field:focus {
+    border-color: #268dfa;
+    color: hsl(210, 5.7142857143%, -16.2745098039%);
+}
+
+.-object-field:disabled {
+    background-color: #f2f4f6;
+    border-color: #e0e2e4 !important;
+    color: #a2a4a6 !important;
+    cursor: default !important;
+}
