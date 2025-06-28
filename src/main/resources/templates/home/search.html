@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Re:Book(키워드 검색)</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/test/assets/styles/header.css" rel="stylesheet" type="text/css">
+    <link href="/home/assets/styles/search.css" rel="stylesheet" type="text/css">
+    <script defer src="/home/assets/scripts/search.js" rel="text/javascript"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}">
+</th:block>
+
+<form novalidate id="searchForm">
+    <input hidden name="id" type="hidden">
+    <label class="-object-label">
+        <input autocomplete="off" maxlength="50" minlength="0" name="keyword"
+               placeholder="검색어를 입력해 주세요." type="text" class="-object-field --field">
+    </label>
+    <button class="-object-button -color-blue" type="submit">검색</button>
+</form>
+
+<div id="grid-container">
+    <div class="item">
+        <div class="box">
+            <img class="img" src="/common/assets/images/main_logo_icon.png" alt="">
+        </div>
+        <span class="title">타이틀</span>
+    </div>
+</div>
+
+</body>
+</html>

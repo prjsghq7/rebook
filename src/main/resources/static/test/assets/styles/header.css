@@ -1,0 +1,39 @@
+#header {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: flex-start;
+
+
+    top: 0;
+    margin: 0;
+    padding: 1.25rem 1.5rem;
+    position: sticky;
+}
+
+#header > .logo {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#header > .logo > .logoImage {
+    object-fit: fill;
+    width: 5rem;
+    height: 3rem;
+}
+
+#header > .menu {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+#header > .menu > .item {
+    font-size: 1.25rem;
+    font-weight: 400;
+}

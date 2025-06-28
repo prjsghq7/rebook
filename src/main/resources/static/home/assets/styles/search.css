@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+
+#searchForm {
+    margin-top: 1.5rem;
+
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.375rem;
+    justify-content: center;
+}
+
+#grid-container {
+    /*margin-top: ;*/
+    padding: 3.5rem 3rem;
+    display: grid;
+    column-gap: 3.5rem;
+    row-gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+#grid-container > .item {
+    height: 15rem;
+
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    justify-content: flex-start;
+}
+
+#grid-container > .item > .box {
+    width: 100%;
+    height: 13rem; /* .item 값 확인 height: 15rem;  */
+    background-color: #268dfa;
+}
+
+#grid-container > .item > .box > .img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#grid-container > .item > .title {
+    height: 2rem; /* .item 값 확인 height: 15rem;  */
+    font-size: 0.875rem;
+}
