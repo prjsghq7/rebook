@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.CategoryMapper">
+    <select id="selectAll" resultType="com.dev.rebook.entities.CategoryEntity">
+        SELECT `id` AS `id`, `display_text` AS `displayText`, `order_no` AS `orderNo`
+        FROM `rebook`.`categories`
+        ORDER BY order_no ASC
+    </select>
+    <select id="selectById" resultType="com.dev.rebook.entities.CategoryEntity">
+        SELECT `id`, `display_text` AS `displayText`, `order_no` AS `orderNo`
+        FROM `rebook`.`categories`
+        WHERE `id` = #{id}
+    </select>
+</mapper>
