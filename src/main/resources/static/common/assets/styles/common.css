@@ -5,6 +5,10 @@
 @import "object/object-field.css";
 @import "object/object-label.css";
 
+:root {
+    --header-height: 5rem;
+}
+
 .-flex-stretch {
     flex-grow: 1;
     flex-shrink: 1;
@@ -39,4 +43,27 @@ ol, ul {
     list-style: none;
     margin-block: initial;
     padding-inline: initial;
+}
+
+body {
+    min-height: 100%;
+    margin: 0;
+
+    align-items: stretch;
+    cursor: default;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    font-family: "Pretendard Variable", "Pretendard", -apple-system, "BlinkMacSystemFont", "system-ui", "Roboto", "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+    gap: 0;
+    justify-content: center;
+}
+
+#default-area {
+    width: 70rem;
+
+    align-self: center;
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height)); /* header의 height 값만큼 빼기 */
+    position: relative;
 }
