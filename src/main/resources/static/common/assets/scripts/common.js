@@ -3,16 +3,33 @@ HTMLElement.VALID_ATTR_NAME = 'data-rb-valid';
 HTMLElement.VISIBLE_ATTR_NAME = 'data-rb-visible';
 
 
+/**
+ * @param {boolean} b
+ * @returns {HTMLElement} */
+HTMLElement.prototype.setDisabled = function (b) {
+    if (b === true) {
+        this.setAttribute('disabled', '');
+    } else if (b === false) {
+        this.removeAttribute('disabled');
+    }
+    return this;
+}
+
 /**@returns {boolean} */
 HTMLElement.prototype.isInValid = function () {
     return this.hasAttribute(HTMLElement.INVALID_ATTR_NAME);
 }
 /**
  * @param {boolean} b
+ * @param {string|undefined} warningText
  * @returns {HTMLElement} */
-HTMLElement.prototype.setInvalid = function (b) {
+HTMLElement.prototype.setInValid = function (b, warningText = undefined) {
     this.removeAttribute(HTMLElement.VALID_ATTR_NAME);
     if (b === true) {
+        const $warning = this.querySelector(':scope > .--warning');
+        if ($warning != null && warningText != null) {
+            $warning.innerText = warningText;
+        }
         this.setAttribute(HTMLElement.INVALID_ATTR_NAME, '');
     } else if (b === false) {
         this.removeAttribute(HTMLElement.INVALID_ATTR_NAME);
