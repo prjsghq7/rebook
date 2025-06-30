@@ -1,0 +1,37 @@
+.-object-label {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    justify-content: flex-start;
+}
+
+.-object-label > .--caption {
+    color: #454546;
+}
+
+.-object-label:hover > .--caption {
+    color: #272727;
+}
+
+.-object-label:focus-within > .--caption {
+    color: #268dfa;
+}
+
+.-object-label > .--row {
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    gap: 0.375rem;
+    justify-content: flex-start;
+}
+
+.-object-label > .--warning {
+    color: #e74c3c;
+    display: none;
+    font-size: 0.8rem;
+}
+
+.-object-label[data-rb-invalid] > .--warning {
+    display: block;
+}

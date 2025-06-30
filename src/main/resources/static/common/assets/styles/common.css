@@ -1,7 +1,9 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
 @import "object/object-button.css";
+@import "object/object-dialog.css";
 @import "object/object-field.css";
+@import "object/object-label.css";
 
 .-flex-stretch {
     flex-grow: 1;

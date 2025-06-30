@@ -1,0 +1,85 @@
+@charset "UTF-8";
+
+body:has(.-object-dialog.visible) {
+    overflow: hidden;
+}
+
+.-object-dialog {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(0.5rem);
+    background-color: #121418a0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+
+    transition-duration: 125ms;
+    transition-property: opacity;
+    transition-timing-function: ease;
+
+    z-index: 9;
+}
+
+.-object-dialog[data-rb-visible] {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.-object-dialog > .--modal {
+    top: 50%;
+    left: 50%;
+    min-width: 20rem;
+    background-color: #ffffff;
+    background-size: cover;
+    background-blend-mode: multiply;
+    border: 0.125rem solid #1b64b2;
+    border-radius: 0.5rem;
+    color: #111111;
+    opacity: 0;
+    overflow: hidden;
+    padding: 1.5rem 2rem;
+    position: fixed;
+    transform: scale(98.75%) translate(-50%, -50%);
+    transform-origin: top left;
+    transition-duration: 125ms;
+    transition-property: opacity, transform;
+    transition-timing-function: ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    z-index: 10;
+}
+
+.-object-dialog > .--modal[data-rb-visible] {
+    opacity: 1;
+    transform: scale(100%) translate(-50%, -50%);
+}
+
+.-object-dialog > .--modal > .--title {
+    font-size: 1.625rem;
+    font-weight: bold;
+    color: #111111;
+    border-bottom: 1px solid #1b64b2;
+    padding-bottom: 0.5rem;
+}
+
+
+.-object-dialog > .--modal > .--content {
+    font-weight: 400;
+    font-size: 1.125rem;
+}
+
+.-object-dialog > .--modal > .--button-container {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.-object-dialog > .--modal > .--button-container > .-object-button {
+    min-width: 5rem;
+    padding: 0.25rem;
+    border-radius: 0.5rem;
+}
