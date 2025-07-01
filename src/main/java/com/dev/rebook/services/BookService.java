@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class bookService {
+public class BookService {
 
     @Value("${api-aladin-api-key}")
     private String aladinApiKey;

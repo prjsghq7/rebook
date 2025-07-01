@@ -3,9 +3,8 @@ package com.dev.rebook.controllers;
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
-import com.dev.rebook.services.bookService;
+import com.dev.rebook.services.BookService;
 import com.dev.rebook.vos.SearchVo;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -14,15 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
-
 @Controller
 @RequestMapping(value = "/home")
 public class homeController {
-    private final bookService bookService;
+    private final BookService bookService;
 
     @Autowired
-    public homeController(bookService bookService) {
+    public homeController(BookService bookService) {
         this.bookService = bookService;
     }
 
