@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-.--object-button {
+.-object-button {
     align-items: center;
     display: flex;
     flex-direction: row;
@@ -18,23 +18,42 @@
     text-decoration: none;
 }
 
-.--object-button:active {
+.-object-button:active {
     position: relative;
     top: 0.0625rem;
 }
 
-.--object-button.-color-blue {
+.-object-button.-color-blue {
     background-color: #268dfa;
 }
 
-.--object-button.-color-blue:hover {
+.-object-button.-color-blue:hover {
     background-color: #1b64b2;
 }
 
-.--object-button.-color-black {
+.-object-button.-color-gray {
+    background-color: #959595;
+}
+
+.-object-button.-color-gray:hover {
+    background-color: #757575;
+}
+
+.-object-button.-color-black {
     background-color: #08080a;
 }
 
-.--object-button.-color-black:hover {
+.-object-button.-color-black:hover {
     background-color: #454546;
+}
+
+.-object-button > .--icon {
+    width: 0.9375rem;
+    height: 0.9375rem;
+    object-fit: contain;
+    object-position: center left;
+}
+
+.-object-button > .--caption {
+    color: #ffffff;
 }
