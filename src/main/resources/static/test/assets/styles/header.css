@@ -1,5 +1,6 @@
 #header {
     align-items: center;
+    background-color: white;
     display: flex;
     flex-direction: row;
     gap: 0.5rem;
@@ -10,19 +11,45 @@
     margin: 0;
     padding: 1.25rem 1.5rem;
     position: sticky;
+
+    z-index: 999;
 }
 
 #header > .logo {
+    width: 10rem;
+}
+
+#header > .-flex-stretch {
+    min-width: 5rem;
+}
+
+#header > .logo > .title {
     align-items: center;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: flex-start;
+
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
-#header > .logo > .logoImage {
-    object-fit: fill;
-    width: 5rem;
-    height: 3rem;
+#header > .logo > .title:hover > .subTitle {
+    max-width: 5rem;
+    opacity: 1;
+
+    transition-duration: 500ms;
+    transition-property: max-width, opacity;
+    transition-timing-function: ease;
+}
+
+#header > .logo > .title > .subTitle {
+    color: #268dfa;
+    max-width: 0;
+    opacity: 0;
+
+    transition-duration: 350ms;
+    transition-property: max-width, opacity;
+    transition-timing-function: ease;
 }
 
 #header > .menu {

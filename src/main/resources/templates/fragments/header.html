@@ -1,23 +1,24 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <header id="header" th:fragment="header">
-    <a href="#" class="logo"><img class="logoImage" src="/common/assets/images/main_logo_icon.png" alt=""></a>
-    <span class="-flex-stretch"></span>
+    <div class="logo">
+        <a href="/user/login" class="title">
+            Re<span class="subTitle">:view</span>Book
+        </a>
+    </div>
+    <span role="none" class="-flex-stretch"></span>
     <ul class="menu">
         <li class="item">
-            <a href="#" class="link">메뉴1</a>
+            <a href="#" class="link">Search</a>
         </li>
         <li class="item">
-            <a href="#" class="link">메뉴2</a>
+            <a href="#" class="link">Review</a>
         </li>
         <li class="item">
-            <a href="#" class="link">메뉴3</a>
-        </li>
-        <li class="item">
-            <a href="#" class="link">마이페이지</a>
+            <a href="#" class="link">MYPage</a>
         </li>
     </ul>
-    <span class="-flex-stretch"></span>
-    <button class="-object-button -color-blue" type="button">로그인</button>
+    <span role="none" class="-flex-stretch"></span>
+    <a href="/user/login" class="-object-button -color-blue">로그인</a>
 </header>
 </html>

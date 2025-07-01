@@ -9,29 +9,63 @@
     <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
     <link href="/test/assets/styles/header.css" rel="stylesheet" type="text/css">
     <link href="/home/assets/styles/search.css" rel="stylesheet" type="text/css">
+    <script defer src="/common/assets/scripts/common.js" rel="text/javascript"></script>
     <script defer src="/home/assets/scripts/search.js" rel="text/javascript"></script>
 </head>
 <body>
 <th:block th:replace="~{/fragments/header :: header}">
 </th:block>
-
-<form novalidate id="searchForm">
-    <input hidden name="id" type="hidden">
-    <label class="-object-label">
-        <input autocomplete="off" maxlength="50" minlength="0" name="keyword"
-               placeholder="검색어를 입력해 주세요." type="text" class="-object-field --field">
-    </label>
-    <button class="-object-button -color-blue" type="submit">검색</button>
-</form>
-
-<div id="grid-container">
-    <div class="item">
-        <div class="box">
-            <img class="img" src="/common/assets/images/main_logo_icon.png" alt="">
+<div id="default-area">
+    <form novalidate id="searchForm">
+        <input hidden name="id" type="hidden">
+        <div class="search">
+            <label class="-object-label">
+                <input autocomplete="off" maxlength="50" minlength="0" name="keyword"
+                       placeholder="검색어를 입력해 주세요." type="text" class="-object-field --field">
+            </label>
+            <button class="-object-button -color-blue" type="submit">검색</button>
         </div>
-        <span class="title">타이틀</span>
+        <div class="detail">
+            <label class="-object-label">
+                <select class="-object-field" name="searchType">
+                    <option disabled hidden selected value="-1">검색어 종류</option>
+                    <option value="keyword">제목+저자</option>
+                    <option value="title">제목</option>
+                    <option value="author">저자</option>
+                    <option value="publisher">출판사</option>
+                </select>
+            </label>
+            <label class="-object-label">
+                <select class="-object-field" name="searchTarget">
+                    <option disabled hidden selected value="-1">검색 대상</option>
+                    <option value="book">도서</option>
+                    <option value="foreign">외국도서</option>
+                    <option value="eBook">전자책</option>
+                </select>
+            </label>
+            <label class="-object-label">
+                <select class="-object-field" name="sort">
+                    <option disabled hidden selected value="-1">정렬 순서</option>
+                    <option value="accuracy">관련도</option>
+                    <option value="publishTime">출간일</option>
+                    <option value="title">제목</option>
+                    <option value="salesPoint">판매량</option>
+                </select>
+            </label>
+        </div>
+    </form>
+    <div id="result-container">
+        <span class="result initial">검색어를 입력해 주세요.</span>
+        <span class="result noResult">검색결과가 없습니다.</span>
+    </div>
+    <div id="grid-container">
+        <div class="item">
+            <div class="box">
+                <img class="img" src="/common/assets/images/main_logo_icon.png" alt="">
+            </div>
+            <span class="title">타이틀</span>
+        </div>
     </div>
 </div>
-
 </body>
 </html>

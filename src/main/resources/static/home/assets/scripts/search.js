@@ -1,11 +1,15 @@
 const $searchForm = document.getElementById('searchForm');
 const $searchInput = $searchForm.querySelector('input[name="keyword"]');
+const $resultContainer = document.getElementById('result-container');
+const $initial = $resultContainer.querySelector(':scope > .result.initial');
+const $noResult = $resultContainer.querySelector(':scope > .result.noResult');
 const $gridContainer = document.getElementById('grid-container');
 
-$searchForm.onsubmit =  (e) => {
+
+$searchForm.onsubmit = (e) => {
     e.preventDefault();
 
-    if($searchForm['keyword'].value === '') {
+    if ($searchForm['keyword'].value === '') {
         alert('검색어를 입력하세요.');
         return;
     }
@@ -13,6 +17,9 @@ $searchForm.onsubmit =  (e) => {
     const xhr = new XMLHttpRequest();
     const url = new URL(`${origin}/home/search-list`);
     url.searchParams.set('keyword', $searchInput.value);
+    url.searchParams.set('searchType', $searchForm['searchType'].value);
+    url.searchParams.set('searchTarget', $searchForm['searchTarget'].value);
+    url.searchParams.set('sort', $searchForm['sort'].value);
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
@@ -33,15 +40,26 @@ $searchForm.onsubmit =  (e) => {
                 gridHtml += `
                     <div class="item">
                         <div class="box">
-                            <img class="img" src="${book['cover']}" alt="${book.title} 표지">
+                            <img class="img" src="${book['cover']}" alt="${book['title']} 표지">
                         </div>
                         <span class="title">${book['title']}</span>
+                        <span class="author">${book['author']}</span>
                     </div>
                 `;
                 console.log("gridHtml\n" + gridHtml);
             }
             $gridContainer.innerHTML = gridHtml;
+
+            $resultContainer.setVisible(false);
+            $initial.setVisible(false);
+            $noResult.setVisible(false);
+            $gridContainer.setVisible(true);
         } else {
+            // result-container 표출 + noResult 표출
+            $resultContainer.setVisible(true);
+            $initial.setVisible(false);
+            $noResult.setVisible(true);
+            $gridContainer.setVisible(false);
             console.log("검색 결과가 없습니다.");
         }
     };
@@ -49,3 +67,9 @@ $searchForm.onsubmit =  (e) => {
     xhr.open('GET', url);
     xhr.send();
 };
+
+
+$resultContainer.setVisible(true);
+$initial.setVisible(true);
+$noResult.setVisible(false);
+$gridContainer.setVisible(false);
