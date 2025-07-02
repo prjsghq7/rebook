@@ -56,4 +56,6 @@
 
 .-object-button > .--caption {
     color: #ffffff;
+    white-space: nowrap;
+    overflow: hidden;
 }
