@@ -8,7 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface CategoryMapper {
-     List<CategoryEntity> selectAll();
+    List<CategoryEntity> selectAll();
 
     CategoryEntity selectById(@Param(value = "id") String id);
+
+    int selectCountById(@Param(value = "id") String id);
 }

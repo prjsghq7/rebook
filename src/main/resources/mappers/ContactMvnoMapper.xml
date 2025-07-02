@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.ContactMvnoMapper">
+    <select id="selectAll" resultType="com.dev.rebook.entities.ContactMvnoEntity">
+        SELECT `code` AS `code`,
+               `display_text` AS `displayText`,
+               `order_no` AS `orderNo`
+        FROM `rebook`.`contact_mvnos`
+        ORDER BY `order_no`
+    </select>
+
+    <select id="selectCountByCode" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`contact_mvnos`
+        WHERE `code` = #{code}
+    </select>
+</mapper>

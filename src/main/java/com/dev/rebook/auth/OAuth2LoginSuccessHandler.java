@@ -42,7 +42,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             // 세션에 사용자 정보 저장
             session.setAttribute("oauthUser", oauthUser);
             // 추가 정보 입력 페이지로 이동
-            response.sendRedirect("/user/register");
+            response.sendRedirect("/user/register?registerType=oauth");
         }
     }
 }

@@ -36,5 +36,5 @@ public class UserEntity {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private LocalDateTime lastSignedAt;
-    private LocalDateTime lastSignedAa;
+    private String lastSignedUa;
 }

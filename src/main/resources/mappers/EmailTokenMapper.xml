@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.EmailTokenMapper">
+
+    <insert id="insert">
+        INSERT INTO `rebook`.`email_tokens` (`email`, `code`, `salt`, `user_agent`, `is_used`, `created_at`, `expires_at`)
+        VALUES (#{emailToken.email}, #{emailToken.code}, #{emailToken.salt}, #{emailToken.userAgent},
+                #{emailToken.isUsed}, #{emailToken.createdAt}, #{emailToken.expiresAt})
+    </insert>
+
+    <select id="selectByEmailAndCodeAndSalt" resultType="com.dev.rebook.entities.EmailTokenEntity">
+        SELECT `email`      AS 'email',
+               `code`       AS 'code',
+               `salt`       AS 'salt',
+               `user_agent` AS 'userAgent',
+               `is_used`    AS 'isUsed',
+               `created_at` AS 'createdAt',
+               `expires_at` AS 'expiresAt'
+        FROM `rebook`.`email_tokens`
+        WHERE `email` = #{email}
+          AND `code` = #{code}
+          AND `salt` = #{salt}
+    </select>
+
+    <update id="update">
+        UPDATE `rebook`.`email_tokens`
+        SET `user_agent` = #{emailToken.userAgent},
+            `is_used`    = #{emailToken.isUsed},
+            `created_at` = #{emailToken.createdAt},
+            `expires_at` = #{emailToken.expiresAt}
+        WHERE `email` = #{emailToken.email}
+          AND `code` = #{emailToken.code}
+          AND `salt` = #{emailToken.salt}
+        LIMIT 1
+    </update>
+</mapper>

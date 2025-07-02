@@ -15,12 +15,7 @@ import java.util.Map;
 
 @Service
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
-    private final UserService userService;
     private final DefaultOAuth2UserService delegate = new DefaultOAuth2UserService();
-
-    public CustomOAuth2UserService(UserService userService) {
-        this.userService = userService;
-    }
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

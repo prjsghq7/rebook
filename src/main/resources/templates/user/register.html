@@ -4,29 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/test/assets/styles/header.css" rel="stylesheet" type="text/css">
     <link href="/user/assets/styles/register.css" rel="stylesheet" type="text/css">
-    <link href="/user/assets/styles/register.css" rel="stylesheet" type="text/css">
-    <script src="/user/assets/scripts/register.js"></script>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/user/assets/scripts/register.js"></script>
 </head>
 <body>
-
+<th:block th:replace="~{/fragments/header :: header}"></th:block>
+<div id="addressFindDialog" class="">
+    <div class="modal">
+    </div>
+</div>
 <form novalidate id="registerForm">
     <h1 class="title">회원가입</h1>
     <ul class="step">
         <li class="item -selected">
             <span class="number">1</span>
-            <span class="caption">이메일 인증</span>
+            <span class="caption">기본 정보 입력</span>
         </li>
-        <li class="item -selected">
+        <li class="item">
             <span class="number">2</span>
-            <span class="caption">개인정보 입력</span>
+            <span class="caption">추가 정보 입력</span>
         </li>
         <li class="item">
             <span class="number">3</span>
-            <span class="caption">약관 동의</span>
+            <span class="caption">이용약관 동의</span>
         </li>
         <li class="item">
             <span class="number">4</span>
@@ -34,54 +43,239 @@
         </li>
     </ul>
 
-    <div class="container email" data-rb-visible>
-        <div class="wrapper oauth" th:if="${session.oauthUser != null}">
+    <div class="container local" data-rb-visible>
+        <span class="title">기본 정보 입력</span>
+        <div class="input-wrapper oauth-user" th:if="${session.oauthUser != null}">
             <strong th:text="${name}"></strong>님
             <strong th:text="${provider}"></strong> 계정 인증이 확인 되었습니다.<br>
             인증 이메일 : <strong th:text="${email}"></strong>
         </div>
-        <div class="wrapper local" th:if="${session.oauthUser == null}">
+        <div class="input-wrapper local-user" th:if="${session.oauthUser == null}">
             <input hidden name="emailSalt" type="hidden">
-            <label for="emailInput">email</label>
-            <input type="email" name="email" id="emailInput">
-            <button type="button" name="emailCodeSendButton">인증코드 전송</button>
+            <label class="-object-label">
+                <span class="--caption">이름</span>
+                <span class="--row">
+                    <input required autocomplete="off" class="-object-field" maxlength="5" minlength="2" name="name"
+                           placeholder="성 + 이름(공백없음)" type="text"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex)._name.pattern}">
+                </span>
+                <span class="--warning">올바른 이름을 입력해 주세요.</span>
+            </label>
+            <label class="-object-label">
+                <span class="--caption">이메일</span>
+                <span class="--row">
+                    <input required type="email" name="email" autocomplete="email" class="-object-field -flex-stretch"
+                           maxlength="50" minlength="8" placeholder="user@sample.com"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).email.pattern}">
+                    <button type="button" class="-object-button -color-blue" name="emailCodeSendButton">인증코드 전송</button>
+                </span>
+                <span class="--row">
+                    <input disabled required autocomplete="off" class="-object-field -flex-stretch" maxlength="6"
+                           minlength="6" name="emailCode" placeholder="000000" type="text"
+                           th:pattern="${T(com.dev.rebook.regexes.EmailTokenRegex).emailCode.pattern}">
+                    <button type="button" class="-object-button -color-blue"
+                            name="emailCodeVerifyButton">인증번호 확인</button>
+                </span>
+                <span class="--warning">이메일 인증을 완료해주세요.</span>
+            </label>
 
-            <label for="emailCodeInput">인증번호</label>
-            <input type="text" name="emailCode" id="emailCodeInput">
-            <button disabled class="--object-button -color-green" name="emailCodeVerifyButton" type="button">인증번호 확인</button>
-
-            <label for="passwordInput">password</label>
-            <input type="password" name="password" id="passwordInput">
-            <label for="passwordCheckInput">password 재입력</label>
-            <input type="password" name="passwordCheck" id="passwordCheckInput">
+            <label class="-object-label">
+                <span class="--caption">비밀번호</span>
+                <span class="--row">
+                    <input required autocomplete="off" class="-object-field -flex-stretch" maxlength="50" minlength="6"
+                           name="password" placeholder="숫자, 알파벳, 특수기호 6자 이상 50자 이하" type="password"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).password.pattern}">
+                    <input required autocomplete="off" class="-object-field -flex-stretch" maxlength="50" minlength="6"
+                           name="passwordCheck" placeholder="비밀번호 재입력" type="password"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).password.pattern}">
+                </span>
+                <span class="--warning">비밀번호를 입력해 주세요.</span>
+            </label>
         </div>
     </div>
 
     <div class="container info">
-        container info
+        <span class="title">기본 정보 입력</span>
+        <div class="input-wrapper">
+            <label class="-object-label">
+                <span class="--caption">닉네임</span>
+                <span class="--row">
+                <input required autocomplete="off" class="-object-field -flex-stretch" maxlength="10" minlength="1"
+                       name="nickname" type="text" th:pattern="${T(com.dev.rebook.regexes.UserRegex).nickname.pattern}">
+                <button class="-object-button -color-blue" name="nicknameCheckButton" type="button">중복 확인</button>
+            </span>
+                <span class="--warning">닉네임 중복을 확인해 주세요.</span>
+            </label>
+
+            <label class="-object-label">
+                <span class="--caption">생년월일/성별</span>
+                <span class="--row">
+                    <input required autocomplete="off" class="-object-field" name="birth" type="date"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).birth.pattern}">
+                    <span class="-object-radio-group">
+                        <label class="--radio-selector">
+                            <input type="radio" name="gender" value="M" checked>
+                            <span class="caption">남</span>
+                        </label>
+                        <label class="--radio-selector">
+                            <input type="radio" name="gender" value="F">
+                            <span class="caption">여</span>
+                        </label>
+                    </span>
+                    <span class="-flex-stretch" role="none"></span>
+                </span>
+                <span class="--warning">생년월일을 입력해 주세요.</span>
+            </label>
+
+            <label class="-object-label">
+                <span class="--caption">연락처</span>
+                <span class="--row">
+                    <select required class="-object-field" name="contactMvno">
+                        <option disabled hidden selected value="-1">통신사</option>
+                        <option th:each="mvon:${contactMvnos}" th:value="${mvon.code}"
+                                th:text="${mvon.displayText}"></option>
+                    </select>
+                    <select required class="-object-field -flex-stretch" name="contactFirst">
+                        <option selected value="010">010</option>
+                        <option value="011">011</option>
+                        <option value="016">016</option>
+                        <option value="017">017</option>
+                        <option value="019">019</option>
+                    </select>
+                    <input required class="-object-field" maxlength="4" minlength="3" name="contactSecond"
+                           placeholder="0000" type="text"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactSecondRegex.pattern}">
+                    <input required class="-object-field -flex-stretch" maxlength="4" minlength="3" name="contactThird"
+                           placeholder="0000" type="text"
+                           th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactThirdRegex.pattern}">
+                    <span class="-flex-stretch" role="none"></span>
+                </span>
+                <span class="--warning">연락처를 입력해 주세요.</span>
+            </label>
+
+            <label class="-object-label">
+                <span class="--caption">주소</span>
+                <span class="--row">
+                    <input required class="-object-field -flex-stretch" maxlength="5" minlength="5" name="addressPostal"
+                           placeholder="우편 번호(주소 찾기 버튼을 클릭해 주세요.)">
+                    <button class="-object-button -color-blue" name="addressFindButton" type="button">주소 찾기</button>
+                </span>
+                <input readonly required class="-object-field -field" maxlength="100" minlength="10"
+                       name="addressPrimary" placeholder="기본 주소 (주소 찾기 버튼을 클릭해 주세요.)" type="text">
+                <input required class="-object-field" maxlength="100" minlength="0" name="addressSecondary"
+                       placeholder="상세 주소 (건물 이름, 동, 호)" type="text">
+                <span class="--warning">주소를 입력해 주세요.</span>
+            </label>
+
+            <label class="-object-label">
+                <span class="--caption">관심 카테고리 선택</span>
+                <span class="category-wrapper">
+                    <label class="category" th:each="category : ${categories}">
+                        <input type="radio" name="categoryId" th:value="${category.id}">
+                        <span th:text="${category.displayText}"></span>
+                    </label>
+                </span>
+                <span class="--warning">관심 카테고리 선택해 주세요.</span>
+            </label>
+        </div>
     </div>
 
     <div class="container term">
-        container term
+        <span class="title">이용약관 동의</span>
+        <div class="input-wrapper">
+            <label class="-object-label">
+                <span class="--caption">서비스 이용약관</span>
+                <textarea readonly class="term-detail">
+제 1조 (목적)
+본 약관은 서비스(이하 "회사"라 한다)는 홈페이지에서 제공하는 서비스(이하 "서비스"라 한다)를 제공함에 있어 회사와 이용자의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.
+
+제 2조 (용어의 정의)
+1. 본 약관에서 사용하는 용어의 정의는 다음과 같습니다.
+'서비스'란 회사가 이용자에게 서비스를 제공하기 위하여 컴퓨터 등 정보통신설비를 이용하여 구성한 가상의 공간을 의미하며, 서비스 자체를 의미하기도 합니다.
+'회원(이하 "회원"이라 한다)'이란 개인정보를 제공하여 회원등록을 한 자로서 홈페이지의 정보를 지속적으로 제공받으며 홈페이지가 제공하는 서비스를 계속적으로 이용할 수 있는 자를 말합니다.
+'아이디(이하 "ID"라 한다)'란 회원의 식별과 회원의 서비스 이용을 위하여 회원이 선정하고 회사가 승인하는 회원 고유의 계정 정보를 의미합니다.
+'비밀번호'란 회원이 부여 받은 ID와 일치된 회원임을 확인하고, 회원의 개인정보를 보호하기 위하여 회원이 정한 문자와 숫자의 조합을 의미합니다.
+'회원탈퇴(이하 "탈퇴"라 한다)'란 회원이 이용계약을 해지하는 것을 의미합니다.
+2. 본 약관에서 사용하는 용어의 정의는 제1항에서 정하는 것을 제외하고는 관계법령 및 서비스 별 안내에서 정하는 바에 의합니다.
+
+제 3조 (이용약관의 효력 및 변경)
+1. 회사는 본 약관의 내용을 회원이 쉽게 알 수 있도록 각 서비스 사이트의 초기 서비스화면에 게시합니다.
+2. 회사는 약관의 규제에 관한 법률, 전자거래기본법, 전자 서명법, 정보통신망 이용촉진 및 정보보호 등에 관한 법률 등 관련법을 위배하지 않는 범위에서 본 약관을 개정할 수 있습니다.
+3. 회사는 본 약관을 개정할 경우에는 적용일자 및 개정사유를 명시하여 현행 약관과 함께 회사가 제공하는 서비스 사이트의 초기 화면에 그 적용일자 7일 이전부터 적용일자 전일까지 공지합니다.
+다만, 회원에게 불리하게 약관내용을 변경하는 경우에는 최소한 30일 이상의 사전 유예기간을 두고 공지합니다. 이 경우 회사는 개정 전 내용과 개정 후 내용을 명확하게 비교하여 회원이 알기 쉽도록 표시합니다.
+4. 회원은 개정된 약관에 대해 거부할 권리가 있습니다. 회원은 개정된 약관에 동의하지 않을 경우 서비스 이용을 중단하고 회원등록을 해지할 수 있습니다.
+단, 개정된 약관의 효력 발생일 이후에도 서비스를 계속 이용할 경우에는 약관의 변경사항에 동의한 것으로 간주합니다.
+5. 변경된 약관에 대한 정보를 알지 못해 발생하는 회원 피해는 회사가 책임지지 않습니다.
+
+제 4조 (약관 외 준칙)
+1. 본 약관은 회사가 제공하는 서비스에 관해 별도의 정책 및 운영규칙과 함께 적용됩니다.
+2. 본 약관에 명시되지 아니한 사항과 본 약관의 해석에 관하여는 관계법령에 따릅니다.</textarea>
+                <span class="--warning">서비스 이용약관에 동의해주세요.</span>
+                <label class="-object-check">
+                    <input class="--input" name="agreeServiceTerm" type="checkbox">
+                    <span class="--box"></span>
+                    <span class="--caption">[필수] 위 서비스 이용약관을 읽어보았고 이해하였으며 동의합니다.</span>
+                </label>
+            </label>
+
+            <label class="-object-label">
+                <span class="--caption">개인정보 수집 및 이용 동의 약관</span>
+                <textarea readonly class="term-detail">
+제 1조 (수집하는 개인정보 항목)
+회사는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집할 수 있습니다.
+1. 필수항목: 이름, 이메일, 아이디, 비밀번호, 휴대전화번호
+2. 선택항목: 생년월일, 성별, 주소
+
+제 2조 (개인정보의 수집 및 이용목적)
+회사는 수집한 개인정보를 다음의 목적을 위해 활용합니다.
+1. 서비스 제공에 관한 계약 이행 및 서비스 제공에 따른 요금정산
+2. 회원 관리: 회원제 서비스 이용에 따른 본인확인, 개인 식별, 불량회원의 부정 이용 방지
+3. 마케팅 및 광고에 활용 (선택 동의 시): 신규 서비스 안내, 이벤트 정보 등
+
+제 3조 (개인정보의 보유 및 이용기간)
+회사는 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다.
+단, 관련 법령에 따라 보존할 필요가 있는 경우 일정 기간 동안 보관할 수 있습니다.
+1. 계약 또는 청약철회 등에 관한 기록: 5년
+2. 대금결제 및 재화 등의 공급에 관한 기록: 5년
+3. 소비자의 불만 또는 분쟁처리에 관한 기록: 3년
+
+제 4조 (이용자의 권리)
+이용자는 언제든지 등록되어 있는 자신의 개인정보를 조회하거나 수정할 수 있으며,
+개인정보의 수집 및 이용에 대한 동의를 철회할 수 있습니다.
+
+제 5조 (동의 거부 권리 및 불이익 안내)
+이용자는 개인정보 수집 및 이용에 대한 동의를 거부할 권리가 있습니다.
+다만, 필수항목에 대한 동의를 거부할 경우 서비스 이용이 제한될 수 있습니다.
+                </textarea>
+                <span class="--warning">개인정보 수집 및 이용 동의 약관에 동의해주세요.</span>
+                <label class="-object-check">
+                    <input class="--input" name="agreePrivacy" type="checkbox">
+                    <span class="--box"></span>
+                    <span class="--caption">[필수] 위 개인정보 수집 및 이용 동의 약관을 읽어보았고 이해하였으며 동의합니다.</span>
+                </label>
+            </label>
+        </div>
     </div>
 
     <div class="container complete">
-        container complete
+        <img class="icon" src="/user/assets/images/register/register-form.complete.png" alt="complete">
+        <span class="title">회원가입 완료</span>
+        <span class="message">회원가입해 주셔서 감사합니다.<br>가입된 계정은 바로 사용할 수 있습니다.</span>
     </div>
 
     <div class="button-container">
-        <a href="/user/login" class="--object-button -color-gray">
-            <img alt="" class="---icon" src="/user/assets/images/register/register-form.cancel.png">
-            <span class="---caption">취소</span>
+        <a href="/user/login" class="-object-button -color-black" data-rb-visible>
+            <img alt="" class="--icon" src="/user/assets/images/register/register-form.cancel.png">
+            <span class="--caption">취소</span>
         </a>
         <div class="-flex-stretch" role="none"></div>
-        <button disabled class="--object-button -color-gray" name="previous" type="button">
-            <img alt="" class="---icon" src="/user/assets/images/register/register-form.previous.png">
-            <span class="---caption">이전</span>
+        <button class="-object-button -color-gray" name="previous" type="button" data-rb-visible>
+            <img alt="" class="--icon" src="/user/assets/images/register/register-form.previous.png">
+            <span class="--caption">이전</span>
         </button>
-        <button class="--object-button -color-green" name="submit" type="submit">
-            <img alt="" class="---icon" src="/user/assets/images/register/register-form.next.png">
-            <span class="---caption">다음</span>
+        <button class="-object-button -color-blue" name="submit" type="submit" data-rb-visible>
+            <img alt="" class="--icon" src="/user/assets/images/register/register-form.next.png">
+            <span class="--caption">다음</span>
         </button>
     </div>
 </form>

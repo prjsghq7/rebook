@@ -1,7 +1,73 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dev.rebook.mappers.UserMapper">
+    <insert id="insert"
+            useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        INSERT INTO `rebook`.`users` (email, password, name, provider, provider_id, profile_img, nickname,
+                                      contact_mvno_code, contact_first, contact_second, contact_third, birth,
+                                      address_postal, address_primary, address_secondary, gender, term_agreed_at,
+                                      category_id, is_admin, is_deleted, is_suspended, created_at, modified_at,
+                                      last_signed_at, last_signed_ua)
+        VALUES (#{user.email}, #{user.password}, #{user.name}, #{user.provider}, #{user.providerId}, #{user.profileImg},
+                #{user.nickname}, #{user.contactMvnoCode}, #{user.contactFirst}, #{user.contactSecond},
+                #{user.contactThird}, #{user.birth}, #{user.addressPostal}, #{user.addressPrimary},
+                #{user.addressSecondary}, #{user.gender}, #{user.termAgreedAt}, #{user.categoryId}, #{user.isAdmin},
+                #{user.isDeleted}, #{user.isSuspended}, #{user.createdAt}, #{user.modifiedAt}, #{user.lastSignedAt},
+                #{user.lastSignedUa})
+
+    </insert>
+
     <select id="selectUserByProviderId" resultType="com.dev.rebook.entities.UserEntity">
-        SELECT 1
+        SELECT `id`                AS `id`,
+               `email`             AS `email`,
+               `password`          AS `password`,
+               `name`              AS `name`,
+               `provider`          AS `provider`,
+               `provider_id`       AS `providerId`,
+               `profile_img`       AS `profileImg`,
+               `nickname`          AS `nickname`,
+               `contact_mvno_code` AS `contactMvnoCode`,
+               `contact_first`     AS `contactFirst`,
+               `contact_second`    AS `contactSecond`,
+               `contact_third`     AS `contactThird`,
+               `birth`             AS `birth`,
+               `address_postal`    AS `addressPostal`,
+               `address_primary`   AS `addressPrimary`,
+               `address_secondary` AS `addressSecondary`,
+               `gender`            AS `gender`,
+               `term_agreed_at`    AS `termAgreedAt`,
+               `category_id`       AS `categoryId`,
+               `is_admin`          AS `isAdmin`,
+               `is_deleted`        AS `isDeleted`,
+               `is_suspended`      AS `isSuspended`,
+               `created_at`        AS `createdAt`,
+               `modified_at`       AS `modifiedAt`,
+               `last_signed_at`    AS `lastSignedAt`,
+               `last_signed_ua`    AS `lastSignedAa`
+        FROM `rebook`.`users`
+        WHERE `provider` = #{provider}
+          AND `provider_id` = #{providerId}
+    </select>
+
+    <select id="selectCountByEmail" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`users`
+        WHERE `email` = #{email}
+    </select>
+
+    <select id="selectCountByNickname" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`users`
+        WHERE `nickname` = #{nickname}
+    </select>
+
+    <select id="selectCountByContact" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`users`
+        WHERE `contact_first` = #{contactFirst}
+          AND `contact_second` = #{contactSecond}
+          AND `contact_third` = #{contactThird}
     </select>
 </mapper>
