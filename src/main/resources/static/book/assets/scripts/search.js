@@ -15,7 +15,7 @@ $searchForm.onsubmit = (e) => {
     }
 
     const xhr = new XMLHttpRequest();
-    const url = new URL(`${origin}/home/search-list`);
+    const url = new URL(`${origin}/book/search-list`);
     url.searchParams.set('keyword', $searchInput.value);
     url.searchParams.set('searchType', $searchForm['searchType'].value);
     url.searchParams.set('searchTarget', $searchForm['searchTarget'].value);

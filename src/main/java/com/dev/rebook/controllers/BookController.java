@@ -14,18 +14,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/home")
-public class homeController {
+@RequestMapping(value = "/book")
+public class BookController {
     private final BookService bookService;
 
     @Autowired
-    public homeController(BookService bookService) {
+    public BookController(BookService bookService) {
         this.bookService = bookService;
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getSearch() {
-        return "home/search";
+        return "book/search";
     }
 
     @RequestMapping(value = "/search-list", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
