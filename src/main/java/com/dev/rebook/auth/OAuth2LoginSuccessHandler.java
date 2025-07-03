@@ -37,7 +37,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 oauthUser.getAttribute("providerId"));
         if (user != null) {
             session.setAttribute("signedUser", user);
-            response.sendRedirect("/info");
+            response.sendRedirect("/");
         } else {
             // 세션에 사용자 정보 저장
             session.setAttribute("oauthUser", oauthUser);

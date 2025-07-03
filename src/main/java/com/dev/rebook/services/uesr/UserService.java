@@ -52,6 +52,10 @@ public class UserService {
         return emailToken;
     }
 
+    public static boolean isInvalidUser(UserEntity user) {
+        return (user == null || user.isDeleted() || user.isSuspended());
+    }
+
     private final UserMapper userMapper;
     private final EmailTokenMapper emailTokenMapper;
     private final ContactMvnoMapper contactMvnoMapper;
@@ -215,5 +219,34 @@ public class UserService {
         return this.userMapper.insert(user) > 0
                 ? CommonResult.SUCCESS
                 : CommonResult.FAILURE;
+    }
+
+    public ResultTuple<UserEntity> login(String email, String password) {
+        if (!UserRegex.email.matches(email)
+                || !UserRegex.password.matches(password)) {
+            return ResultTuple.<UserEntity>builder()
+                    .result(CommonResult.FAILURE)
+                    .build();
+        }
+        UserEntity dbUser = this.userMapper.selectLocalUserByEmail(email);
+        if (dbUser == null || dbUser.isDeleted()) {
+            return ResultTuple.<UserEntity>builder()
+                    .result(CommonResult.FAILURE)
+                    .build();
+        }
+        if (dbUser.isSuspended()) {
+            return ResultTuple.<UserEntity>builder()
+                    .result(CommonResult.FAILURE_SUSPENDED)
+                    .build();
+        }
+        if (!passwordEncoder.matches(password, dbUser.getPassword())) {
+            return ResultTuple.<UserEntity>builder()
+                    .result(CommonResult.FAILURE)
+                    .build();
+        }
+        return ResultTuple.<UserEntity>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(dbUser)
+                .build();
     }
 }

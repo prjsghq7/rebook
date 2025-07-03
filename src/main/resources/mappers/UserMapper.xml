@@ -19,6 +19,39 @@
 
     </insert>
 
+    <select id="selectLocalUserByEmail" resultType="com.dev.rebook.entities.UserEntity">
+        SELECT `id`                AS `id`,
+               `email`             AS `email`,
+               `password`          AS `password`,
+               `name`              AS `name`,
+               `provider`          AS `provider`,
+               `provider_id`       AS `providerId`,
+               `profile_img`       AS `profileImg`,
+               `nickname`          AS `nickname`,
+               `contact_mvno_code` AS `contactMvnoCode`,
+               `contact_first`     AS `contactFirst`,
+               `contact_second`    AS `contactSecond`,
+               `contact_third`     AS `contactThird`,
+               `birth`             AS `birth`,
+               `address_postal`    AS `addressPostal`,
+               `address_primary`   AS `addressPrimary`,
+               `address_secondary` AS `addressSecondary`,
+               `gender`            AS `gender`,
+               `term_agreed_at`    AS `termAgreedAt`,
+               `category_id`       AS `categoryId`,
+               `is_admin`          AS `isAdmin`,
+               `is_deleted`        AS `isDeleted`,
+               `is_suspended`      AS `isSuspended`,
+               `created_at`        AS `createdAt`,
+               `modified_at`       AS `modifiedAt`,
+               `last_signed_at`    AS `lastSignedAt`,
+               `last_signed_ua`    AS `lastSignedUa`
+        FROM `rebook`.`users`
+        WHERE `email` = #{email}
+        AND `provider` = 'local'
+        LIMIT 1
+    </select>
+
     <select id="selectUserByProviderId" resultType="com.dev.rebook.entities.UserEntity">
         SELECT `id`                AS `id`,
                `email`             AS `email`,

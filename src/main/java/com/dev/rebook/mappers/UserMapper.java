@@ -8,6 +8,8 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
     int insert(@Param("user") UserEntity user);
 
+    UserEntity selectLocalUserByEmail(@Param(value = "email") String email);
+
     UserEntity selectUserByProviderId(@Param("provider") String provider, @Param("providerId") String providerId);
 
     int selectLocalUserCountByEmail(@Param(value = "email") String email);

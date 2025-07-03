@@ -18,10 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,6 +60,10 @@ public class UserController {
     @RequestMapping(value = "/register", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getRegister(@RequestParam(value = "registerType", required = false, defaultValue = "local") String registerType,
                               HttpSession session, Model model) {
+        UserEntity user = (UserEntity) session.getAttribute("signedUser");
+        if (!UserService.isInvalidUser(user)) {
+            return "redirect:/";
+        }
         if (registerType != null && registerType.equals("local")) {
             session.removeAttribute("oauthUser");
         }
@@ -126,8 +127,31 @@ public class UserController {
         return response.toString();
     }
 
+    @RequestMapping(value = "/logout", method = {RequestMethod.GET, RequestMethod.POST}, produces = MediaType.TEXT_HTML_VALUE)
+    public String getLogout(HttpSession session) {
+        session.setAttribute("signedUser", null);
+        return "redirect:/user/login";
+    }
+
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String postLogin(@RequestParam(value = "email") String email,
+                            @RequestParam(value = "password") String password,
+                            HttpSession session) {
+        ResultTuple<UserEntity> result = userService.login(email, password);
+        if (result.getResult() == CommonResult.SUCCESS) {
+            session.setAttribute("signedUser", result.getPayload());
+        }
+        JSONObject response = new JSONObject();
+        response.put("result", result.getResult().toStringLower());
+        return response.toString();
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getLogin() {
+    public String getLogin(@SessionAttribute(value = "signedUser", required = false) UserEntity user) {
+        if (!UserService.isInvalidUser(user)) {
+            return "redirect:/";
+        }
         return "user/login";
     }
 }

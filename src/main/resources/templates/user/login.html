@@ -4,43 +4,82 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>Document</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
     <link href="/user/assets/styles/login.css" rel="stylesheet" type="text/css">
-    <script src="/user/assets/scripts/login.js"></script>
+    <script src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/user/assets/scripts/login.js"></script>
 </head>
 <body>
-<div id="loginArea">
-    <form id="loginForm" novalidate>
-        <label for="emailInput">email</label>
-        <input type="email" id="emailInput">
+<th:block th:replace="~{/fragments/header :: header}"></th:block>
 
-        <label for="passwordInput">password</label>
-        <input type="password" id="passwordInput">
+<div class="bg-book_lines">
+    <img class="text review" src="/user/assets/images/login/bg-text-review.png" alt="rebook-text">
+    <img class="text book" src="/user/assets/images/login/bg-text-book.png" alt="rebook-text">
+</div>
+<div class="bg-particles">
+    <span class="circle"></span>
+    <span class="circle"></span>
+    <span class="circle"></span>
+    <span class="circle"></span>
+    <span class="circle"></span>
+</div>
 
-        <button type="submit">로그인</button>
-    </form>
+<div id="default-area">
+    <div id="login-card">
+        <span class="title">
+            Re<span class="subTitle">:view</span>Book
+        </span>
+        <form novalidate id="loginForm">
+            <h2 class="title">로그인</h2>
 
+            <div class="input-wrapper">
+                <input required class="field" type="email" id="email" maxlength="50" minlength="8" th:pattern="${T(com.dev.rebook.regexes.UserRegex).email.pattern}" placeholder=" ">
+                <label class="caption" for="email">이메일</label>
+            </div>
+            <div class="input-wrapper">
+                <input required class="field" type="password" id="password" maxlength="50" minlength="6" th:pattern="${T(com.dev.rebook.regexes.UserRegex).password.pattern}" placeholder=" ">
+                <label class="caption" for="password">비밀번호</label>
+            </div>
+            <div class="remember-area">
+                <label class="-object-check">
+                    <input class="--input" name="remember" type="checkbox">
+                    <span class="--box"></span>
+                    <span class="--caption">이메일 기억</span>
+                </label>
+            </div>
+            <button class="login-button" type="submit">로그인</button>
+        </form>
+        <div class="login-guide">
+            <span class="caption">계정이 없으신가요?</span>
+            <a class="link" href="/user/register?registerType=local">회원가입</a>
+        </div>
+        <div class="login-guide">
+            <span class="caption">계정 정보를 분실하셨나요?</span>
+            <a class="link" href="#">계정복구</a>
+        </div>
 
-    <!-- Google 로그인 버튼 -->
-    <a href="/oauth2/authorization/google" class="-object-button --symbol-google --light">
-        Google 계정으로 로그인
-    </a>
-
-    <!-- KaKao 로그인 버튼 -->
-    <a href="/oauth2/authorization/kakao" class="-object-button --symbol-kakao --gold">
-        KAKAO 계정으로 로그인
-    </a>
-
-    <!-- KaKao 로그인 버튼 -->
-    <a href="/oauth2/authorization/naver" class="-object-button --symbol-naver --green">
-        NAVER 계정으로 로그인 (미구현)
-    </a>
-
-    <!-- 일반회원 회원가입 -->
-    <a href="/user/register?t=n" class="-object-button --symbol-google --light">
-        일반계정 회원가입
-    </a>
+        <div class="oauth-wrapper">
+            <span class="caption">소셜 계정으로 간편 로그인</span>
+            <div class="button-container">
+                <!-- Google 로그인 버튼 -->
+                <a class="link" href="/oauth2/authorization/google">
+                    <img class="icon" src="/user/assets/images/oauth/oauth-icon-google.png" alt="NAVER 계정으로 로그인">
+                </a>
+                <!-- KaKao 로그인 버튼 -->
+                <a class="link" href="/oauth2/authorization/kakao">
+                    <img class="icon" src="/user/assets/images/oauth/oauth-icon-kakao.png" alt="NAVER 계정으로 로그인">
+                </a>
+                <!-- Naver 로그인 버튼 -->
+                <a class="link" href="/oauth2/authorization/naver">
+                    <img class="icon" src="/user/assets/images/oauth/oauth-icon-naver.png" alt="NAVER 계정으로 로그인">
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>
