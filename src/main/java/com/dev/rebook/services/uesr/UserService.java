@@ -122,7 +122,17 @@ public class UserService {
             return CommonResult.FAILURE;
         }
         return this.userMapper.selectCountByNickname(nickname) > 0
-                ? CommonResult.FAILURE
+                ? CommonResult.FAILURE_DUPLICATE
+                : CommonResult.SUCCESS;
+    }
+
+    public Result checkContact(String contactFirst, String contactSecond, String contactThird) {
+        if (!UserRegex.contactSecondRegex.matches(contactSecond)
+                || !UserRegex.contactThirdRegex.matches(contactThird)) {
+            return CommonResult.FAILURE;
+        }
+        return this.userMapper.selectCountByContact(contactFirst, contactSecond, contactThird) > 0
+                ? CommonResult.FAILURE_DUPLICATE
                 : CommonResult.SUCCESS;
     }
 

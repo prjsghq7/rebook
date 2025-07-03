@@ -36,7 +36,7 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
             const response = JSON.parse(xhr.responseText);
             switch (response.result) {
                 case 'failure_duplicate':
-                    dialog.showSimpleOk('인증번호 전송', `입력하신 이메일 '${$registerForm['email'].value}'은/는 이미 사용 중입니다.`, {
+                    dialog.showSimpleOk('인증번호 전송', `입력하신 이메일 [${$registerForm['email'].value}]은/는 이미 사용 중입니다.`, {
                         onOkCallback: () => {
                             $registerForm['email'].focus();
                             $registerForm['email'].select();
@@ -157,13 +157,13 @@ const registerUser = () => {
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_duplicate_email':
-                dialog.showSimpleOk('회원가입', `입력하신 이메일 '${$registerForm['email'].value}'은/는 이미 사용 중입니다.`);
+                dialog.showSimpleOk('회원가입', `입력하신 이메일 [${$registerForm['email'].value}]은/는 이미 사용 중입니다.`);
                 break;
             case 'failure_duplicate_nickname':
-                dialog.showSimpleOk('회원가입', `입력하신 닉네임 '${$registerForm['nickname'].value}'은/는 이미 사용 중입니다.`);
+                dialog.showSimpleOk('회원가입', `입력하신 닉네임 [${$registerForm['nickname'].value}]은/는 이미 사용 중입니다.`);
                 break;
             case 'failure_duplicate_contact':
-                dialog.showSimpleOk('회원가입', `입력하신 연락처 '${$registerForm['contactFirst'].value}-${$registerForm['contactSecond'].value}-${$registerForm['contactThird'].value}'은/는 이미 사용 중입니다.`);
+                dialog.showSimpleOk('회원가입', `입력하신 연락처 [${$registerForm['contactFirst'].value}-${$registerForm['contactSecond'].value}-${$registerForm['contactThird'].value}]은/는 이미 사용 중입니다.`);
                 break;
             case 'success':
                 currentStep++;
@@ -289,21 +289,14 @@ const isSecondStepValid = () => {
     if (!$registerForm['nicknameCheckButton'].hasAttribute('disabled')) {
         $nicknameLabel.setInValid(true, '닉네임 중복 확인해 주세요.');
     }
+    if (!$registerForm['contactCheckButton'].hasAttribute('disabled')) {
+        $contactLabel.setInValid(true, '연락처 중복 확인해 주세요.');
+    }
 
     if ($registerForm['birth'].validity.valueMissing) {
         $birthLabel.setInValid(true, '생년월일을 입력해 주세요.');
     } else if (!$registerForm['birth'].validity.valid) {
         $birthLabel.setInValid(true, '올바른 이름을 입력해 주세요.');
-    }
-
-    if ($registerForm['contactMvno'].value === '-1') {
-        $contactLabel.setInValid(true, '통신사를 선택해 주세요.');
-    } else if ($registerForm['contactSecond'].validity.valueMissing
-        || $registerForm['contactThird'].validity.valueMissing) {
-        $contactLabel.setInValid(true, '전화번호를 입력해 주세요.');
-    } else if (!$registerForm['contactSecond'].validity.valid
-        || !$registerForm['contactThird'].validity.valid) {
-        $contactLabel.setInValid(true, '올바른 전화번호를 입력해 주세요.');
     }
 
     if ($registerForm['addressPostal'].validity.valueMissing) {
@@ -370,14 +363,13 @@ $registerForm['nicknameCheckButton'].addEventListener('click', () => {
         switch (response.result) {
             case 'failure_duplicate':
                 dialog.showSimpleOk('닉네임 중복 확인', `${$registerForm['nickname'].value} 은/는 이미 사용 중입니다.`, () => {
-                    $registerForm['emailCode'].nickname();
-                    $registerForm['emailCode'].nickname();
+                    $registerForm['nickname'].focus();
                 });
                 break;
             case 'success':
                 dialog.show({
                     title: '닉네임 중복 확인',
-                    content: `입력하신 닉네임 '${$registerForm['nickname'].value}'은/는 사용가능합니다. 이 닉네임을 사용할까요?`,
+                    content: `입력하신 닉네임 '${$registerForm['nickname'].value}'은/는 사용가능합니다. 이 닉네임을 사용하시겠습니까?`,
                     buttons: [
                         {
                             caption: '아니요',
@@ -397,10 +389,83 @@ $registerForm['nicknameCheckButton'].addEventListener('click', () => {
                 });
                 break;
             default:
-                dialog.showSimpleOk('인증번호 확인', '알 수 없는 이유로 닉네임 중복을 확인 하지 못하였습니다.\n잠시 후 다시 시도해 주세요.');
+                dialog.showSimpleOk('닉네임 중복 확인', '알 수 없는 이유로 닉네임 중복을 확인 하지 못하였습니다.\n잠시 후 다시 시도해 주세요.');
         }
     };
     xhr.open('POST', '/user/nickname-check');
+    xhr.setRequestHeader(header, token);
+    xhr.send(formData);
+});
+
+$registerForm['contactCheckButton'].addEventListener('click', () => {
+    const $contactLabel = $registerForm.querySelector('.-object-label:has(input[name="contactSecond"])');
+    $contactLabel.setInValid(false);
+    if ($registerForm['contactMvno'].value === '-1') {
+        $contactLabel.setInValid(true, '통신사를 선택해 주세요.');
+    } else if ($registerForm['contactSecond'].validity.valueMissing
+        || $registerForm['contactThird'].validity.valueMissing) {
+        $contactLabel.setInValid(true, '전화번호를 입력해 주세요.');
+    } else if (!$registerForm['contactSecond'].validity.valid
+        || !$registerForm['contactThird'].validity.valid) {
+        $contactLabel.setInValid(true, '올바른 전화번호를 입력해 주세요.');
+    }
+    if ($contactLabel.isInValid()) {
+        return;
+    }
+
+    const xhr = new XMLHttpRequest();
+    const formData = new FormData();
+    formData.append('contactFirst', $registerForm['contactFirst'].value);
+    formData.append('contactSecond', $registerForm['contactSecond'].value);
+    formData.append('contactThird', $registerForm['contactThird'].value);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('연락처 중복 확인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
+            return;
+        }
+        const response = JSON.parse(xhr.responseText);
+        const contact = $registerForm['contactFirst'].value
+            + '-' + $registerForm['contactSecond'].value
+            + '-' + $registerForm['contactThird'].value;
+        switch (response.result) {
+            case 'failure_duplicate':
+                dialog.showSimpleOk('연락처 중복 확인', `[${contact}] 은/는 이미 사용 중입니다.`, () => {
+                    $registerForm['contactSecond'].focus();
+                });
+                break;
+            case 'success':
+                dialog.show({
+                    title: '연락처 중복 확인',
+                    content: `입력하신 연락처 '${contact}'은/는 사용가능합니다. 이 연락처를 사용하시겠습니까?`,
+                    buttons: [
+                        {
+                            caption: '아니요',
+                            color: 'gray',
+                            onClickCallback: ($modal) => dialog.hide($modal)
+                        },
+                        {
+                            caption: '네',
+                            color: 'blue',
+                            onClickCallback: ($modal) => {
+                                dialog.hide($modal);
+                                $registerForm['contactMvno'].setDisabled(true);
+                                $registerForm['contactFirst'].setDisabled(true);
+                                $registerForm['contactSecond'].setDisabled(true);
+                                $registerForm['contactThird'].setDisabled(true);
+                                $registerForm['contactCheckButton'].setDisabled(true)
+                            }
+                        }
+                    ]
+                });
+                break;
+            default:
+                dialog.showSimpleOk('연락처 확인', '알 수 없는 이유로 연락처 중복을 확인 하지 못하였습니다.\n잠시 후 다시 시도해 주세요.');
+        }
+    };
+    xhr.open('POST', '/user/contact-check');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
 });

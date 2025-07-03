@@ -141,13 +141,13 @@
                         <option value="017">017</option>
                         <option value="019">019</option>
                     </select>
-                    <input required class="-object-field" maxlength="4" minlength="3" name="contactSecond"
+                    <input required class="-object-field tel-input" maxlength="4" minlength="3" name="contactSecond"
                            placeholder="0000" type="text"
                            th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactSecondRegex.pattern}">
-                    <input required class="-object-field -flex-stretch" maxlength="4" minlength="3" name="contactThird"
+                    <input required class="-object-field tel-input" maxlength="4" minlength="3" name="contactThird"
                            placeholder="0000" type="text"
                            th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactThirdRegex.pattern}">
-                    <span class="-flex-stretch" role="none"></span>
+                    <button class="-object-button -color-blue" name="contactCheckButton" type="button">중복 확인</button>
                 </span>
                 <span class="--warning">연락처를 입력해 주세요.</span>
             </label>
@@ -155,7 +155,7 @@
             <label class="-object-label">
                 <span class="--caption">주소</span>
                 <span class="--row">
-                    <input required class="-object-field -flex-stretch" maxlength="5" minlength="5" name="addressPostal"
+                    <input readonly required class="-object-field -flex-stretch" maxlength="5" minlength="5" name="addressPostal"
                            placeholder="우편 번호(주소 찾기 버튼을 클릭해 주세요.)">
                     <button class="-object-button -color-blue" name="addressFindButton" type="button">주소 찾기</button>
                 </span>

@@ -115,6 +115,17 @@ public class UserController {
         return response.toString();
     }
 
+    @RequestMapping(value = "/contact-check", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String postContactCheck(@RequestParam(value = "contactFirst") String contactFirst,
+                                   @RequestParam(value = "contactSecond") String contactSecond,
+                                   @RequestParam(value = "contactThird") String contactThird) {
+        Result result = this.userService.checkContact(contactFirst, contactSecond, contactThird);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toString().toLowerCase());
+        return response.toString();
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getLogin() {
         return "user/login";

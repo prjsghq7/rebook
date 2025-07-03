@@ -45,10 +45,11 @@
                `created_at`        AS `createdAt`,
                `modified_at`       AS `modifiedAt`,
                `last_signed_at`    AS `lastSignedAt`,
-               `last_signed_ua`    AS `lastSignedAa`
+               `last_signed_ua`    AS `lastSignedUa`
         FROM `rebook`.`users`
         WHERE `provider` = #{provider}
           AND `provider_id` = #{providerId}
+        LIMIT 1
     </select>
 
     <select id="selectCountByEmail" resultType="java.lang.Integer">
