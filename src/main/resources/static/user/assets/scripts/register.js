@@ -280,6 +280,7 @@ const isSecondStepValid = () => {
     const $birthLabel = $registerForm.querySelector('.-object-label:has(input[name="birth"])');
     const $contactLabel = $registerForm.querySelector('.-object-label:has(input[name="contactSecond"])');
     const $addressLabel = $registerForm.querySelector('.-object-label:has(input[name="addressPostal"])');
+    const $categoryLabel = $registerForm.querySelector('.-object-label:has(input[name="categoryId"])');
 
     const $labels = [$nicknameLabel, $birthLabel, $contactLabel, $addressLabel];
     $labels.forEach(($label) => {
@@ -299,10 +300,15 @@ const isSecondStepValid = () => {
         $birthLabel.setInValid(true, '올바른 이름을 입력해 주세요.');
     }
 
-    if ($registerForm['addressPostal'].validity.valueMissing) {
+    if ($registerForm['addressPostal'].value.trim() === ''
+        || $registerForm['addressPrimary'].value.trim() === '') {
         $addressLabel.setInValid(true, '주소 찾기 버튼을 통해 주소를 입력해 주세요.');
     } else if ($registerForm['addressSecondary'].validity.valueMissing) {
         $addressLabel.setInValid(true, '상세 주소를 입력해 주세요.');
+    }
+
+    if ($registerForm['categoryId'].value === '') {
+        $categoryLabel.setInValid(true, '관심 카테고리를 선택해 주세요.');
     }
 
     if ($labels.some($label => $label.isInValid())) {

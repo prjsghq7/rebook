@@ -10,6 +10,8 @@ public interface UserMapper {
 
     UserEntity selectUserByProviderId(@Param("provider") String provider, @Param("providerId") String providerId);
 
+    int selectLocalUserCountByEmail(@Param(value = "email") String email);
+
     int selectCountByEmail(@Param(value = "email") String email);
 
     int selectCountByNickname(@Param(value = "nickname") String nickname);

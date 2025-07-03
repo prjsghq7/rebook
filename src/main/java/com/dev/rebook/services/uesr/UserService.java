@@ -84,7 +84,7 @@ public class UserService {
                     .result(CommonResult.FAILURE)
                     .build();
         }
-        if (this.userMapper.selectCountByEmail(email) > 0) {
+        if (this.userMapper.selectLocalUserCountByEmail(email) > 0) {
             return ResultTuple.<EmailTokenEntity>builder()
                     .result(CommonResult.FAILURE_DUPLICATE)
                     .build();

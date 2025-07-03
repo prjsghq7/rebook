@@ -52,6 +52,13 @@
         LIMIT 1
     </select>
 
+    <select id="selectLocalUserCountByEmail" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`users`
+        WHERE `email` = #{email}
+          AND `provider` = 'local'
+    </select>
+
     <select id="selectCountByEmail" resultType="java.lang.Integer">
         SELECT COUNT(0)
         FROM `rebook`.`users`
