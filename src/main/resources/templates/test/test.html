@@ -8,90 +8,143 @@
     <title>reBook</title>
     <link rel="stylesheet" href="/test/assets/styles/rebook.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
-    <script defer src="/test/assets/scripts/rebook.js" type="module"></script>
+    <link rel="stylesheet" href="/test/assets/styles/loading.css">
+    <link rel="stylesheet" href="/common/assets/styles/common.css">
+    <link rel="stylesheet" href="/chatbot/assets/styles/chat.css">
+    <!--    <link rel="stylesheet" href="/test/assets/styles/header.css">-->
+    <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/chatbot/assets/scripts/chat.js"></script>
+    <script type="module" defer src="/common/assets/scripts/loading.js"></script>
+    <script defer src="/test/assets/scripts/keyword.js" type="module"></script>
+    <script defer src="/test/assets/scripts/index.js" type="module"></script>
 </head>
 <body>
+<th:block th:replace="~{/fragments/header :: header}">
+</th:block>
+<!--<div class="-object-loading">-->
+<!--    <img src="/test/assets/loading.gif" alt="" class="icon">-->
+<!--    <span class="caption">잠시만 기다려주세요.</span>-->
+<!--</div>-->
 
-<main id="main" data-rb-reference="main">
+<div id="default-area" class="main">
 
-    <section class="content best-seller" data-rb-reference="content" data-rb-name="bestSeller" data-rb-visible>
+    <section class="container best-seller" id="bestSeller">
         <h2 class="title">베스트 셀러</h2>
         <form id="bestForm" class="best-form" novalidate>
-
+            <div class="best-book" id="bestBook">
+                <!--여기에서 책 렌더링 js-->
+            </div>
         </form>
     </section>
 
-    <!-- 키워드 선택 영역 -->
-    <section class="content keyword-recommend"
-             data-rb-reference="content"
-             data-rb-name="keywordRecommend"
-             data-rb-visible>
-        <h2 class="title">관심 키워드 기반 도서 추천</h2>
 
+    <section class="container keyword" id="keyword">
+        <h2 class="title">추천 도서 리스트</h2>
         <form id="keywordForm" class="keyword-form" novalidate>
-            <ul class="keyword-list">
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="심리학"><span class="caption">심리학</span></label>
-                </li>
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="자기계발"><span class="caption">자기계발</span></label>
-                </li>
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="인문학"><span class="caption">인문학</span></label>
-                </li>
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="공포"><span class="caption">공포</span></label>
-                </li>
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="판타지"><span class="caption">판타지</span></label>
-                </li>
-                <li class="item">
-                    <label><input type="checkbox" name="keywords" value="로맨스"><span class="caption">로맨스</span></label>
-                </li>
-            </ul>
+            <div class="keyword-book">
+                <div class="keyword-labels">
+                    <label class="-object-keyword-label" th:each="c : ${CId}">
+                        <input hidden required name="categoryId" type="radio" class="--object-categoryId"
+                               th:value="${c.id}">
+                        <span class="--object-caption" th:text="${c.getDisplayText()}"></span>
+                    </label>
+
+                </div>
+                <div class="keyword-results">
+                    <!--여기에서 책 렌더링 js-->
+                </div>
+            </div>
         </form>
-
-        <div class="keyword-counter" data-rb-reference="counter" id="keywordCounter">0/5</div>
-
-        <div class="button-container">
-            <button type="button"
-                    id="submitKeywords"
-                    data-rb-object="button"
-                    data-rb-color="green">
-                도서 추천받기
-            </button>
-        </div>
     </section>
 
-    <!-- 책 슬라이더 결과 -->
-    <section class="content book-carousel hidden"
-             data-rb-reference="content"
-             data-rb-name="bookCarousel"
-             id="bookCarouselWrapper">
-        <div class="book-slider" data-rb-reference="carousel" id="bookSlider">
-            <!-- JS에서 .book-card가 여기에 append됨 -->
+    <section id="chatbot" class="chatbot">
+        <div class="chatbot-layout" data-rb-visible>
+
+            <div class="chat-view chat-intro-view" data-view="intro" data-rb-visible>
+                <div class="intro-message">
+                    <p>ㅎㅇ<br>어떤 도움이 필요하신가요?</p>
+                    <button id="startChatBtn" class="-object-button -color-blue">메시지를 보내주세요</button>
+                </div>
+            </div>
+
+            <div class="chat-view chat-main-view" data-view="main">
+                <div class="chat-messages" id="chat-message">
+                    <button name="refresh" type="button" hidden></button>
+                    <ul class="list">여기가 채팅 폼</ul>
+                    <form class="user-input" id="chatForm" novalidate>
+                        <label class="-object-chat-label">
+                            <input type="text" name="message" placeholder="메시지를 입력하세요"
+                                   class="--object-input" maxlength="100" autocomplete="off"/>
+                            <button type="submit" class="--object-button -color-blue">전송</button>
+                        </label>
+                    </form>
+                </div>
+
+            </div>
+
+            <div class="chat-view chat-room-view" data-view="room">
+                <ul id="chatRoomList" class="chat-room-list">
+                    <li class="item">ㅋㅋ</li>
+                    <li class="item">1</li>
+                    <li class="item">2</li>
+                    <li class="item">3</li>
+                    <li class="item">4</li>
+                </ul>
+            </div>
+
+            <div class="chat-category" id="chatCategory">
+                <div class="-button-container chat-list">
+                    <button class="category-item" data-target="intro">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100" height="100">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 22 L25 10 L40 22 V40 H10 Z" />
+                                <rect x="21" y="28" width="8" height="12" />
+                            </g>
+                        </svg>
+
+                        <span class="caption">홈</span>
+                    </button>
+                    <button class="category-item" data-target="room">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100" height="100">
+                            <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <!-- 말풍선 외곽 -->
+                                <path d="M10 10h30a5 5 0 0 1 5 5v20a5 5 0 0 1-5 5H20l-8 6v-6h-2a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5z" />
+                                <!-- 메시지 줄 -->
+                                <line x1="16" y1="20" x2="34" y2="20" />
+                                <line x1="16" y1="28" x2="30" y2="28" />
+                            </g>
+                        </svg>
+
+                        <span class="caption">메시지</span>
+                    </button>
+                    <button class="category-item" data-target="help">
+                        <svg class="chat-icon" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100"
+                             height="100" viewBox="0 0 50 50">
+                            <g transform="translate(0,48) scale(0.1,-0.1)" fill="currentColor" stroke="none">
+                                <path d="M140 433 c-151 -79 -160 -289 -16 -377 143 -89 322 4 334 172 8 119
+                     -83 221 -206 230 -48 3 -66 -1 -112 -25z m178 -8 c104 -44 151 -167 103 -270
+                     -71 -153 -291 -153 -362 0 -33 72 -19 166 34 224 52 56 151 76 225 46z"/>
+                                <path d="M202 344 c-12 -8 -22 -22 -22 -30 0 -19 26 -18 34 2 3 9 15 14 28 12
+                     31 -4 35 -41 9 -74 -23 -29 -29 -78 -8 -72 6 3 14 13 16 24 2 10 12 30 22 43
+                     53 66 -11 143 -79 95z"/>
+                                <path d="M225 150 c-8 -14 3 -30 21 -30 8 0 14 9 14 20 0 21 -24 28 -35 10z"/>
+                            </g>
+                        </svg>
+                        <span class="caption">도움말</span>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="slider-controls" data-rb-reference="slider-controls">
-            <button class="nav left"
-                    id="prevSlide"
-                    data-rb-object="button"
-                    data-rb-color="white">
-                &larr;
-            </button>
-
-            <div class="dots" id="paginationDots" data-rb-reference="pagination-dots"></div>
-
-            <button class="nav right"
-                    id="nextSlide"
-                    data-rb-object="button"
-                    data-rb-color="white">
-                &rarr;
-            </button>
-        </div>
+        <span class="chatbot-icon">
+        <img src="/chatbot/assets/images/chatbotIcon.png" alt="챗봇" class="icon">
+    </span>
     </section>
 
-</main>
+
+</div>
+
 
 </body>
 </html>
