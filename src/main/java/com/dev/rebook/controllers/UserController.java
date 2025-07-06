@@ -39,6 +39,67 @@ public class UserController {
         return "user/info";
     }
 
+    @RequestMapping(value = "/recover-password-email", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String postRecoverPasswordEmail(@RequestParam(value = "email") String email,
+                                           HttpServletRequest request) throws MessagingException {
+        String userAgent = request.getHeader("User-Agent");
+        ResultTuple<EmailTokenEntity> result = this.userService.sendRecoverPasswordEmail(email, userAgent);
+        JSONObject response = new JSONObject();
+        response.put("result", result.getResult().toStringLower());
+        if (result.getResult() == CommonResult.SUCCESS) {
+            response.put("salt", result.getPayload().getSalt());
+        }
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/recover-password-email", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String patchRecoverPasswordEmail(EmailTokenEntity emailToken,
+                                            HttpServletRequest request) {
+        emailToken.setUserAgent(request.getHeader("User-Agent"));
+        Result result = this.emailTokenService.verityEmailToken(emailToken);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toStringLower());
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/recover-password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String postRecoverPassword(EmailTokenEntity emailToken,
+                                      HttpServletRequest request,
+                                      @RequestParam(value = "password", required = false) String password) {
+        emailToken.setUserAgent(request.getHeader("User-Agent"));
+        Result result = this.userService.recoverPassword(emailToken, password);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toStringLower());
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/recover-email", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String postRecoverEmail(UserEntity user) {
+        Result result = this.userService.recoverEmail(user);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toString().toLowerCase());
+        if (result == CommonResult.SUCCESS
+                || result == CommonResult.FAILURE_SUSPENDED) {
+            response.put("email", user.getEmail());
+        }
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/recover", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getRecover(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                             Model model) {
+        if (!UserService.isInvalidUser(signedUser)) {
+            return "redirect:/";
+        }
+        ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
+        model.addAttribute("contactMvnos", contactMvnos);
+        return "user/recover";
+    }
+
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String postRegister(@RequestParam(value = "registerType", required = false, defaultValue = "local") String registerType,

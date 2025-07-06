@@ -1,0 +1,129 @@
+@charset "UTF-8";
+
+#recoverForm {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    justify-content: flex-start;
+    width: 40rem;
+    align-self: center;
+    padding: 2rem;
+
+    box-sizing: border-box;
+    min-height: calc(100vh - var(--header-height));
+}
+
+#recoverForm .-object-button,
+#recoverForm .-object-field {
+    border-radius: 0.375rem;
+}
+
+#recoverForm > .title {
+    font-size: 1.75rem;
+    font-weight: 200;
+    margin-bottom: 1rem;
+}
+
+#recoverForm > .type-container {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+
+    margin-bottom: 2rem;
+}
+
+#recoverForm > .type-container > .type {
+    border: 0.0625rem solid #333333;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    padding: 1.25rem 1.5rem;
+    user-select: none;
+
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    justify-content: flex-start;
+}
+
+#recoverForm > .type-container > .type:hover {
+    border-color: #b4d4ff;
+}
+
+#recoverForm > .type-container > .type:has(> input:checked) {
+    border-color: #86b6f6;
+    outline: 0.0625rem solid #86b6f6;
+}
+
+#recoverForm > .type-container > .type > input {
+    display: none;
+}
+
+#recoverForm > .type-container > .type > .title {
+    font-size: 1.125rem;
+}
+
+#recoverForm > .type-container > .type > .description {
+    color: #a2a4a8;
+    font-size: 0.85rem;
+    text-align: justify;
+}
+
+#recoverForm > .message {
+    border: 0.0625rem solid #222428;
+    color: #a2a4a8;
+    padding: 2rem;
+    text-align: center;
+}
+
+
+#recoverForm > .type-container:has(> .type > input:checked) + .message {
+    display: none;
+}
+
+#recoverForm > .input-recover {
+    align-items: stretch;
+    display: none;
+    flex-direction: column;
+    gap: 1.25rem;
+    justify-content: flex-start;
+
+    border: 0.0625rem solid #86b6f6;
+    outline: 0.0625rem solid #86b6f6;
+    border-radius: 0.25rem;
+    padding: 1.375rem 2.25rem;
+}
+
+#recoverForm > .type-container:has(> .type > input[value="email"]:checked) ~ .input-recover.email,
+#recoverForm > .type-container:has(> .type > input[value="password"]:checked) ~ .input-recover.password {
+    display: flex;
+}
+
+#recoverForm > .input-recover > .-object-label > .--row > .-object-field.tel-input {
+    width: 20%;
+}
+#recoverForm > .input-recover >  .-object-label > .--row > .-object-field[name="pRecoverPassword"]::placeholder {
+    font-size: 0.75rem;
+}
+
+#recoverForm > .button-container {
+    width: 100%;
+
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    gap: 0.75rem;
+    justify-content: flex-end;
+
+    margin-bottom: 1rem;
+}
+
+#recoverForm > .button-container > button[type="submit"] {
+    display: none;
+}
+
+#recoverForm > .type-container:has(> .type > input:checked) ~ .button-container > button[type="submit"] {
+    display: flex;
+}

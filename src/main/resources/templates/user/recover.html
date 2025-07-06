@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/user/assets/styles/recover.css" rel="stylesheet" type="text/css">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/user/assets/scripts/recover.js"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}"></th:block>
+<form novalidate id="recoverForm">
+    <h1 class="title">계정 복구</h1>
+    <div class="type-container">
+        <label class="type">
+            <input name="type" type="radio" value="email">
+            <span class="title">이메일 찾기</span>
+            <span class="description">
+                회원가입시 사용한 이름, 생년월일, 연락처로 이메일을 찾을 수 있습니다.
+            </span>
+        </label>
+        <label class="type">
+            <input name="type" type="radio" value="password">
+            <span class="title">비밀번호 재설정</span>
+            <span class="description">
+                회원가입시 사용한 이메일로 인증하여 비밀번호를 재설정 할 수 있습니다.
+            </span>
+        </label>
+    </div>
+
+    <div class="message">계정 찾기 유형을 선택해 주세요.</div>
+
+    <div class="input-recover email">
+        <label class="-object-label">
+            <span class="--caption">이름/생년월일</span>
+            <span class="--row">
+                <input required autocomplete="off" class="-object-field" maxlength="5" minlength="2"
+                       name="eRecoverName"
+                       placeholder="성 + 이름(공백없음)" type="text"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex)._name.pattern}">
+                <input required autocomplete="off" class="-object-field" name="eRecoverBirth" type="date"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).birth.pattern}">
+                </span>
+            <span class="--warning">올바른 이름을 입력해 주세요.</span>
+        </label>
+
+        <label class="-object-label">
+            <span class="--caption">연락처</span>
+            <span class="--row">
+                <select required class="-object-field" name="eRecoverContactMvno">
+                    <option disabled hidden selected value="-1">통신사</option>
+                    <option th:each="mvon:${contactMvnos}" th:value="${mvon.code}"
+                            th:text="${mvon.displayText}"></option>
+                </select>
+                <select required class="-object-field -flex-stretch" name="eRecoverContactFirst">
+                    <option selected value="010">010</option>
+                    <option value="011">011</option>
+                    <option value="016">016</option>
+                    <option value="017">017</option>
+                    <option value="019">019</option>
+                </select>
+                <input required class="-object-field tel-input" maxlength="4" minlength="3"
+                       name="eRecoverContactSecond"
+                       placeholder="0000" type="text"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactSecondRegex.pattern}">
+                <input required class="-object-field tel-input" maxlength="4" minlength="3"
+                       name="eRecoverContactThird"
+                       placeholder="0000" type="text"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).contactThirdRegex.pattern}">
+            </span>
+            <span class="--warning">연락처를 입력해 주세요.</span>
+        </label>
+    </div>
+
+    <div class="input-recover password">
+        <input hidden name="emailSalt" type="hidden">
+        <label class="-object-label">
+            <span class="--caption">이메일</span>
+            <span class="--row">
+                <input required type="email" name="pRecoverEmail" autocomplete="email" class="-object-field -flex-stretch"
+                       maxlength="50" minlength="8" placeholder="user@sample.com"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).email.pattern}">
+                <button type="button" class="-object-button -color-blue" name="pRecoverEmailCodeSendButton">인증코드 전송</button>
+                </span>
+            <span class="--row">
+                <input disabled required autocomplete="off" class="-object-field -flex-stretch" maxlength="6"
+                       minlength="6" name="pRecoverEmailCode" placeholder="000000" type="text"
+                       th:pattern="${T(com.dev.rebook.regexes.EmailTokenRegex).emailCode.pattern}">
+                <button type="button" class="-object-button -color-blue"
+                        name="pRecoverEmailCodeVerifyButton">인증번호 확인</button>
+            </span>
+            <span class="--warning">이메일 인증을 완료해주세요.</span>
+        </label>
+        <label class="-object-label">
+            <span class="--caption">비밀번호</span>
+            <span class="--row">
+                <input required autocomplete="off" class="-object-field -flex-stretch" maxlength="50" minlength="6"
+                       name="pRecoverPassword" placeholder="숫자, 알파벳, 특수기호 6자 이상 50자 이하" type="password"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).password.pattern}">
+                <input required autocomplete="off" class="-object-field -flex-stretch" maxlength="50" minlength="6"
+                       name="pRecoverPasswordCheck" placeholder="비밀번호 재입력" type="password"
+                       th:pattern="${T(com.dev.rebook.regexes.UserRegex).password.pattern}">
+                </span>
+            <span class="--warning">비밀번호를 입력해 주세요.</span>
+        </label>
+    </div>
+
+    <div class="-flex-stretch" role="none"></div>
+
+    <div class="button-container">
+        <a class="-object-button -color-gray" href="/user/login">
+            <span class="--caption">돌아가기</span>
+        </a>
+        <button class="-object-button -color-blue" type="submit">
+            <span class="--caption">계정 복구</span>
+        </button>
+    </div>
+</form>
+
+</body>
+</html>

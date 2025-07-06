@@ -8,6 +8,13 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
     int insert(@Param("user") UserEntity user);
 
+    int update(@Param("user") UserEntity user);
+
+    UserEntity selectLocalUserByContact(@Param(value = "contactMvno") String contactMvno,
+                                        @Param(value = "contactFirst") String contactFirst,
+                                        @Param(value = "contactSecond") String contactSecond,
+                                        @Param(value = "contactThird") String contactThird);
+
     UserEntity selectLocalUserByEmail(@Param(value = "email") String email);
 
     UserEntity selectUserByProviderId(@Param("provider") String provider, @Param("providerId") String providerId);

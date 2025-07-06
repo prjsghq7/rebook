@@ -61,6 +61,7 @@ body {
     width: 40rem;
     align-self: center;
     padding: 2rem;
+    box-sizing: border-box;
 }
 
 #registerForm .-object-button,
@@ -163,8 +164,12 @@ body {
     justify-content: flex-start;
 }
 
-#registerForm > .container > .input-wrapper .tel-input {
-    width: 20%;
+#registerForm > .container > .input-wrapper > .-object-label > .--row > .-object-field.tel-input {
+    width: 15%;
+}
+
+#registerForm > .container > .input-wrapper > .-object-label > .--row > .-object-field[name="password"]::placeholder {
+    font-size: 0.875rem;
 }
 
 #registerForm > .container  > .input-wrapper > .-object-label > .term-detail {

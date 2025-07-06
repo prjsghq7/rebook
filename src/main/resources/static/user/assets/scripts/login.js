@@ -108,7 +108,7 @@ $loginForm.addEventListener('submit', (e) => {
         }
     };
     xhr.open('POST', '/user/login');
-    xhr.setRequestHeader(header, token)
+    xhr.setRequestHeader(header, token);
     xhr.send(formData);
 });
 

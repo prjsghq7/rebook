@@ -9,7 +9,6 @@ import com.dev.rebook.mappers.ContactMvnoMapper;
 import com.dev.rebook.mappers.EmailTokenMapper;
 import com.dev.rebook.mappers.UserMapper;
 import com.dev.rebook.regexes.EmailTokenRegex;
-import com.dev.rebook.regexes.Regex;
 import com.dev.rebook.regexes.UserRegex;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
@@ -75,8 +74,100 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public Result recoverPassword(EmailTokenEntity emailToken, String password) {
+        if (emailToken == null
+                || !UserRegex.email.matches(emailToken.getEmail())
+                || !UserRegex.password.matches(password)) {
+            return CommonResult.FAILURE;
+        }
+
+        EmailTokenEntity dbEmailToken = this.emailTokenMapper.selectByEmailAndCodeAndSalt(emailToken.getEmail(), emailToken.getCode(), emailToken.getSalt());
+        if (dbEmailToken == null
+                || !dbEmailToken.isUsed()
+                || !dbEmailToken.getUserAgent().equals(emailToken.getUserAgent())) {
+            return CommonResult.FAILURE;
+        }
+
+        UserEntity user = this.userMapper.selectLocalUserByEmail(emailToken.getEmail());
+        if (user == null || user.isDeleted()) {
+            return CommonResult.FAILURE;
+        }
+        if (user.isSuspended()) {
+            return CommonResult.FAILURE_SUSPENDED;
+        }
+        user.setPassword(passwordEncoder.encode(password));
+        user.setModifiedAt(LocalDateTime.now());
+        return this.userMapper.update(user) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
+    }
+
+    public Result recoverEmail(UserEntity user) {
+        if (user == null
+                || !UserRegex._name.matches(user.getName())
+                || !UserRegex.birth.matches(user.getBirth().toString())
+                || !UserRegex.contactSecondRegex.matches(user.getContactSecond())
+                || !UserRegex.contactThirdRegex.matches(user.getContactThird())
+                || this.contactMvnoMapper.selectCountByCode(user.getContactMvnoCode()) < 1) {
+            return CommonResult.FAILURE;
+        }
+        UserEntity dbUser = this.userMapper.selectLocalUserByContact(user.getContactMvnoCode(), user.getContactFirst(), user.getContactSecond(), user.getContactThird());
+        if (dbUser == null
+                || dbUser.isDeleted()
+                || !dbUser.getName().equals(user.getName())
+                || !dbUser.getBirth().equals(user.getBirth())) {
+            return CommonResult.FAILURE_ABSENT;
+        }
+
+        user.setEmail(dbUser.getEmail());
+        if (dbUser.isSuspended()) {
+            return CommonResult.FAILURE_SUSPENDED;
+        }
+
+        return CommonResult.SUCCESS;
+    }
+
     public UserEntity selectByProviderId(String provider, String providerId) {
         return this.userMapper.selectUserByProviderId(provider, providerId);
+    }
+
+    public ResultTuple<EmailTokenEntity> sendRecoverPasswordEmail(String email, String userAgent) throws MessagingException {
+        if (!UserRegex.email.matches(email) || userAgent == null) {
+            return ResultTuple.<EmailTokenEntity>builder()
+                    .result(CommonResult.FAILURE)
+                    .build();
+        }
+        if (this.userMapper.selectLocalUserCountByEmail(email) == 0) {
+            return ResultTuple.<EmailTokenEntity>builder()
+                    .result(CommonResult.FAILURE_ABSENT)
+                    .build();
+        }
+        String code = RandomStringUtils.randomNumeric(6);   // "000000" ~ "999999"
+        String salt = RandomStringUtils.randomAlphanumeric(128); // a-z A~Z 0~9
+        EmailTokenEntity emailToken = UserService.generateEmailToken(email, userAgent, code, salt, 10);
+
+        if (this.emailTokenMapper.insert(emailToken) < 1) {
+            return ResultTuple.<EmailTokenEntity>builder().result(CommonResult.FAILURE).build();
+        }
+
+        //이메일 전송
+        Context context = new Context();
+        // thymeleaf 에서 사용할 데이터 입력
+        context.setVariable("code", emailToken.getCode());
+        // 보낼 html 파일 경로
+        String mailText = this.springTemplateEngine.process("user/recoverEmail", context);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom("prjsghq7@gmail.com");
+        mimeMessageHelper.setTo(emailToken.getEmail());
+        mimeMessageHelper.setSubject("[ReBook] 계정 복구(비밀번호 재설정) 인증번호");
+        mimeMessageHelper.setText(mailText, true);
+        this.javaMailSender.send(mimeMessage);
+
+        return ResultTuple.<EmailTokenEntity>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(emailToken)
+                .build();
     }
 
     public ResultTuple<EmailTokenEntity> sendRegisterEmail(String email, String userAgent) throws MessagingException {
@@ -111,7 +202,7 @@ public class UserService {
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
         mimeMessageHelper.setFrom("prjsghq7@gmail.com");
         mimeMessageHelper.setTo(emailToken.getEmail());
-        mimeMessageHelper.setSubject("[ReBook] 회원가입 인증번호]");
+        mimeMessageHelper.setSubject("[ReBook] 회원가입 인증번호");
         mimeMessageHelper.setText(mailText, true);
         this.javaMailSender.send(mimeMessage);
 
@@ -193,8 +284,6 @@ public class UserService {
                 || user.getAddressSecondary() == null || user.getAddressSecondary().isEmpty()) {
             return CommonResult.FAILURE;
         }
-        System.out.println("categoryCount" + categoryMapper.selectCountById(user.getCategoryId()));
-        System.out.println("contactCount" + contactMvnoMapper.selectCountByCode(user.getContactMvnoCode()));
         if (categoryMapper.selectCountById(user.getCategoryId()) < 1
                 || contactMvnoMapper.selectCountByCode(user.getContactMvnoCode()) < 1) {
             return CommonResult.FAILURE;
