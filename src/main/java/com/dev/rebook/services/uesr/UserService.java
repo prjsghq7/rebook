@@ -310,7 +310,7 @@ public class UserService {
                 : CommonResult.FAILURE;
     }
 
-    public ResultTuple<UserEntity> login(String email, String password) {
+    public ResultTuple<UserEntity> login(String email, String password, String userAgent) {
         if (!UserRegex.email.matches(email)
                 || !UserRegex.password.matches(password)) {
             return ResultTuple.<UserEntity>builder()
@@ -333,8 +333,16 @@ public class UserService {
                     .result(CommonResult.FAILURE)
                     .build();
         }
+
+        dbUser.setLastSignedAt(LocalDateTime.now());
+        dbUser.setLastSignedUa(userAgent);
+
+        Result result = this.userMapper.update(dbUser) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
+
         return ResultTuple.<UserEntity>builder()
-                .result(CommonResult.SUCCESS)
+                .result(result)
                 .payload(dbUser)
                 .build();
     }

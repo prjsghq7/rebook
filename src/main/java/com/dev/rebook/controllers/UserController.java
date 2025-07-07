@@ -198,8 +198,10 @@ public class UserController {
     @ResponseBody
     public String postLogin(@RequestParam(value = "email") String email,
                             @RequestParam(value = "password") String password,
-                            HttpSession session) {
-        ResultTuple<UserEntity> result = userService.login(email, password);
+                            HttpSession session,
+                            HttpServletRequest request) {
+        String userAgent = request.getHeader("User-Agent");
+        ResultTuple<UserEntity> result = userService.login(email, password, userAgent);
         if (result.getResult() == CommonResult.SUCCESS) {
             session.setAttribute("signedUser", result.getPayload());
         }
