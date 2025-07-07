@@ -148,8 +148,9 @@ body {
 }
 
 #registerForm > .container > .title {
-    font-size: 1.25rem;
+    font-size: 1.3125rem;
     font-weight: 500;
+    margin-bottom: 0.5rem;
 }
 
 #registerForm > .container.complete > .message {
@@ -162,6 +163,30 @@ body {
     flex-direction: column;
     gap: 1.5rem;
     justify-content: flex-start;
+}
+
+#registerForm > .container > .input-wrapper.oauth-user {
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: flex-start;
+
+    margin: 1.5rem 0;
+}
+
+#registerForm > .container > .input-wrapper.oauth-user > .desc {
+    font-size: 1.0625rem;
+    line-height: 1.5;
+}
+
+#registerForm > .container > .input-wrapper.oauth-user > .desc > .accent {
+    font-weight: 700;
+    font-size: 1.25rem;
+    vertical-align: bottom;
+    text-decoration: underline;
+    text-underline-offset: 0.3125em;
+    color: #268dfa;
 }
 
 #registerForm > .container > .input-wrapper > .-object-label > .--row > .-object-field.tel-input {
