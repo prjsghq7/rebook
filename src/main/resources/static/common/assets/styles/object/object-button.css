@@ -23,6 +23,14 @@
     top: 0.0625rem;
 }
 
+.-object-button.-color-red {
+    background-color: #dc0a43;
+}
+
+.-object-button.-color-red:hover {
+    background-color: #c8002e;
+}
+
 .-object-button.-color-blue {
     background-color: #268dfa;
 }
