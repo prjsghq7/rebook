@@ -28,10 +28,20 @@
 
 .-object-label > .--warning {
     color: #e74c3c;
-    display: none;
-    font-size: 0.8rem;
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+
+    max-height: 0;
+    opacity: 0;
+
+    transition-duration: 620ms;
+    transition-property: max-height, opacity;
+    transition-timing-function: ease;
+
 }
 
 .-object-label[data-rb-invalid] > .--warning {
-    display: block;
+    opacity: 1;
+    max-height: 10rem;
 }
