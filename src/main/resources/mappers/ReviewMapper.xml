@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.ReviewMapper">
+    <select id="selectRecentReviews" resultType="com.dev.rebook.dtos.RecentReviewDto">
+        SELECT `b`.`title`   AS `bookTitle`,
+               `r`.`comment` AS `comment`,
+               `r`.`scope`   AS `scope`,
+               `r`.`created_at` AS `reviewDate`
+        FROM `rebook`.`reviews` AS `r`
+                 JOIN `rebook`.`books` AS `b` ON `r`.book_id = `b`.`id`
+        WHERE `r`.`user_id` = #{userId}
+          AND `r`.`is_deleted` = FALSE
+        ORDER BY `r`.created_at DESC
+        LIMIT #{limit}
+    </select>
+
+    <select id="selectReviewSummary" resultType="com.dev.rebook.dtos.ReviewSummaryDto">
+        SELECT COUNT(0)               AS totalCount,
+               ROUND(AVG(`scope`), 1) AS averageScope,
+               MAX(`created_at`)      AS lastReviewDate
+        FROM `rebook`.`reviews`
+        WHERE `user_id` = #{userId}
+          AND `is_deleted` = FALSE
+    </select>
+</mapper>

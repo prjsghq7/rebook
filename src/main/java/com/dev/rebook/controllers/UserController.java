@@ -1,5 +1,7 @@
 package com.dev.rebook.controllers;
 
+import com.dev.rebook.dtos.RecentReviewDto;
+import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.entities.ContactMvnoEntity;
 import com.dev.rebook.entities.EmailTokenEntity;
@@ -7,6 +9,7 @@ import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.services.ReviewService;
 import com.dev.rebook.services.uesr.EmailTokenService;
 import com.dev.rebook.services.uesr.UserService;
 import jakarta.mail.MessagingException;
@@ -27,15 +30,27 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
     private final EmailTokenService emailTokenService;
+    private final ReviewService reviewService;
 
     @Autowired
-    public UserController(UserService userService, EmailTokenService emailTokenService) {
+    public UserController(UserService userService, EmailTokenService emailTokenService, ReviewService reviewService) {
         this.userService = userService;
         this.emailTokenService = emailTokenService;
+        this.reviewService = reviewService;
     }
 
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getInfo() {
+    public String getInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                          Model model) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return "redirect:/user/login";
+        }
+        model.addAttribute("signedUser", signedUser);
+        model.addAttribute("recentReviews", this.reviewService.getRecentReviews(signedUser.getId()));
+        System.out.println(this.reviewService.getRecentReviews(signedUser.getId()) == null);
+        RecentReviewDto[] reviews = this.reviewService.getRecentReviews(signedUser.getId());
+        System.out.println(reviews.length);
+        model.addAttribute("reviewSummary", this.reviewService.getReviewSummary(signedUser.getId()));
         return "user/info";
     }
 

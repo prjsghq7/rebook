@@ -4,10 +4,83 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <title>Document</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/user/assets/styles/info.css" rel="stylesheet" type="text/css">
+    <script src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/user/assets/scripts/info.js"></script>
 </head>
 <body>
-마이페이지
+<th:block th:replace="~{/fragments/header :: header}"></th:block>
+<div id="default-area">
+    <h1 class="title">마이페이지</h1>
+
+    <section id="profile-section">
+        <img th:if="${signedUser.profileImg == null}" src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
+        <img th:if="${signedUser.profileImg != null}" th:src="${signedUser.profileImg}" alt="프로필 이미지" class="profile-image">
+        <div class="profile-info -flex-stretch">
+            <span class="label">이름</span><span th:text="${signedUser.name}"></span>
+            <span class="label">이메일</span><span th:text="${signedUser.email}"></span>
+            <span class="label">닉네임</span><span th:text="${signedUser.nickname}"></span>
+            <span class="label">성별/생년월일</span><span th:text="|${signedUser.gender} / ${signedUser.birth}|"></span>
+            <span class="label">연락처</span><span th:text="|${signedUser.contactFirst}-${signedUser.contactSecond}-${signedUser.contactThird}|"></span>
+            <span class="label">주소</span><span th:text="|${signedUser.addressPrimary} ${signedUser.addressSecondary}|"></span>
+            <span class="label">관심 카테고리</span><span>자기계발</span>
+        </div>
+        <div class="button-container">
+            <button class="-object-button -color-blue">
+                <span class="--caption">정보 수정</span>
+            </button>
+            <button class="-object-button -color-red">
+                <span class="--caption">회원 탈퇴</span>
+            </button>
+        </div>
+    </section>
+
+    <section id="activity-section">
+        <h2 class="subTitle">활동 요약</h2>
+        <div class="summary-wrapper">
+            <div class="summary-item">
+                <div class="summary-value" th:text="${reviewSummary.totalCount}"></div>
+                <div class="summary-label">작성한 리뷰</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" th:text="${reviewSummary.averageScope}"></div>
+                <div class="summary-label">평균 평점</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-value" th:text="${reviewSummary.lastReviewDate != null} ? ${#temporals.format(reviewSummary.lastReviewDate, 'yyyy.MM.dd HH:mm')} : '작성 리뷰 없음'"></div>
+                <div class="summary-label">최근 리뷰 작성일</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="reviews-section">
+        <h2 class="subTitle">최근 작성한 리뷰</h2>
+        <ul class="review-list">
+            <li class="message-empty" th:if="${recentReviews.length == 0 || recentReviews == null}">
+                <img  class="empty-icon" src="/review/assets/images/empty-review.png" alt="리뷰 없음">
+                <p class="empty-text">작성된 리뷰가 없습니다.</p>
+            </li>
+            <li class="review-item" th:each="review:${recentReviews}">
+                <span class="header">
+                    <span class="title -flex-stretch" th:text="${review.bookTitle}"></span>
+                    <span class="date" th:text="${review.reviewDate}">2025-07-05</span>
+                </span>
+                <span class="content">
+                    <span class="scope">
+                        <img class="star" src="/review/assets/images/star-fill.png" alt="fill" th:each="i : ${#numbers.sequence(1, review.scope)}">
+                        <img class="star" src="/review/assets/images/star-empty.png" alt="empty"
+                             th:each="i : ${#numbers.sequence(1, 5 - review.scope)}">
+                    </span>
+                    <span class="comment -flex-stretch" th:text="${review.comment}"></span>
+                </span>
+            </li>
+        </ul>
+    </section>
+</div>
 </body>
 </html>
