@@ -17,7 +17,7 @@ public class BookEntity {
     private String author;
     private LocalDate pubDate;
     private String description;
-    private int priceSales;
+    private Integer priceSales;
     private String mallType;
     private String cover;
     private String publisher;

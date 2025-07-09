@@ -1,9 +1,11 @@
 package com.dev.rebook.services;
 
 import com.dev.rebook.entities.BookEntity;
+import com.dev.rebook.mappers.BookMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.vos.SearchVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -23,9 +25,15 @@ import java.util.List;
 
 @Service
 public class BookService {
+    private final BookMapper bookMapper;
 
     @Value("${api-aladin-api-key}")
     private String aladinApiKey;
+
+    @Autowired
+    public BookService(BookMapper bookMapper) {
+        this.bookMapper = bookMapper;
+    }
 
     public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
         System.out.println("서비스 도착 : " + keyword);
@@ -41,7 +49,7 @@ public class BookService {
             StringBuilder aladinUrl = new StringBuilder();
             aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=")
                     .append(aladinApiKey); // API 키
-            aladinUrl.append("&MaxResults=10&Cover=Big&start=1&output=xml&Version=20131101");
+            aladinUrl.append("&MaxResults=12&Cover=Big&start=1&output=xml&Version=20131101");
             aladinUrl.append("&Query=")
                     .append(keyword); // 검색어 키워드
 
@@ -99,15 +107,29 @@ public class BookService {
             // 각 item을 BookEntity로 변환
             for (int i = 0; i < items.getLength(); i++) {
                 Element item = (Element) items.item(i);
-
                 BookEntity book = new BookEntity();
-                book.setTitle(getElementText(item, "title"));
-                book.setAuthor(getElementText(item, "author"));
-                book.setPubDate(parsePubDate(getElementText(item, "pubDate")));
-                book.setCover(getElementText(item, "cover"));
-                book.setLink(getElementText(item, "link"));
 
-                booksList.add(book);
+                book.setId(getValidIsbn(item)); // isbn13, isbn 검사 후 id 세팅
+                book.setTitle(getElementText(item, "title", false));
+                book.setAuthor(getElementText(item, "author", true));
+                book.setPubDate(parsePubDate(getElementText(item, "pubDate", true)));
+                book.setCover(getElementText(item, "cover", true));
+                book.setLink(getElementText(item, "link", false));
+                book.setDescription(getElementText(item, "description", true));
+                book.setPriceSales(getElementInt(item, "priceSales", true));
+                book.setMallType(getElementText(item, "mallType", false));
+                book.setPublisher(getElementText(item, "publisher", false));
+                book.setAdult(parseBoolean(getElementText(item, "adult", false)));
+
+                // DB에 있으면 DB에서 꺼내 저장 없으면 신규로 Insert하기
+
+                if (this.bookMapper.selectCountById(book.getId()) > 0) {
+                    System.out.println("DB에 존재 : " + book.getTitle());
+                } else {
+                    int insertResult = this.bookMapper.insert(book);
+                    System.out.println("DB에 추가 : " + insertResult);
+                }
+                booksList.add(this.bookMapper.selectById(book.getId()));
             }
 
         } catch (Exception e) {
@@ -118,12 +140,28 @@ public class BookService {
         return booksList.toArray(new BookEntity[0]);
     }
 
-    private String getElementText(Element parent, String tagName) {
+    private String getElementText(Element parent, String tagName, boolean nullable) {
         NodeList nodeList = parent.getElementsByTagName(tagName);
         if (nodeList.getLength() > 0) {
-            return nodeList.item(0).getTextContent();
+            String value = nodeList.item(0).getTextContent();
+            if (value == null || value.trim().isEmpty()) {
+                return nullable ? null : "";
+            }
+            return value;
         }
-        return "";
+        return nullable ? null : "";
+    }
+
+    private Integer getElementInt(Element parent, String tagName, boolean nullable) {
+        String value = getElementText(parent, tagName, nullable);
+        if (value == null || value.trim().isEmpty()) {
+            return nullable ? null : 0;
+        }
+        try {
+            return Integer.parseInt(value.replaceAll("[^0-9]", ""));
+        } catch (NumberFormatException e) {
+            return nullable ? null : 0;
+        }
     }
 
     private LocalDate parsePubDate(String pubDateStr) {
@@ -139,5 +177,28 @@ public class BookService {
             // 파싱 실패 시 null 반환
             return null;
         }
+    }
+
+    private boolean parseBoolean(String boolStr) {
+        return "true".equalsIgnoreCase(boolStr) || "1".equals(boolStr);
+    }
+
+    // isbn13, isbn 중 유효한 값을 id로 반환, 없으면 예외
+    private String getValidIsbn(Element item) {
+        String isbn13 = getElementText(item, "isbn13", false);
+        String isbn = getElementText(item, "isbn", false);
+        if (isValidIsbn(isbn13)) {
+            return isbn13.trim();
+        }
+        if (isValidIsbn(isbn)) {
+            System.out.println("ISBN 10자리 등록됨");
+            return isbn.trim();
+        }
+        throw new IllegalArgumentException("ISBN 정보가 없습니다.");
+    }
+
+    // null, 빈 문자열, '0'이 아닌지 검사
+    private boolean isValidIsbn(String isbn) {
+        return isbn != null && !isbn.trim().isEmpty() && !"0".equals(isbn.trim());
     }
 }

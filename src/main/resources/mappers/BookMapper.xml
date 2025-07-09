@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.BookMapper">
+    <insert id="insert">
+        INSERT INTO `rebook`.`books` (`id`, `title`, `link`, `author`, `pub_date`, `description`, `price_sales`,
+                                      `mallType`,
+                                      `cover`,
+                                      `publisher`,
+                                      `adult`)
+        VALUES (#{book.id}, #{book.title}, #{book.link}, #{book.author}, #{book.pubDate}, #{book.description},
+                #{book.priceSales}, #{book.mallType}, #{book.cover}, #{book.publisher}, #{book.adult});
+    </insert>
+
+    <select id="selectById" resultType="com.dev.rebook.entities.BookEntity">
+        SELECT `id`          AS 'id',
+               `title`       AS 'title',
+               `link`        AS 'link',
+               `author`      AS 'author',
+               `pub_date`    AS 'pubDate',
+               `description` AS 'description',
+               `price_sales` AS 'priceSales',
+               `mallType`    AS 'mallType',
+               `cover`       AS 'cover',
+               `publisher`   AS 'publisher',
+               `adult`       AS 'adult'
+        FROM `rebook`.`books`
+        WHERE `id` = #{id}
+        LIMIT 1
+    </select>
+
+    <select id="selectCountById" resultType="java.lang.Integer">
+            SELECT COUNT(0)
+            FROM `rebook`.`books`
+            WHERE `id` = #{id}
+    </select>
+
+    <select id="selectAll" resultType="com.dev.rebook.entities.BookEntity">
+        SELECT `id`          AS 'id',
+               `title`       AS 'title',
+               `link`        AS 'link',
+               `author`      AS 'author',
+               `pub_date`    AS 'pubDate',
+               `description` AS 'description',
+               `price_sales` AS 'priceSales',
+               `mallType`    AS 'mallType',
+               `cover`       AS 'cover',
+               `publisher`   AS 'publisher',
+               `adult`       AS 'adult'
+        FROM `rebook`.`books`
+    </select>
+</mapper>
