@@ -6,10 +6,10 @@
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>reBook</title>
+    <link rel="stylesheet" href="/common/assets/styles/common.css">
     <link rel="stylesheet" href="/test/assets/styles/rebook.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
     <link rel="stylesheet" href="/test/assets/styles/loading.css">
-    <link rel="stylesheet" href="/common/assets/styles/common.css">
     <link rel="stylesheet" href="/chatbot/assets/styles/chat.css">
     <!--    <link rel="stylesheet" href="/test/assets/styles/header.css">-->
     <script defer src="/common/assets/scripts/common.js"></script>
@@ -59,28 +59,77 @@
     </section>
 
     <section id="chatbot" class="chatbot">
-        <div class="chatbot-layout" data-rb-visible>
-
+        <div class="chatbot-layout">
             <div class="chat-view chat-intro-view" data-view="intro" data-rb-visible>
+                <div class="intro-header">
+                    <div class="chat-logo">
+                            <span class="title">Re
+                            <span class="subTitle">:view</span>Book</span>
+
+                    </div>
+                    <div class="intro-help">
+                        <p class="intro-title">안녕하세요 👋</p>
+                        <p class="intro-subtitle">무엇을 도와드릴까요?</p>
+                    </div>
+                    <button class="close-button" aria-label="닫기">&times;</button>
+                </div>
+                <div class="intro-body">
+                    <p class="intro-desc">
+                        ReBook 챗봇은 책 추천부터 키워드 검색, 사용 안내까지 도와주는 AI 도우미입니다. <br>
+                        궁금한 점을 물어보거나 관심 있는 분야를 입력해보세요. <br>
+                        아래 기능들을 통해 더 쉽고 빠르게 원하는 정보를 찾을 수 있어요.
+                    </p>
+                    <ul class="intro-feature-list">
+                        <li class="item">
+                            <button class="feature-button" data-target="main">
+                                <span class="caption">📚챗봇 도서 추천</span>
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button class="feature-button" data-target="keyword-search">
+                                <span class="caption">🔍키워드 검색</span>
+                            </button>
+                        </li>
+                        <li class="item">
+                            <button class="feature-button" data-target="room">
+                                <span class="caption">💬채팅방 관리</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+                        <!--TODO keyword-search, 폼 만들어야됨-->
                 <div class="intro-message">
-                    <p>ㅎㅇ<br>어떤 도움이 필요하신가요?</p>
-                    <button id="startChatBtn" class="-object-button -color-blue">메시지를 보내주세요</button>
+                    <div class="-flex-stretch"></div>
+                    <div class="intro-action">
+                        <button id="startChatBtn" class="-object-button -color-blue" th:text="${session.signedUser != null} ? '메세지 입력 ㄱㄱ' : '로그인 후 이용 가능합니다.'"
+                        th:classappend="${session.signedUser == null} ? 'danger-text' : ''"></button>
+
+                    </div>
                 </div>
             </div>
-
             <div class="chat-view chat-main-view" data-view="main">
                 <div class="chat-messages" id="chat-message">
+                    <div class="chat-form-header">
+                        <button class="chat-back-button">
+                            <img src="/chatbot/assets/images/back.png" alt="back" class="chat-form-back chat-form-img">
+                        </button>
+                        <img src="/chatbot/assets/images/chatbotIcon.png" alt="rebook" class="chat-form-icon chat-form-img">
+                        <div class="chat-form-header-span">
+                            <span class="title">Re:Book</span>
+                            <span class="caption">생성형 AI 답변이므로 정확하지 않을 수 있습니다.</span>
+                        </div>
+                        <button class="chat-close-button" aria-label="닫기">&times;</button>
+                    </div>
                     <button name="refresh" type="button" hidden></button>
-                    <ul class="list">여기가 채팅 폼</ul>
-                    <form class="user-input" id="chatForm" novalidate>
-                        <label class="-object-chat-label">
-                            <input type="text" name="message" placeholder="메시지를 입력하세요"
-                                   class="--object-input" maxlength="100" autocomplete="off"/>
-                            <button type="submit" class="--object-button -color-blue">전송</button>
-                        </label>
-                    </form>
+                    <ul class="list"></ul>
                 </div>
-
+                <form class="user-input" id="chatForm" novalidate>
+                    <label class="-object-chat-label">
+                        <input type="text" name="message" placeholder="메시지를 입력하세요"
+                               class="--object-input" maxlength="100" autocomplete="off"/>
+                        <button type="submit" class="-object-button -color-blue">전송</button>
+                    </label>
+                </form>
             </div>
 
             <div class="chat-view chat-room-view" data-view="room">
@@ -93,26 +142,30 @@
                 </ul>
             </div>
 
-            <div class="chat-category" id="chatCategory">
+            <div class="chat-category" id="chatCategory" data-rb-visible>
                 <div class="-button-container chat-list">
                     <button class="category-item" data-target="intro">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100" height="100">
-                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M10 22 L25 10 L40 22 V40 H10 Z" />
-                                <rect x="21" y="28" width="8" height="12" />
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100"
+                             height="100">
+                            <g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                               stroke-linejoin="round">
+                                <path d="M10 22 L25 10 L40 22 V40 H10 Z"/>
+                                <rect x="21" y="28" width="8" height="12"/>
                             </g>
                         </svg>
 
                         <span class="caption">홈</span>
                     </button>
                     <button class="category-item" data-target="room">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100" height="100">
-                            <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" class="chat-icon" width="100"
+                             height="100">
+                            <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"
+                               stroke-linejoin="round">
                                 <!-- 말풍선 외곽 -->
-                                <path d="M10 10h30a5 5 0 0 1 5 5v20a5 5 0 0 1-5 5H20l-8 6v-6h-2a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5z" />
+                                <path d="M10 10h30a5 5 0 0 1 5 5v20a5 5 0 0 1-5 5H20l-8 6v-6h-2a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5z"/>
                                 <!-- 메시지 줄 -->
-                                <line x1="16" y1="20" x2="34" y2="20" />
-                                <line x1="16" y1="28" x2="30" y2="28" />
+                                <line x1="16" y1="20" x2="34" y2="20"/>
+                                <line x1="16" y1="28" x2="30" y2="28"/>
                             </g>
                         </svg>
 
