@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.ChatRoomMapper">
+    <insert id="insertChatRoom"
+            keyColumn="id"
+            keyProperty="room.id"
+            useGeneratedKeys="true">
+        INSERT INTO `rebook`.`chat_rooms`
+            (`user_id`, `created_at`, `modified_at`, `is_deleted`)
+        VALUES (#{room.userId}, #{room.createdAt}, #{room.modifiedAt}, #{room.isDeleted})
+    </insert>
+    <update id="updateChatRoomTitle">
+        UPDATE `rebook`.`chat_rooms`
+        SET `modified_at` = #{modifiedAt}
+        WHERE `id` = #{id}
+        LIMIT 1
+    </update>
+    <delete id="deleteChatRoom">
+        DELETE
+        FROM `rebook`.`chat_rooms`
+        WHERE `id` = #{id}
+          AND `user_id` = #{userId}
+    </delete>
+
+    <select id="selectChatRoomById" resultType="com.dev.rebook.entities.ChatRoomEntity">
+        SELECT `id`          AS `id`,
+               `user_id`     AS `userId`,
+               `created_at`  AS `createdAt`,
+               `modified_at` AS `modifiedAt`,
+               `is_deleted`  AS `isDeleted`
+        FROM `rebook`.`chat_rooms`
+        WHERE `id` = #{id}
+          AND `user_id` = #{userId}
+        LIMIT 1
+    </select>
+
+    <select id="selectChatRoomsByUserId" resultType="com.dev.rebook.entities.ChatRoomEntity">
+        SELECT `id`          AS `id`,
+               `user_id`     AS `userId`,
+               `created_at`  AS `createdAt`,
+               `modified_at` AS `modifiedAt`,
+               `is_deleted`  AS `isDeleted`
+        FROM `rebook`.`chat_rooms`
+        WHERE `user_id` = #{userId}
+    </select>
+    <select id="selectedChatRoomByUserId" resultType="com.dev.rebook.entities.ChatRoomEntity">
+        SELECT `id`          AS `id`,
+               `user_id`     AS `userId`,
+               `created_at`  AS `createdAt`,
+               `modified_at` AS `modifiedAt`,
+               `is_deleted`  AS `isDeleted`
+        FROM `rebook`.`chat_rooms`
+        WHERE user_id = #{userId}
+          AND is_deleted = FALSE
+        ORDER BY created_at DESC
+    </select>
+    <select id="selectChatRoomsWithLastMessageByUserId"
+            resultType="com.dev.rebook.dtos.ChatRoomWithLastMessageDto">
+        SELECT `T1`.`id`         AS `roomId`,
+               `T2`.`message`    AS `lastMessage`,
+               `T2`.`created_at` AS `lastMessageAt`
+        FROM `rebook`.`chat_rooms` AS `T1`
+                 LEFT JOIN `rebook`.`chat_messages` AS `T2` ON `T1`.`id` = `T2`.`chat_room_id`
+        WHERE `T1`.`user_id` = 1
+          AND `T1`.`is_deleted` = FALSE
+        GROUP BY `T1`.`id`
+        HAVING MAX(`T2`.created_at)
+    </select>
+
+</mapper>
