@@ -45,4 +45,14 @@ public class HomeController {
         }
         return result.getPayload();
     }
+
+    @RequestMapping(value = "/api/aladin/category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public BookEntity[] getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId) {
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromUserKeyword(categoryId);
+        if (result.getResult() != CommonResult.SUCCESS) {
+            return new BookEntity[0];
+        }
+        return result.getPayload();
+    }
 }

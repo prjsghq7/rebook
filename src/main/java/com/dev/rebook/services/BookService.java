@@ -211,7 +211,7 @@ public class BookService {
             StringBuilder aladinUrl = new StringBuilder();
             aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
                     .append(aladinApiKey); // API 키
-            aladinUrl.append("&QueryType=ItemNewAll&MaxResults=10&start=1&SearchTarget=Book&output=xml&Version=20131101");
+            aladinUrl.append("&QueryType=BestSeller&MaxResults=12&start=1&SearchTarget=Book&output=xml&Version=20131101");
 
 
             // RestTemplate으로 API 호출
@@ -230,6 +230,36 @@ public class BookService {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
+
+    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId) {
+        try {
+
+            StringBuilder aladinUrl = new StringBuilder();
+            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
+                    .append(aladinApiKey);
+            aladinUrl.append("&QueryType=BestSeller");
+            aladinUrl.append("&CategoryId=").append(categoryId);
+            aladinUrl.append("&MaxResults=12&start=1&output=xml&Version=20131101");
+
+
+            // RestTemplate으로 API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
+
+            // XML 응답을 BookEntity 배열로 파싱
+            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            System.out.println(books[0].getTitle());
+            return ResultTuple.<BookEntity[]>builder()
+                    .payload(books)
+                    .result(CommonResult.SUCCESS)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+    }
+
+    // 카테고리 thymeleaf
     public List<CategoryEntity> getCategoryId() {
         return categoryMapper.selectAll();
     }
