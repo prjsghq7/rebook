@@ -36,36 +36,13 @@ public class HomeController {
         model.addAttribute("CId", CId);
         return "test/test";
     }
-
-    // TODO 키워드 기반 컨트롤러 작성
-
     @RequestMapping(value = "/api/aladin/bestseller", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BookEntity[] getBestSellerBooksFromAladin() {
-        ResultTuple<BookEntity[]> result = this.bookService.searchBestSellerBooksFromAlladin();
+    public BookEntity[] getBooksBestSeller() {
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksBestSellerAlladin();
         if (result.getResult() != CommonResult.SUCCESS) {
             return new BookEntity[0];
         }
         return result.getPayload();
-    }
-
-    @GetMapping(value = "/api/aladin/category", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public BookEntity[] getCategoryIdBooksFromAladin(@RequestParam("categoryId") String categoryId) {
-        ResultTuple<BookEntity[]> result = this.bookService.searchCategoryBooksFromAlladin(categoryId);
-        if (result.getResult() != CommonResult.SUCCESS) {
-            return new BookEntity[0];
-        }
-        return result.getPayload();
-    }
-
-    @RequestMapping(value = "/api/chat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String getMessage() {
-        JSONArray response = new JSONArray();
-        for (String msg : messages) {
-            response.put(msg);
-        }
-        return response.toString();
     }
 }

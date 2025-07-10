@@ -1,7 +1,9 @@
 package com.dev.rebook.services;
 
 import com.dev.rebook.entities.BookEntity;
+import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.mappers.BookMapper;
+import com.dev.rebook.mappers.CategoryMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.vos.SearchVo;
@@ -26,13 +28,15 @@ import java.util.List;
 @Service
 public class BookService {
     private final BookMapper bookMapper;
+    private final CategoryMapper categoryMapper;
 
     @Value("${api-aladin-api-key}")
     private String aladinApiKey;
 
     @Autowired
-    public BookService(BookMapper bookMapper) {
+    public BookService(BookMapper bookMapper, CategoryMapper categoryMapper) {
         this.bookMapper = bookMapper;
+        this.categoryMapper = categoryMapper;
     }
 
     public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
@@ -200,5 +204,33 @@ public class BookService {
     // null, 빈 문자열, '0'이 아닌지 검사
     private boolean isValidIsbn(String isbn) {
         return isbn != null && !isbn.trim().isEmpty() && !"0".equals(isbn.trim());
+    }
+
+    public ResultTuple<BookEntity[]> searchBooksBestSellerAlladin() {
+        try {
+            StringBuilder aladinUrl = new StringBuilder();
+            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
+                    .append(aladinApiKey); // API 키
+            aladinUrl.append("&QueryType=ItemNewAll&MaxResults=10&start=1&SearchTarget=Book&output=xml&Version=20131101");
+
+
+            // RestTemplate으로 API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
+
+            // XML 응답을 BookEntity 배열로 파싱
+            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            System.out.println(books[0].getTitle());
+            return ResultTuple.<BookEntity[]>builder()
+                    .payload(books)
+                    .result(CommonResult.SUCCESS)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+    }
+    public List<CategoryEntity> getCategoryId() {
+        return categoryMapper.selectAll();
     }
 }
