@@ -1,5 +1,8 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css");
 
+/* 구글 폰트 적용 */
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@300;400;700&display=swap');
+
 @import "object/object-button.css";
 @import "object/object-check.css";
 @import "object/object-dialog.css";
@@ -9,9 +12,68 @@
 
 @import "header.css";
 
+/*
+프리텐다드
+굵기 100~900
+https://noonnu.cc/font_page/694
+*/
+@font-face {
+    font-family: 'Pretendard-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/Project-Noonnu/noonfonts_2107@1.1/Pretendard-Regular.woff') format('woff');
+    font-weight: 400;
+    font-style: normal;
+}
+
+/*
+오뮤 다예쁨체
+https://noonnu.cc/font_page/1136
+*/
+@font-face {
+    font-family: 'omyu_pretty';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*
+고운바탕
+굵기 400, 700
+https://noonnu.cc/font_page/733
+*/
+@font-face {
+    font-family: 'GowunBatang-Regular';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/GowunBatang-Regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/*
+강원교육새음체
+https://noonnu.cc/font_page/806
+*/
+@font-face {
+    font-family: 'GangwonEduSaeeum_OTFMediumA';
+    src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2201-2@1.0/GangwonEduSaeeum_OTFMediumA.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 구글 폰트 적용*/
+/*.dongle-regular {*/
+/*    font-family: "Dongle", sans-serif;*/
+/*    font-weight: 400;*/
+/*    font-size: 3rem;*/
+/*    font-style: normal;*/
+/*}*/
+
+.logo-text {
+    font-family: "Dongle", sans-serif;
+    font-weight: 600;
+    font-style: normal;
+}
 
 :root {
-    --header-height: 5.5rem;
+    --header-height: 4.5rem;
 }
 
 .-flex-stretch {

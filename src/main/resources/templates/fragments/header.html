@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <header id="header" th:fragment="header">
-    <div class="logo">
-        <a href="/user/login" class="title">
+    <div class="logo logo-text">
+        <a href="/" class="title">
             Re<span class="subTitle">:view</span>Book
         </a>
     </div>
@@ -19,8 +19,7 @@
         </li>
     </ul>
     <span role="none" class="-flex-stretch"></span>
-    <a href="/user/login" class="-object-button -color-blue">
-        <span class="--caption">로그인</span>
-    </a>
+    <a href="/user/login" class="account-link" th:if="${signedUser == null}">Login</a>
+    <a href="/user/logout" class="account-link" th:if="${signedUser != null}">Logout</a>
 </header>
 </html>

@@ -1,4 +1,6 @@
 #header {
+    font-family: "Dongle", sans-serif;
+
     align-items: center;
     background-color: white;
     display: flex;
@@ -11,10 +13,12 @@
 
     top: 0;
     margin: 0;
-    padding: 1.25rem 1.5rem;
+    padding: 0.875rem 1.5rem;
     position: sticky;
 
     z-index: 999;
+
+    border-bottom: 0.0625rem solid #e0e0e0;
 }
 
 #header > .logo {
@@ -31,8 +35,7 @@
     flex-direction: row;
     justify-content: flex-start;
 
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 3rem;
 }
 
 #header > .logo > .title:hover > .subTitle {
@@ -58,11 +61,16 @@
     align-items: center;
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    gap: 2rem;
     justify-content: flex-start;
 }
 
-#header > .menu > .item {
-    font-size: 1.25rem;
+#header > .menu > .item,
+#header > .account-link {
+    font-size: 2.375rem;
     font-weight: 400;
+}
+
+#header > .account-link {
+    margin-right: 3rem;
 }
