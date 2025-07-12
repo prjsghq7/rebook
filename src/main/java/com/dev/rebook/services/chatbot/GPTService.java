@@ -1,12 +1,17 @@
 package com.dev.rebook.services.chatbot;
 
 import com.dev.rebook.dtos.GptReplyDto;
+import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.results.CommonResult;
+import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.services.BookService;
+import com.dev.rebook.vos.SearchVo;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -47,8 +52,10 @@ public class GPTService {
 
             List<Map<String, String>> messages = new ArrayList<>();
             messages.add(Map.of("role", "system", "content", """
-                    너는 Re:Book이라는 도서 추천 및 리뷰를 쓸 수 있는 웹사이트의 챗봇이야. 사용자의 질문을 분석해서 아래 JSON 형식으로만 응답해.
-                    절대 다른 텍스트 없이 JSON만 응답해.
+                    너는 Re:Book이라는 도서 추천 챗봇이야. 사용자의 질문을 분석해서 **정확한 JSON 포맷**으로만 응답해. 반드시 아래 형식을 따르고, 문자열 내부에 `"`, `\n`, `\\` 등은 JSON 규칙에 맞게 escape 처리해.
+                    
+                    반드시 아래 두 가지 경우 중 하나로만 응답해:
+                    책을 추천할 경우:
                     {
                       "message": "이런 책들을 추천드립니다",
                       "book": [
@@ -60,7 +67,17 @@ public class GPTService {
                         ...
                       ]
                     }
-                    위 json은 예시일뿐 무조건 저 메세지 저 book의 값만 말하라는건 절대 아니야 책 추천일땐 book배열에 담고 다른 그냥 일상대화일경우 message만 출력해"""));
+                    
+                    그냥 대화일 경우:
+                    {
+                      "message": "챗봇의 일반적인 응답",
+                      "book": []
+                    }
+                    
+                    반드시 유효한 JSON만 출력하고, 설명/텍스트 절대 포함하지 마.
+                    JSON 내부 줄바꿈은 \n 등 이스케이프 문법을 반드시 지켜줘.
+                    """));
+
             messages.add(Map.of("role", "user", "content", userMessage));
 
             requestBody.put("messages", messages);
@@ -73,7 +90,6 @@ public class GPTService {
             HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(requestBody, headers);
 
             // HttpEntity? http요청의 body, header를 하나의 객체로 묶는 클래스
-
 
 
             ResponseEntity<String> response = restTemplate.postForEntity(API_URL, httpEntity, String.class);

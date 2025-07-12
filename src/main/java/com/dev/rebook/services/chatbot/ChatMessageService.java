@@ -8,9 +8,12 @@ import com.dev.rebook.mappers.ChatMessageMapper;
 import com.dev.rebook.mappers.ChatRoomMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.services.BookService;
 import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.vos.SearchVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.relational.core.dialect.Dialect;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,12 +26,16 @@ public class ChatMessageService {
     private final ChatMessageMapper chatMessageMapper;
     private final GPTService gptService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final Dialect dialect;
+    private final BookService bookService;
 
     @Autowired
-    public ChatMessageService(ChatRoomMapper chatRoomMapper, ChatMessageMapper chatMessageMapper, GPTService gptService) {
+    public ChatMessageService(ChatRoomMapper chatRoomMapper, ChatMessageMapper chatMessageMapper, GPTService gptService, Dialect dialect, BookService bookService) {
         this.chatRoomMapper = chatRoomMapper;
         this.chatMessageMapper = chatMessageMapper;
         this.gptService = gptService;
+        this.dialect = dialect;
+        this.bookService = bookService;
     }
 
     // 채팅 메세지 등록 사용자 챗봇 둘 다
@@ -63,12 +70,25 @@ public class ChatMessageService {
         }
         // gpt응답 가져오기
         ResultTuple<GptReplyDto> botReply = gptService.getReply(chat.getMessage());
-
         if (botReply.getResult() != CommonResult.SUCCESS || botReply.getPayload() == null) {
             return ResultTuple.<ChatMessageEntity[]>builder().result(CommonResult.FAILURE).build();
         }
         // gpt 응답 저장
         GptReplyDto dto = botReply.getPayload();
+        if (dto.getBook() != null && !dto.getBook().isEmpty()) {
+            for (GptReplyDto.BookDto bookDto : dto.getBook()) {
+                SearchVo searchVo = new SearchVo();
+                searchVo.setSearchType("title");
+                searchVo.setSearchTarget("book");
+                searchVo.setSort("accuracy");
+                try {
+                    bookService.searchBooksFromAladin(bookDto.getTitle(), searchVo);
+                } catch (Exception e) {
+                    System.out.println("error book insert");
+                }
+            }
+        }
+
         String payloadJson = null;
 
         try {
