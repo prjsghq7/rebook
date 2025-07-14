@@ -1,5 +1,6 @@
 package com.dev.rebook.services.chatbot;
 
+import com.dev.rebook.dtos.ChatRoomWithLastMessageDto;
 import com.dev.rebook.entities.ChatRoomEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.ChatRoomMapper;
@@ -113,5 +114,19 @@ public class ChatRoomService {
         return chatRoomMapper.deleteChatRoom(dbRoom.getId()) > 0 ? CommonResult.SUCCESS : CommonResult.FAILURE;
     }
 
+    public ResultTuple<ChatRoomWithLastMessageDto[]> getChatRoomsLastMessage(UserEntity signedUser) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return ResultTuple.<ChatRoomWithLastMessageDto[]>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
+        }
+
+        ChatRoomWithLastMessageDto[] rooms = chatRoomMapper.selectChatRoomsWithLastMessageByUserId(signedUser.getId());
+        if (rooms == null) {
+            return ResultTuple.<ChatRoomWithLastMessageDto[]>builder().result(CommonResult.FAILURE).build();
+        }
+        return ResultTuple.<ChatRoomWithLastMessageDto[]>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(rooms)
+                .build();
+    }
 
 }

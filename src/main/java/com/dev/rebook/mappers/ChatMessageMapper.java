@@ -11,5 +11,5 @@ public interface ChatMessageMapper {
 
     int insertChatMessage(@Param(value = "message") ChatMessageEntity message);
 
-    ChatMessageEntity selectedMessagesByChatRoomId(@Param(value = "id") int chatRoomId);
+    ChatMessageEntity[] selectedMessagesByChatRoomId(@Param(value = "chatRoomId") int chatRoomId);
 }

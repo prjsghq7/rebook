@@ -1,14 +1,5 @@
 @charset "UTF-8";
 
-:root {
-    --box-top-padding: 2rem;
-    --box-right-padding: 2rem;
-    --box-bottom-padding: 4rem;
-    --box-left-padding: 2rem;
-    /* 이미지 크기 */
-    --box-width: 12.5rem;
-    --box-height: 16rem;
-}
 
 #searchForm {
     margin-top: 1.5rem;
@@ -77,51 +68,32 @@
 
 #grid-container > .item {
     /*height: 20rem;*/
-    position: relative;
 
-    width: calc(12.5rem + var(--box-right-padding) + var(--box-left-padding));
-    height: calc(22rem + var(--box-top-padding) + var(--box-bottom-padding));
-}
-
-#grid-container > .item > .item-bg-area {
-    background-color: #eaeaea;
-    margin-top: calc(var(--box-height) / 2 + var(--box-top-padding));
-    width: 100%;
-    height: calc(100% - (var(--box-height) / 2 + var(--box-top-padding)));
-    z-index: -1;
-    position: absolute;
-}
-
-#grid-container > .item > .detail {
-    padding: var(--box-top-padding) var(--box-right-padding) var(--box-bottom-padding) var(--box-left-padding); /* 상, 우, 하, 좌 */
-
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     flex-direction: column;
-    gap: 1.875rem;
+    gap: 0.875rem;
     justify-content: flex-start;
 }
 
-#grid-container > .item > .detail > .box {
-    /*width: 100%;*/
-    /*height: 100%;*/
-    width: var(--box-width);
-    height: var(--box-height); /* .item 값 확인 height: 16rem;  */
+#grid-container > .item > .box {
+    width: 12.5rem;
+    height: 16rem; /* .item 값 확인 height: 15rem;  */
 }
 
-#grid-container > .item > .detail > .box > .img {
+#grid-container > .item > .box > .img {
     width: 100%;
     height: 100%;
     object-fit: none;
 }
 
-#grid-container > .item > .detail > .title {
+#grid-container > .item > .title {
     font-size: 1rem;
-    font-weight: 800;
+    font-weight: 600;
 
     width: 100%;
     text-overflow: ellipsis;
-    /*text-align: center;*/
+    text-align: center;
     overflow: hidden;
     word-break: break-word;
 
@@ -130,7 +102,7 @@
     -webkit-box-orient: vertical
 }
 
-#grid-container > .item > .detail > .author {
+#grid-container > .item > .author {
     font-size: 0.875rem;
     font-weight: 400;
     color: #7a7c7e;
@@ -138,7 +110,7 @@
 
     width: 100%;
     text-overflow: ellipsis;
-    /*text-align: center;*/
+    text-align: center;
     overflow: hidden;
     word-break: break-word;
 

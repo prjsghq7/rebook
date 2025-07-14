@@ -20,7 +20,7 @@ public interface ChatRoomMapper {
 
     int deleteChatRoom(@Param(value = "id") int id);
 
-    List<ChatRoomWithLastMessageDto> selectChatRoomsWithLastMessageByUserId(@Param("userId") int userId);
+    ChatRoomWithLastMessageDto[] selectChatRoomsWithLastMessageByUserId(@Param("userId") int userId);
 
 
 

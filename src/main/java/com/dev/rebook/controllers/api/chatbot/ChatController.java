@@ -1,6 +1,8 @@
 package com.dev.rebook.controllers.api.chatbot;
 
+import com.dev.rebook.dtos.ChatRoomWithLastMessageDto;
 import com.dev.rebook.dtos.GptReplyDto;
+import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.ChatMessageEntity;
 import com.dev.rebook.entities.ChatRoomEntity;
 import com.dev.rebook.entities.UserEntity;
@@ -11,6 +13,7 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.chatbot.ChatMessageService;
 import com.dev.rebook.services.chatbot.ChatRoomService;
 import com.dev.rebook.services.chatbot.GPTService;
+import com.dev.rebook.services.uesr.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,15 +28,16 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private final ChatRoomService chatRoomService;
-    private final GPTService gptService;
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final ChatMessageService chatMessageService;
+    private final GPTService gptService;
+
 
     @Autowired
-    public ChatController(ChatRoomService chatRoomService, ChatMessageMapper chatMessageMapper, GPTService gptService, ChatMessageService chatMessageService) {
+    public ChatController(ChatRoomService chatRoomService, ChatMessageMapper chatMessageMapper, GPTService gptService, ChatMessageService chatMessageService, GPTService gptService1) {
         this.chatRoomService = chatRoomService;
-        this.gptService = gptService;
         this.chatMessageService = chatMessageService;
+        this.gptService = gptService1;
     }
 
     @RequestMapping(value = "/room", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,7 +56,7 @@ public class ChatController {
     @ResponseBody
     public ResultTuple<ChatRoomEntity> postRegisterChatRoom(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
                                                             ChatRoomEntity room
-                                       ) {
+    ) {
 
         if (signedUser == null || signedUser.isDeleted() || signedUser.isSuspended()) {
             return ResultTuple.<ChatRoomEntity>builder()
@@ -64,20 +68,12 @@ public class ChatController {
 
     @RequestMapping(value = "/room/lists", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResultTuple<ChatRoomEntity[]> getChatRoomList(HttpSession session) {
+    public ResultTuple<ChatRoomWithLastMessageDto[]> getChatRoomList(HttpSession session) {
         UserEntity signedUser = (UserEntity) session.getAttribute("signedUser");
-
         if (signedUser == null || signedUser.isDeleted() || signedUser.isSuspended()) {
-            return ResultTuple.<ChatRoomEntity[]>builder()
-                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
-                    .build();
+            return ResultTuple.<ChatRoomWithLastMessageDto[]>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
         }
-
-        ChatRoomEntity[] rooms = chatRoomService.getChatRoomByUserId(signedUser).getPayload();
-        return ResultTuple.<ChatRoomEntity[]>builder()
-                .payload(rooms)
-                .result(CommonResult.SUCCESS)
-                .build();
+        return this.chatRoomService.getChatRoomsLastMessage(signedUser);
     }
 
     @RequestMapping(value = "/room/delete", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -115,5 +111,11 @@ public class ChatController {
         System.out.println("[IN CONTROLLER] room=" + chat.getChatRoomId() + ", msg=" + chat.getMessage());
         ResultTuple<ChatMessageEntity[]> result = chatMessageService.registerChat(signedUser, chat);
         return ResponseEntity.ok(result);
+    }
+
+    @RequestMapping(value = "/room/messages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResultTuple<ChatMessageEntity[]> getMessage(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser, @RequestParam(value = "roomId", required = false) int roomId) {
+        return this.chatMessageService.getMessageByRoomId(signedUser, roomId);
     }
 }

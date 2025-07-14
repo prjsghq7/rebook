@@ -5,6 +5,7 @@ const $initial = $resultContainer.querySelector(':scope > .result.initial');
 const $noResult = $resultContainer.querySelector(':scope > .result.noResult');
 const $gridContainer = document.getElementById('grid-container');
 
+
 $searchForm.onsubmit = (e) => {
     e.preventDefault();
 
@@ -37,15 +38,12 @@ $searchForm.onsubmit = (e) => {
             for (const book of response) {
                 console.log("book\n" + book);
                 gridHtml += `
-                <div class="item">
-                    <div class="item-bg-area"></div>
-                    <a href="/book/?id=${book['id']}" class="detail">
+                    <div class="item">
                         <div class="box">
-                                <img class="img" src="${book['cover']}" alt="${book['title']} 표지">
-                            </div>
-                            <span class="title">${book['title']}</span>
-                            <span class="author">${book['author']}</span>
-                        </a>
+                            <img class="img" src="${book['cover']}" alt="${book['title']} 표지">
+                        </div>
+                        <span class="title">${book['title']}</span>
+                        <span class="author">${book['author']}</span>
                     </div>
                 `;
                 console.log("gridHtml\n" + gridHtml);

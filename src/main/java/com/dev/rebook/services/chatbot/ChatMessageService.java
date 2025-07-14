@@ -133,4 +133,23 @@ public class ChatMessageService {
                 .payload(new ChatMessageEntity[]{chat, botMessage})
                 .build();
     }
+
+    public ResultTuple<ChatMessageEntity[]> getMessageByRoomId(UserEntity signedUser, int roomId) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return ResultTuple.<ChatMessageEntity[]>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
+        }
+        ChatRoomEntity dbRoom = this.chatRoomMapper.selectChatRoomById(roomId, signedUser.getId());
+        if (dbRoom == null || dbRoom.isDeleted() || !dbRoom.getUserId().equals(signedUser.getId())) {
+            return ResultTuple.<ChatMessageEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+        if (roomId < 1) {
+            return ResultTuple.<ChatMessageEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+        ChatMessageEntity[] chatMessage = this.chatMessageMapper.selectedMessagesByChatRoomId(roomId);
+
+        return ResultTuple.<ChatMessageEntity[]>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(chatMessage)
+                .build();
+    }
 }

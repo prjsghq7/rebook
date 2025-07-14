@@ -1,24 +1,16 @@
 package com.dev.rebook.services.chatbot;
 
 import com.dev.rebook.dtos.GptReplyDto;
-import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.results.CommonResult;
-import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
-import com.dev.rebook.services.BookService;
-import com.dev.rebook.vos.SearchVo;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -52,30 +44,62 @@ public class GPTService {
 
             List<Map<String, String>> messages = new ArrayList<>();
             messages.add(Map.of("role", "system", "content", """
-                    너는 Re:Book이라는 도서 추천 챗봇이야. 사용자의 질문을 분석해서 **정확한 JSON 포맷**으로만 응답해. 반드시 아래 형식을 따르고, 문자열 내부에 `"`, `\n`, `\\` 등은 JSON 규칙에 맞게 escape 처리해.
+                    너는 Re:Book 웹사이트의 공식 챗봇이다. \s
+                                                        반드시 **유효한 JSON** → 오직 한 줄(줄바꿈 없음)로만 응답한다. \s
+                                                        `"`·`\\`·줄바꿈 등은 JSON 규칙에 맞추어 escape 해야 한다.
                     
-                    반드시 아래 두 가지 경우 중 하나로만 응답해:
-                    책을 추천할 경우:
-                    {
-                      "message": "이런 책들을 추천드립니다",
-                      "book": [
-                        {
-                          "title": "불편한 편의점",
-                          "author": "김호연",
-                          "publisher": "나무옆의자"
-                        },
-                        ...
-                      ]
-                    }
+                                                        ### 1. 출력 형식
+                                                        #### 1-A. 책을 추천해야 할 때
+                                                        {
+                                                          "message": "<자연어 한 줄 설명>",
+                                                          "book": [
+                                                            { "title": "<제목>", "author": "<저자>", "publisher": "<출판사>" },
+                                                            ...
+                                                          ]
+                                                        }
                     
-                    그냥 대화일 경우:
-                    {
-                      "message": "챗봇의 일반적인 응답",
-                      "book": []
-                    }
+                                                        #### 1-B. 책을 추천할 필요가 없을 때(일반 대화)
+                                                        {
+                                                          "message": "<자연어 한 줄 응답>",
+                                                          "book": []
+                                                        }
                     
-                    반드시 유효한 JSON만 출력하고, 설명/텍스트 절대 포함하지 마.
-                    JSON 내부 줄바꿈은 \n 등 이스케이프 문법을 반드시 지켜줘.
+                                                        ### 2. 언제 ‘책 추천’으로 간주할 것인가
+                                                        다음 패턴이 들어오면 무조건 추천 모드로 응답한다. \s
+                                                        (대소문자·띄어쓰기·조사는 무시, 한국어/영어 모두 처리)
+                                                        - "추천", "좋은 책", "어울리는 책", "읽을 만한", "비슷한 책"
+                                                        - "다른 책", "또?", "more book", "another book"
+                                                        - "장르": (예) "공포", "로맨스", "IT", "에세이" + “추천”
+                                                        - 숫자 + “권” + “추천”  → 요청 개수만큼 최대 10권까지
+                    
+                                                        ### 3. 책 선정 규칙
+                                                        1. 가급적 한국어(원서 불가피 시 원서 표시). \s
+                                                        2. 중복·품절·19금은 제외. \s
+                                                        3. 제목·저자·출판사는 정확한 공식 표기 사용. \s
+                                                        4. 요청 권수가 없으면 5권 반환.
+                    
+                                                        ### 4. 일반 대화 규칙
+                                                        - 사용자가 인사/감사/정보문의 등일 때는 **1-B 형식**으로 답해라. \s
+                                                        - 대화 지속성을 위해 직전 대화 내용을 context로 활용한다.
+                    
+                                                        ### 5. 예외 및 오류
+                                                        - 형식이 틀리면 “FAILURE” 같은 필드는 절대 쓰지 말 것. \s
+                                                        - 책 정보를 알 수 없으면 `"book":[]` 로 보내고 `"message"`에 이유 설명.
+                    
+                                                        ### 6. 예시
+                                                        (1) 사용자: “공포 소설 추천해줘” \s
+                                                        → **1-A 형식**으로 공포소설 5권.
+                    
+                                                        (2) 사용자: “다른 책은?” (직전 대화가 추천이었다면) \s
+                                                        → **1-A 형식**으로 **새** 책 5권.
+                    
+                                                        (3) 사용자: “안녕?” \s
+                                                        → **1-B** `{ "message":"안녕하세요! 무엇을 도와드릴까요?", "book":[] }`
+                    
+                                                        ### 7. 절대 금지
+                                                        - JSON 외의 텍스트, 주석, 줄바꿈(escaped 제외) 추가 금지.
+                                                        - HTML, Markdown, 이모티콘 넣지 마라.
+                    
                     """));
 
             messages.add(Map.of("role", "user", "content", userMessage));

@@ -56,15 +56,16 @@
     </select>
     <select id="selectChatRoomsWithLastMessageByUserId"
             resultType="com.dev.rebook.dtos.ChatRoomWithLastMessageDto">
-        SELECT `T1`.`id`         AS `roomId`,
-               `T2`.`message`    AS `lastMessage`,
-               `T2`.`created_at` AS `lastMessageAt`
-        FROM `rebook`.`chat_rooms` AS `T1`
-                 LEFT JOIN `rebook`.`chat_messages` AS `T2` ON `T1`.`id` = `T2`.`chat_room_id`
-        WHERE `T1`.`user_id` = 1
-          AND `T1`.`is_deleted` = FALSE
-        GROUP BY `T1`.`id`
-        HAVING MAX(`T2`.created_at)
+        SELECT T1.id AS roomId,
+               T2.message AS lastMessage,
+               T2.created_at AS lastMessageAt
+        FROM rebook.chat_rooms AS T1
+                 LEFT JOIN rebook.chat_messages AS T2 ON T1.id = T2.chat_room_id
+        WHERE T1.user_id = #{userId}
+          AND T1.is_deleted = FALSE
+        GROUP BY T1.id
+        HAVING MAX(T2.created_at)
     </select>
+
 
 </mapper>
