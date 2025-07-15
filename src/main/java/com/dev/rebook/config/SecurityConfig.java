@@ -19,6 +19,9 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**") // 여기만 예외 처리
+        );
         http.authorizeHttpRequests(auth -> auth
                         .anyRequest()
                         .permitAll())
