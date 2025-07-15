@@ -41,6 +41,11 @@ public class BookService {
 
     public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
         System.out.println("서비스 도착 : " + keyword);
+        if(keyword == null || keyword.isEmpty()) {
+            System.out.println("bookService : keyword 값이 없음");
+            return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+        
         try {
             // 키워드 URL 인코딩
 //            String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
@@ -63,14 +68,17 @@ public class BookService {
              * SearchTarget : 도서
              * Sort : 관련도
              * */
+            System.out.println("QueryType : " + searchVo.getSearchType());
             if (!searchVo.getSearchType().equals("-1")) {
                 aladinUrl.append("&QueryType=")
                         .append(searchVo.getSearchType()); // 검색어 종류 ( 제목 + 저자, 저자, 제목 등 )
             }
+            System.out.println("SearchTarget : " + searchVo.getSearchTarget());
             if (!searchVo.getSearchTarget().equals("-1")) {
                 aladinUrl.append("&SearchTarget=")
                         .append(searchVo.getSearchTarget()); // 검색 대상 Mall ( 도서, 외국도서, eBook 등 )
             }
+            System.out.println("Sort : " + searchVo.getSort());
             if (!searchVo.getSort().equals("-1")) {
                 aladinUrl.append("&Sort=")
                         .append(searchVo.getSort()); // 정렬순서 ( 출간일, 판매량, 제목 등 )
@@ -82,10 +90,11 @@ public class BookService {
             // RestTemplate으로 API 호출
             RestTemplate restTemplate = new RestTemplate();
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-
+            System.out.println("서비스에서 xmlResponse 받았음");
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse);
-            System.out.println(books[0].getTitle());
+            System.out.println("서비스에서 books 배열에 담았음");
+//            System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
