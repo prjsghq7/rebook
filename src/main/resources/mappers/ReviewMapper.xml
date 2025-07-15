@@ -22,4 +22,26 @@
         WHERE `user_id` = #{userId}
           AND `is_deleted` = FALSE
     </select>
+
+    <select id="selectCountByUserIdAndBookId" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`reviews`
+        WHERE `user_id` = #{userId}
+          AND `book_id` = #{bookId}
+          AND `is_deleted` = FALSE
+    </select>
+
+    <insert id="insert"
+            useGeneratedKeys="true"
+            keyColumn="id"
+            keyProperty="id">
+        INSERT INTO `rebook`.`reviews` (user_id, book_id, scope, comment, created_at, modified_at, is_deleted)
+        VALUES (#{review.userId},
+                #{review.bookId},
+                #{review.scope},
+                #{review.comment},
+                #{review.createdAt},
+                #{review.modifiedAt},
+                #{review.isDeleted})
+    </insert>
 </mapper>

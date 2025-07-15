@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Re:Book - 리뷰 등록</title>
     <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
     <link href="/review/assets/styles/register.css" rel="stylesheet" type="text/css">
     <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
     <script defer src="/review/assets/scripts/register.js" type="module"></script>
 </head>
 <body>
