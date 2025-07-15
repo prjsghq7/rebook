@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Re:Book</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/book/assets/styles/index.css" rel="stylesheet" type="text/css">
+    <script defer src="/common/assets/scripts/common.js" rel="text/javascript"></script>
+    <script defer src="/book/assets/scripts/index.js" rel="text/javascript"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}">
+</th:block>
+<div id="default-area" class="book-detail">
+    <h1 class="title" th:text="${book.title}"></h1>
+
+    <div class="info-wrapper">
+        <img class="cover" th:src="${book.cover}" th:alt="${book.title}">
+        <table class="book-info -flex-stretch">
+            <tbody>
+            <tr>
+                <th>저자</th>
+                <td th:text="${book.author}"></td>
+            </tr>
+            <tr>
+                <th>출판사</th>
+                <td th:text="${book.publisher}"></td>
+            </tr>
+            <tr>
+                <th>출간일</th>
+                <td th:text="${book.pubDate}"></td>
+            </tr>
+            <tr>
+                <th>판매가</th>
+                <td th:text="${book.priceSales}"></td>
+            </tr>
+            <tr>
+                <th>구매처</th>
+                <td th:text="${book.mallType}"></td>
+            </tr>
+            <tr>
+                <th>책 링크</th>
+                <td><a class="link" th:href="${book.link}" target="_blank">책 자세히 보기</a></td>
+            </tr>
+            <tr>
+                <th>책 소개</th>
+                <td th:text="${book.description}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+    <div class="review-header">
+        <h2 class="sub-title">리뷰 (0)</h2>
+        <button class="-object-button -color-blue" name="reviewRegisterButton" type="button">
+            <span class="--caption">리뷰 등록하기</span>
+        </button>
+    </div>
+
+    <div id="reviewContainer">
+        <div class="review">
+            <img src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
+            <div class="review-info-area">
+                <div class="head">
+                    <span class="writer">작성자 자리</span>
+                    <span class="-flex-stretch"></span>
+                    <span class="timestamp">0000-00-00 00:00:00</span>
+                </div>
+                <div class="body">
+                    <div class="top">
+                        <span class="scope">
+                            <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+                            <img class="star" src="/review/assets/images/star-empty.png" alt="empty">
+                        </span>
+                        <span class="-flex-stretch"></span>
+                        <a class="action">수정</a>
+                        <a class="action">삭제</a>
+                    </div>
+                    <span class="comment">리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="review">
+            <img src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
+            <div class="review-info-area">
+                <div class="head">
+                    <span class="writer">작성자 자리</span>
+                    <span class="-flex-stretch"></span>
+                    <span class="timestamp">0000-00-00 00:00:00</span>
+                </div>
+                <div class="body">
+                    <div class="top">
+                        <span class="scope">
+                            <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+                            <img class="star" src="/review/assets/images/star-empty.png" alt="empty">
+                        </span>
+                        <span class="-flex-stretch"></span>
+                        <a class="action">수정</a>
+                        <a class="action">삭제</a>
+                    </div>
+                    <span class="comment">리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -44,4 +44,12 @@ public class BookController {
         }
         return "book/search";
     }
+
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getIndex(@RequestParam(value = "id", required = false) String id,
+                           Model model) {
+        BookEntity book = this.bookService.getBookById(id);
+        model.addAttribute("book", book);
+        return "book/index";
+    }
 }

@@ -272,4 +272,8 @@ public class BookService {
     public List<CategoryEntity> getCategoryId() {
         return categoryMapper.selectAll();
     }
+
+    public BookEntity getBookById(String id) {
+        return this.bookMapper.selectById(id);
+    }
 }

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Re:Book - 리뷰 등록</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/review/assets/styles/register.css" rel="stylesheet" type="text/css">
+    <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/review/assets/scripts/register.js" type="module"></script>
+</head>
+<body>
+<form novalidate id="reviewRegisterForm">
+    <h1 class="title">리뷰 등록하기</h1>
+
+    <span class="caption">평점</span>
+    <div class="scope-area">
+        <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+        <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+        <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+        <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+        <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
+        <input type="hidden" value="5" name="scope">
+    </div>
+
+    <span class="scope-guide">
+        최고에요
+    </span>
+
+    <span class="caption">리뷰 평가</span>
+    <label class="-object-label">
+        <textarea required class="-object-field ---field" minlength="1" maxlength="100"
+                  name="comment" placeholder="리뷰를 입력해 주세요." rows="4"></textarea>
+    </label>
+
+    <button class="-object-button -color-blue" type="submit">
+        <span class="--caption">리뷰 등록하기</span>
+    </button>
+</form>
+</body>
+</html>
