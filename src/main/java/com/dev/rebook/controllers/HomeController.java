@@ -2,10 +2,12 @@ package com.dev.rebook.controllers;
 
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.CategoryEntity;
+import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.BookService;
 
+import com.dev.rebook.services.uesr.UserService;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -31,10 +33,17 @@ public class HomeController {
 
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String getTest(Model model) {
-        List<CategoryEntity> CId = this.bookService.getCategoryId();
-        model.addAttribute("CId", CId);
+    public String getTest(Model model,
+                          @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        List<CategoryEntity> CIds = this.bookService.getCategoryId();
+        model.addAttribute("CIds", CIds);
+        if (UserService.isInvalidUser(signedUser)) {
+            model.addAttribute("UserCId", CIds.get(0).getId());
+        } else {
+            model.addAttribute("UserCId", signedUser.getCategoryId());
+        }
         return "test/test";
+
     }
     @RequestMapping(value = "/api/aladin/bestseller", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -48,11 +57,10 @@ public class HomeController {
 
     @RequestMapping(value = "/api/aladin/category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BookEntity[] getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId) {
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromUserKeyword(categoryId);
-        if (result.getResult() != CommonResult.SUCCESS) {
-            return new BookEntity[0];
-        }
-        return result.getPayload();
+    public ResultTuple<BookEntity[]> getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId,
+                                           @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser
+                                                        ) {
+        return this.bookService.searchBooksFromUserKeyword(categoryId, signedUser);
+
     }
 }

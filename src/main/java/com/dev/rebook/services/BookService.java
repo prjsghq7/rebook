@@ -2,11 +2,14 @@ package com.dev.rebook.services;
 
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.CategoryEntity;
+import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.BookMapper;
 import com.dev.rebook.mappers.CategoryMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.services.uesr.UserService;
 import com.dev.rebook.vos.SearchVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,6 +28,7 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 public class BookService {
     private final BookMapper bookMapper;
@@ -220,7 +224,7 @@ public class BookService {
             StringBuilder aladinUrl = new StringBuilder();
             aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
                     .append(aladinApiKey); // API 키
-            aladinUrl.append("&QueryType=BestSeller&MaxResults=12&start=1&SearchTarget=Book&output=xml&Version=20131101");
+            aladinUrl.append("&QueryType=BestSeller&Cover=Big&MaxResults=12&start=1&SearchTarget=Book&output=xml&Version=20131101");
 
 
             // RestTemplate으로 API 호출
@@ -240,7 +244,7 @@ public class BookService {
         }
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId) {
+    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId ,UserEntity signedUser) {
         try {
 
             StringBuilder aladinUrl = new StringBuilder();
@@ -248,7 +252,7 @@ public class BookService {
                     .append(aladinApiKey);
             aladinUrl.append("&QueryType=BestSeller");
             aladinUrl.append("&CategoryId=").append(categoryId);
-            aladinUrl.append("&MaxResults=12&start=1&output=xml&Version=20131101");
+            aladinUrl.append("&MaxResults=12&Cover=Big&start=1&output=xml&Version=20131101");
 
 
             // RestTemplate으로 API 호출
@@ -257,6 +261,7 @@ public class BookService {
 
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            System.out.println(books);
             System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
