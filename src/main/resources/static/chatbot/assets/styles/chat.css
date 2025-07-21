@@ -413,7 +413,6 @@
     align-items: center;
     justify-content: flex-end;
     width: 4rem;
-    height: 4.5rem;
     padding: 0;
     margin: 0;
     background: none;
@@ -467,7 +466,6 @@
 }
 
 .intro-body {
-    padding: 1rem;
     box-sizing: border-box;
     font-size: 0.875rem;
     color: #ddd;
