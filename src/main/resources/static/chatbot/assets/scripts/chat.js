@@ -31,18 +31,13 @@ $chatIcon.addEventListener('click', () => {
     }
 });
 
-
-
 $chatForm.onsubmit = async (e) => {
     e.preventDefault();
-    await sendChatMessage();
-};
 
-async function sendChatMessage() {
     const input = $chatForm.querySelector('input[name="message"]');
     const message = input.value.trim();
     if (!message) {
-        dialog.showSimpleOk('오류', '메세지를 입력해주세요.');
+        dialog.showSimpleOk('메세지를 입력해주세요.');
         return;
     }
 
@@ -104,14 +99,11 @@ async function sendChatMessage() {
         removeTypingBubble();
         dialog.showSimpleOk('오류', '알 수 없는 오류로 챗봇을 이용하실 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
-}
+};
 
 $chatStartBtn.addEventListener('click', async (e) => {
     e.preventDefault();
-    await startNewChatRoom();
-});
 
-async function startNewChatRoom() {
     try {
         const res = await fetch('/api/chat/room/register', {
             method: 'POST',
@@ -138,7 +130,7 @@ async function startNewChatRoom() {
     } catch (e) {
         dialog.showSimpleOk('오류', '알 수 없는 이유로 챗봇을 이용할 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
-}
+});
 
 function clearMessage() {
     const $list = document.querySelector('#chat-message ul.list');
@@ -200,21 +192,9 @@ $chatBackBtn.addEventListener('click', () => {
 });
 
 $chatFeatureList.forEach($item => {
-    $item.addEventListener('click', async () => {
+    $item.addEventListener('click', () => {
         const target = $item.dataset.target;
         showChatView(target);
-
-        if (target === 'room') {
-            await loadChatRooms();
-        }
-        if (target === 'main') {
-            if (!currentRoomId) {
-                await startNewChatRoom();
-            }
-            const input = $chatForm.querySelector('input[name="message"]');
-            input.value = '니가 생각하는 오늘 하루의 책 추천 좀 해줘';
-            await sendChatMessage();
-        }
     });
 });
 
@@ -238,7 +218,6 @@ async function loadChatRooms() {
         });
 
         const result = await res.json();
-
         if (result.result === 'FAILURE_SESSION_EXPIRED') {
             dialog.showSimpleOk('오류', '로그인이 만료되었거나 권한이 없습니다. 로그인 후 다시 시도해 주세요.', () => {
                 location.href = `${window.origin}/user/login`;
@@ -263,65 +242,10 @@ async function loadChatRooms() {
         rooms.forEach(room => {
             const $item = document.createElement('li');
             $item.className = 'item';
-
-            const previewText = room.lastMessage || '(최근 메시지 없음)';
-            const date = room.lastMessageAt
-                ? new Date(room.lastMessageAt).toLocaleString('ko-KR', {
-                    month: 'short',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                })
-                : '';
-
-            $item.innerHTML = `
-                <div class="chat-room-preview">
-                    <div class="chat-room-title">채팅방 #${room.roomId}</div>
-                    <div class="chat-room-message">${previewText}</div>
-                    <div class="chat-room-date">${date}</div>
-                </div>
-            `;
-
-            // 클릭 시 진입 등 이벤트도 추가 가능
-            $item.addEventListener('click', async () => {
-                currentRoomId = room.roomId;
-                showChatView('main');
-                clearMessage();
-                await loadChatMessage(currentRoomId);
-            });
-
+            $item.innerText = room.name || '(이름 없음)';
             $chatRoomList.appendChild($item);
         });
     } catch (e) {
         dialog.showSimpleOk('오류', '알 수 없는 오류로인해 채팅을 이용하실 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
-}
-
-async function loadChatMessage(roomId) {
-    try {
-        const res = await fetch(`/api/chat/room/messages?roomId=${roomId}`, {
-            method: 'GET',
-            credentials: 'include'
-        });
-
-        const result = await res.json();
-        if (result.result === 'FAILURE_SESSION_EXPIRED') {
-            dialog.showSimpleOk('오류', '로그인이 만료되었거나 권한이없습니다. 로그인 후 다시 시도해주세요.', () => {
-                location.href = `${window.origin}/user/login`;
-            });
-            return;
-        }
-        if (result.result === 'FAILURE') {
-            dialog.showSimpleOk('오류', '채팅내역을 불러 올 수 없습니다. 잠시 후 다시 시도해주세요.');
-            return;
-        }
-        const messages = result.payload;
-        clearMessage();
-        messages.forEach(msg => {
-            appendMessage(msg.sender === 'user' ? 'user' : 'bot', msg.message);
-        });
-    } catch (e) {
-        dialog.showSimpleOk('오류', '알 수 없는 오류로인하여 채팅내역을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
-    }
-
 }

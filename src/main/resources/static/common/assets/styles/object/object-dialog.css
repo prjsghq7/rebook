@@ -19,7 +19,7 @@ body:has(.-object-dialog.visible) {
     transition-property: opacity;
     transition-timing-function: ease;
 
-    z-index: 1001;
+    z-index: 9;
 }
 
 .-object-dialog[data-rb-visible] {

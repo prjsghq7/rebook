@@ -1,247 +1,192 @@
-:root{
-    --white:#ffffff;
-    --blue-50:#f0f6ff;
-    --blue-100:#e1efff;
-    --blue-200:#c7e0ff;
-    --blue-300:#9fcbff;
-    --blue-400:#6eafff;
-    --blue-500:#3a93ff;
-    --blue-600:#1a7fff;
-    --blue-700:#0065e0;
-    --text-color:#1a1a1a;
-    --radius:1rem;
-    --shadow:0 8px 20px rgba(0,102,204,0.08);
-    --shadow-hover:0 12px 28px rgba(0,102,204,0.12);
-    --transition:0.3s ease
-}
-*{box-sizing:border-box}
-#default-area.main{
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    justify-content:flex-start
-}
-#bestSeller{
-    background-color:var(--white);
-    padding:5rem 2rem;
-    display:flex;
-    flex-direction:column;
-    align-items:center
-}
-#bestSeller>.carousel-cover{
-    border:0.125rem solid #e0e0e0;
-    border-radius:calc(var(--radius)*1.5);
-    padding:2rem;
-    width:100%;
-    box-shadow:var(--shadow);
-    display:flex;
-    flex-direction:column;
-    align-items:stretch;
-    justify-content:center
-}
-#bestSeller>.carousel-cover>.title{
-    font-size:1.55rem;
-    font-weight:600;
-    color:#222428;
-    margin-bottom:3rem;
-    letter-spacing:-0.02em
-}
-#bestSeller .carousel{
-    position:relative;
-    width:calc(12rem * 4 + 2rem * 3);   /* 4장 + gap 3 */
-    margin:0 auto;
-    display:flex;
-    align-items:center;
-}
+/* rebook.css – 키워드 랜덤 배치, 카드 뒤집기, 미니멀 스타일링 */
 
-#bestSeller>.carousel-cover>.carousel>.carousel-control{
-    background-color:var(--white);
-    border:none;
-    color:var(--blue-600);
-    width:3.2rem;
-    height:3.2rem;
-    font-size:1.8rem;
-    font-weight:600;
-    border-radius:50%;
-    box-shadow:var(--shadow);
-    cursor:pointer;
-    transition:all var(--transition);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:2;
-    position:absolute;
-    top:50%;
-    transform:translateY(-50%);
-}
-#bestSeller .carousel-control.prev{left:-2rem}
-#bestSeller .carousel-control.next{right:-2rem}
+/*body {*/
+/*    margin: 0;*/
+/*    padding: 0;*/
+/*    font-family: 'Noto Sans KR', sans-serif;*/
+/*    background: white;*/
+/*    overflow-x: hidden;*/
+/*}*/
 
-#bestSeller>.carousel-cover>.carousel>.carousel-control:hover{
-    background-color:var(--blue-100);
-    transform:scale(1.1);
-    box-shadow:var(--shadow-hover)
-}
-#bestSeller>.carousel-cover>.carousel>.carousel-control:active{
-    transform:scale(0.95)
-}
-#bestSeller .carousel-track{
-    display:flex;
-    gap:2rem;
-    will-change:transform;
-    transition:transform .6s ease;
-    overflow:hidden;
-}
-
-#bestSeller>.carousel-cover>.carousel>.carousel-track::-webkit-scrollbar{height:0.4rem}
-#bestSeller>.carousel-cover>.carousel>.carousel-track::-webkit-scrollbar-thumb{
-    background-color:var(--blue-200);
-    border-radius:9999px
-}
-#bestBook {
+/* 키워드 선택 영역 */
+.keyword-recommend {
+    width: 100%;
+    height: 100vh;
+    position: relative;
     display: flex;
-    gap: 2rem;
-    padding: 0;
-    margin: 0;
-    transition: transform 0.6s ease;
-    will-change: transform;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 5vh;
 }
 
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card{
-    background-color:var(--white);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    transition:all var(--transition);
-    width:12rem;
-    flex-shrink:0;
-    display:flex;
-    flex-direction:column;
-    overflow:hidden;
-    position:relative
+.keyword-form {
+    width: 100%;
+    height: 70vh;
+    position: relative;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover{
-    transform:translateY(-0.5rem) scale(1.02);
-    box-shadow:var(--shadow-hover)
+
+.keyword-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+    width: 100%;
+    height: 100%;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-cover{
-    width:100%;
-    padding-top:150%;
-    position:relative;
-    background-color:var(--blue-50);
-    overflow:hidden
+
+.keyword-list .item {
+    position: absolute;
+    display: inline-block;
+    transition: transform 0.3s ease;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-cover>img{
-    position:absolute;
-    top:0;
-    left:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    transition:transform var(--transition)
+
+.keyword-list .item label {
+    display: flex;
+    align-items: center;
+    border: 2px solid teal;
+    border-radius: 30px;
+    padding: 6px 14px;
+    cursor: pointer;
+    background-color: white;
+    font-weight: bold;
+    user-select: none;
+    white-space: nowrap;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover>.book-cover>img{transform:scale(1.05)}
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-title{
-    padding:1rem;
-    font-size:1rem;
-    font-weight:600;
-    text-align:center;
-    color:var(--text-color);
-    line-height:1.4;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    transition:color var(--transition)
+
+.keyword-list .item input[type="checkbox"] {
+    display: none;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:nth-child(odd){
-    background:linear-gradient(to bottom right,var(--blue-50),var(--white))
+
+.keyword-list .item input:checked + .caption {
+    background-color: teal;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:nth-child(even){
-    background:linear-gradient(to bottom right,var(--white),var(--blue-50))
+
+.keyword-counter {
+    margin-top: 20px;
+    font-size: 0.9rem;
+    color: teal;
+    align-self: flex-end;
+    padding-right: 2rem;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-control:focus-visible{
-    outline:2px solid var(--blue-400);
-    outline-offset:3px
+
+.button-container {
+    margin-top: 20px;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:active{
-    transform:scale(0.98);
-    box-shadow:var(--shadow)
+
+#submitKeywords {
+    padding: 10px 20px;
+    background-color: teal;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-title::after{
-    content:'';
-    display:block;
-    width:0%;
-    height:2px;
-    background-color:var(--blue-300);
-    margin-top:0.25rem;
-    transition:width var(--transition)
+
+#submitKeywords:hover {
+    background-color: #007070;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover>.book-title::after{
-    width:50%;
-    margin-inline:auto
+
+/* 카드 캐러셀 */
+.book-carousel {
+    padding: 5vh 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-cover::after{
-    content:'';
-    position:absolute;
-    inset:0;
-    background:linear-gradient(to top,rgba(255,255,255,0.1),transparent);
-    opacity:0;
-    transition:opacity var(--transition)
+
+.book-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 20px;
+    padding: 0 10vw;
+    width: 100vw;
+    box-sizing: border-box;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover>.book-cover::after{opacity:1}
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-title>span{
-    display:block;
-    max-width:100%;
-    overflow:hidden;
-    white-space:nowrap;
-    text-overflow:ellipsis
+
+.book-card {
+    width: 200px;
+    height: 300px;
+    perspective: 1000px;
+    flex-shrink: 0;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track.dragging{scroll-behavior:auto;cursor:grabbing}
-#bestSeller>.carousel-cover>.carousel>.carousel-track.active{cursor:grabbing}
-#bestSeller>.carousel-cover>.carousel>.carousel-track:active{cursor:grabbing}
-#bestSeller>.carousel-cover>.carousel>.carousel-track.is-snapping{scroll-snap-type:x mandatory}
-#bestSeller>.carousel-cover>.carousel>.carousel-track.no-snap{scroll-snap-type:none}
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:focus-within{
-    outline:2px solid var(--blue-400);
-    outline-offset:-1px
+
+.book-card .book-cover,
+.book-card .book-info {
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    transition: transform 0.6s ease;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-align: center;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track::-webkit-scrollbar-track{background:transparent}
-#bestSeller>.carousel-cover>.carousel>.carousel-track::-webkit-scrollbar-thumb:hover{background-color:var(--blue-300)}
-#bestSeller>.carousel-cover>.carousel>.carousel-track::-webkit-scrollbar-thumb:active{background-color:var(--blue-400)}
-#bestSeller:focus-within .carousel-cover>.carousel>.carousel-control{box-shadow:var(--shadow-hover)}
-#bestSeller>.carousel-cover>.carousel>.carousel-track.snapping{scroll-snap-type:x mandatory}
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card::before{
-    content:'';
-    position:absolute;
-    top:0;
-    right:0;
-    width:0.5rem;
-    height:100%;
-    background:linear-gradient(to left,var(--white),transparent);
-    z-index:2
+
+.book-card .book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card::after{
-    content:'';
-    position:absolute;
-    bottom:0;
-    left:0;
-    width:100%;
-    height:0.25rem;
-    background:var(--blue-100);
-    opacity:0;
-    transition:opacity var(--transition)
+
+.book-card .book-info {
+    transform: rotateY(180deg);
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover::after{opacity:1}
-#bestSeller>.carousel-cover>.carousel>.carousel-control:disabled{
-    opacity:0.25;
-    pointer-events:none
+
+.book-card.flipped .book-cover {
+    transform: rotateY(180deg);
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover>.book-title{color:var(--blue-600)}
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-title>span::before{
-    content:'“';
-    color:var(--blue-300)
+
+.book-card.flipped .book-info {
+    transform: rotateY(0);
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card>.book-title>span::after{
-    content:'”';
-    color:var(--blue-300)
+
+.slider-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
-#bestSeller>.carousel-cover>.carousel>.carousel-track .book-card:hover>.book-title>span{color:var(--blue-500)}
+
+.nav {
+    background: teal;
+    color: white;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: lightgray;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: teal;
+}
+
+/* 숨김 */
+.hidden {
+    display: none !important;
+}

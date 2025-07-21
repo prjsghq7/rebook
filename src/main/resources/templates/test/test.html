@@ -18,7 +18,6 @@
     <script type="module" defer src="/common/assets/scripts/loading.js"></script>
     <script defer src="/test/assets/scripts/keyword.js" type="module"></script>
     <script defer src="/test/assets/scripts/index.js" type="module"></script>
-    <script defer src="/chatbot/assets/scripts/main-animation.js"></script>
 </head>
 <body>
 <th:block th:replace="~{/fragments/header :: header}">
@@ -30,19 +29,13 @@
 
 <div id="default-area" class="main">
 
-    <section id="bestSeller" class="container best-seller">
-        <div class="carousel-cover">
-            <h2 class="title">베스트 셀러</h2>
-            <div class="carousel">
-                <button class="carousel-control prev" aria-label="이전">&lt;</button>
-                <div class="carousel-track">
-                    <div id="bestBook" class="best-book">
-                        <!-- JS로 .book-card들 렌더링 -->
-                    </div>
-                </div>
-                <button class="carousel-control next" aria-label="다음">&gt;</button>
+    <section class="container best-seller" id="bestSeller">
+        <h2 class="title">베스트 셀러</h2>
+        <form id="bestForm" class="best-form" novalidate>
+            <div class="best-book" id="bestBook">
+                <!--여기에서 책 렌더링 js-->
             </div>
-        </div>
+        </form>
     </section>
 
 
@@ -104,13 +97,12 @@
                         </li>
                     </ul>
                 </div>
-                <!--TODO keyword-search, 폼 만들어야됨-->
+                        <!--TODO keyword-search, 폼 만들어야됨-->
                 <div class="intro-message">
                     <div class="-flex-stretch"></div>
                     <div class="intro-action">
-                        <button id="startChatBtn" class="-object-button -color-blue"
-                                th:text="${session.signedUser != null} ? '메세지 입력 ㄱㄱ' : '로그인 후 이용 가능합니다.'"
-                                th:classappend="${session.signedUser == null} ? 'danger-text' : ''"></button>
+                        <button id="startChatBtn" class="-object-button -color-blue" th:text="${session.signedUser != null} ? '메세지 입력 ㄱㄱ' : '로그인 후 이용 가능합니다.'"
+                        th:classappend="${session.signedUser == null} ? 'danger-text' : ''"></button>
 
                     </div>
                 </div>
@@ -121,8 +113,7 @@
                         <button class="chat-back-button">
                             <img src="/chatbot/assets/images/back.png" alt="back" class="chat-form-back chat-form-img">
                         </button>
-                        <img src="/chatbot/assets/images/chatbotIcon.png" alt="rebook"
-                             class="chat-form-icon chat-form-img">
+                        <img src="/chatbot/assets/images/chatbotIcon.png" alt="rebook" class="chat-form-icon chat-form-img">
                         <div class="chat-form-header-span">
                             <span class="title">Re:Book</span>
                             <span class="caption">생성형 AI 답변이므로 정확하지 않을 수 있습니다.</span>

@@ -59,7 +59,6 @@ HTMLElement.prototype.setValid = function (b) {
 HTMLElement.prototype.isVisible = function () {
     return this.hasAttribute(HTMLElement.VISIBLE_ATTR_NAME);
 }
-
 /**
  * @param {boolean} b
  * @returns {HTMLElement} */
