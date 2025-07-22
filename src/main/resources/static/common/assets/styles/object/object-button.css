@@ -18,9 +18,13 @@
     text-decoration: none;
 }
 
-.-object-button:active {
+.-object-button:not(:disabled):active {
     position: relative;
     top: 0.0625rem;
+}
+
+.-object-button:disabled {
+    pointer-events: none;
 }
 
 .-object-button.-color-red {
@@ -37,6 +41,10 @@
 
 .-object-button.-color-blue:hover {
     background-color: #1b64b2;
+}
+
+.-object-button.-color-blue:disabled {
+    background-color: #6f8cb3;
 }
 
 .-object-button.-color-gray {
