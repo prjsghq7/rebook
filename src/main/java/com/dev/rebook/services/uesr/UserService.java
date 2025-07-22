@@ -13,6 +13,7 @@ import com.dev.rebook.regexes.UserRegex;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.results.review.ModifyResult;
 import com.dev.rebook.results.user.RegisterResult;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -72,6 +73,55 @@ public class UserService {
         this.javaMailSender = javaMailSender;
         this.springTemplateEngine = springTemplateEngine;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Result modify(UserEntity user, UserEntity signedUser) {
+        if (UserService.isInvalidUser(signedUser)) {
+            if (signedUser == null || signedUser.isDeleted()) {
+                return CommonResult.FAILURE_SESSION_EXPIRED;
+            }
+            return CommonResult.FAILURE_SUSPENDED;
+        }
+
+        if (!UserRegex.nickname.matches(user.getNickname())
+                || !UserRegex.birth.matches(user.getBirth().toString())
+                || !UserRegex.gender.matches(user.getGender())
+                || !UserRegex.contactSecondRegex.matches(user.getContactSecond())
+                || !UserRegex.contactThirdRegex.matches(user.getContactThird())
+                || user.getAddressPostal() == null || user.getAddressPostal().isEmpty()
+                || user.getAddressPrimary() == null || user.getAddressPrimary().isEmpty()
+                || user.getAddressSecondary() == null || user.getAddressSecondary().isEmpty()) {
+            return CommonResult.FAILURE;
+        }
+        if (!signedUser.getNickname().equals(user.getNickname())) {
+            if (this.userMapper.selectCountByNickname(user.getNickname()) > 0) {
+                return ModifyResult.FAILURE_DUPLICATE_NICKNAME;
+            }
+        }
+        if (!signedUser.getContactFirst().equals(user.getContactFirst())
+                || !signedUser.getContactSecond().equals(user.getContactSecond())
+                || !signedUser.getContactThird().equals(user.getContactThird())) {
+            if (this.userMapper.selectCountByContact(user.getContactFirst(), user.getContactSecond(), user.getContactThird()) > 0) {
+                return ModifyResult.FAILURE_DUPLICATE_CONTACT;
+            }
+        }
+
+        signedUser.setNickname(user.getNickname());
+        signedUser.setBirth(user.getBirth());
+        signedUser.setGender(user.getGender());
+        signedUser.setContactMvnoCode(user.getContactMvnoCode());
+        signedUser.setContactFirst(user.getContactFirst());
+        signedUser.setContactSecond(user.getContactSecond());
+        signedUser.setContactThird(user.getContactThird());
+        signedUser.setAddressPostal(user.getAddressPostal());
+        signedUser.setAddressPrimary(user.getAddressPrimary());
+        signedUser.setAddressSecondary(user.getAddressSecondary());
+        signedUser.setCategoryId(user.getCategoryId());
+        signedUser.setModifiedAt(LocalDateTime.now());
+
+        return userMapper.update(signedUser) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
     }
 
     public Result recoverPassword(EmailTokenEntity emailToken, String password) {

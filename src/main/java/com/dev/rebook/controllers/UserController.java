@@ -39,6 +39,29 @@ public class UserController {
         this.reviewService = reviewService;
     }
 
+    @RequestMapping(value = "/modify", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String patchModify(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser, UserEntity user) {
+        Result result = userService.modify(user, signedUser);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toStringLower());
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/modify", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getModify(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                          Model model) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return "redirect:/user/login";
+        }
+        model.addAttribute("user", signedUser);
+        ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
+        model.addAttribute("contactMvnos", contactMvnos);
+        List<CategoryEntity> categories = userService.getCategories();
+        model.addAttribute("categories", categories);
+        return "user/modify";
+    }
+
     @RequestMapping(value = "/info", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
                           Model model) {
