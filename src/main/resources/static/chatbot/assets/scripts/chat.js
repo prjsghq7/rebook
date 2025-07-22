@@ -7,16 +7,19 @@ const $chatForm = document.getElementById('chatForm');
 const $chatBot = document.getElementById('chatbot');
 const $chatIcon = $chatBot.querySelector('.chatbot-icon');
 const $chatLayout = $chatBot.querySelector('.chatbot-layout');
-const $chatCloseBtn = $chatLayout.querySelector(':scope > .chat-intro-view > .intro-header > .close-button');
+const $chatCloseBtn = document.querySelectorAll('.chat-close-button');
 const $chatFeatureList = $chatLayout.querySelectorAll(':scope > .chat-view.chat-intro-view > .intro-body > .intro-feature-list > .item > .feature-button');
 const $chatMessage = document.getElementById('chat-message');
 const $chatBackBtn = $chatMessage.querySelector(':scope > .chat-form-header > .chat-back-button');
 
 let currentRoomId = null;
+let silentSend = false;
 
-$chatCloseBtn.addEventListener('click', () => {
-    $chatLayout.setVisible(false);
-    $chatIcon.setVisible(true);
+$chatCloseBtn.forEach(($cbt) => {
+    $cbt.addEventListener('click', () => {
+        $chatLayout.setVisible(false);
+        $chatIcon.setVisible(true);
+    });
 });
 
 $chatIcon.setVisible(true);
@@ -51,7 +54,9 @@ async function sendChatMessage() {
         return;
     }
 
-    appendMessage('user', message);
+    if (!silentSend) {
+        appendMessage('user', message);
+    }
     input.value = '';
     appendMessage('bot', 'typing');
 
@@ -84,14 +89,25 @@ async function sendChatMessage() {
         }
 
         removeTypingBubble();
+        silentSend = false;
         appendMessage('bot', result.payload[1].message);
 
         try {
             const books = JSON.parse(result.payload[1].payload);
             if (Array.isArray(books)) {
                 books.forEach(book => {
-                    const bookLine = `"${book.title}" (${book.author}, ${book.publisher})`;
-                    appendMessage('bot', bookLine);
+                    const bookLine = `"${book.title}"`;
+                    const $li = appendMessage('bot', bookLine);
+                    if (!$li) {
+                        return;
+                    }
+                    $li.dataset.id = book.id;
+                    $li.classList.add('clickable');
+                    $li.addEventListener('click', () => {
+                        location.href = `${window.origin}/book/?id=${book.id}`;
+                    });
+
+
                 });
             }
         } catch (e) {
@@ -111,7 +127,7 @@ $chatStartBtn.addEventListener('click', async (e) => {
     await startNewChatRoom();
 });
 
-async function startNewChatRoom() {
+async function startNewChatRoom(skipGreeting = false) {
     try {
         const res = await fetch('/api/chat/room/register', {
             method: 'POST',
@@ -134,7 +150,9 @@ async function startNewChatRoom() {
         currentRoomId = result.payload.id;
         showChatView('main');
         clearMessage();
-        appendMessage('bot', '안녕하세요 reBook 챗봇입니다. 무엇을 도와드릴까요?');
+        if (!skipGreeting) {
+            appendMessage('bot', '안녕하세요 reBook 챗봇입니다. 무엇을 도와드릴까요?');
+        }
     } catch (e) {
         dialog.showSimpleOk('오류', '알 수 없는 이유로 챗봇을 이용할 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
@@ -149,7 +167,7 @@ function clearMessage() {
 
 function appendMessage(sender, text) {
     const $list = document.querySelector('#chat-message ul.list');
-    if (!$list) return;
+    if (!$list) return null;
 
     const $item = document.createElement('li');
     $item.className = `message ${sender}`;
@@ -163,6 +181,7 @@ function appendMessage(sender, text) {
         $img.src = '/chatbot/assets/images/text-bubble.gif';
         $img.alt = 'GPT 응답 중...';
         $img.style.height = '1.25rem';
+        $img.style.backgroundColor = '#f1f1f1';
         $bubble.appendChild($img);
     } else {
         $bubble.textContent = text;
@@ -171,6 +190,7 @@ function appendMessage(sender, text) {
     $item.appendChild($bubble);
     $list.appendChild($item);
     $list.scrollTop = $list.scrollHeight;
+    return $item;
 }
 
 function removeTypingBubble() {
@@ -208,11 +228,10 @@ $chatFeatureList.forEach($item => {
             await loadChatRooms();
         }
         if (target === 'main') {
-            if (!currentRoomId) {
-                await startNewChatRoom();
-            }
+            await startNewChatRoom(true);
             const input = $chatForm.querySelector('input[name="message"]');
             input.value = '니가 생각하는 오늘 하루의 책 추천 좀 해줘';
+            silentSend = true;
             await sendChatMessage();
         }
     });
@@ -275,6 +294,7 @@ async function loadChatRooms() {
                 : '';
 
             $item.innerHTML = `
+<button class="chat-room-delete-button" id="chat-room-delete-button">&times;</button>
                 <div class="chat-room-preview">
                     <div class="chat-room-title">채팅방 #${room.roomId}</div>
                     <div class="chat-room-message">${previewText}</div>
@@ -316,10 +336,22 @@ async function loadChatMessage(roomId) {
             return;
         }
         const messages = result.payload;
+        console.log(result.payload);
         clearMessage();
         messages.forEach(msg => {
-            appendMessage(msg.sender === 'user' ? 'user' : 'bot', msg.message);
+            console.log('[클릭 가능 여부 체크]', msg.message, msg.id);
+
+            const $li = appendMessage(msg.sender === 'user' ? 'user' : 'bot', msg.message);
+            if (!$li) {
+                return;
+            }
+            $li.dataset.id = msg.id;
+            $li.addEventListener('click', () => {
+                location.href = `${window.origin}/book?id=${msg.id}`;
+            });
+
         });
+
     } catch (e) {
         dialog.showSimpleOk('오류', '알 수 없는 오류로인하여 채팅내역을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
     }

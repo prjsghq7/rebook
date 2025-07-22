@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderBookCard(book, $container) {
         const card = document.createElement('div');
         card.className = 'book-card';
+        card.classList.add('id', book.id);
+
 
         const cover = document.createElement('div');
         cover.className = 'book-cover';
@@ -27,7 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
         card.appendChild(title);
 
         card.addEventListener('click', () => {
-            if (book.link) window.open(book.link, '_blank');
+            if (book.id) {
+                location.href = `${window.origin}/book/?id=${book.id}`;
+            }
         });
 
         $container.appendChild(card);
