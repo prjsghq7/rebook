@@ -492,6 +492,7 @@ $registerForm['addressFindButton'].addEventListener('click', () => {
             $registerForm['addressPrimary'].value = data['roadAddress'];
             $registerForm['addressSecondary'].focus()
             $registerForm['addressSecondary'].select();
+            $addressFindDialog.setVisible(false);
         }
     }).embed($modal);
     $addressFindDialog.setVisible(true);
