@@ -65,6 +65,10 @@
     </div>
 
     <div id="reviewContainer">
+        <div class="message-empty" th:if="${reviews.length == 0 || reviews == null}">
+            <img  class="empty-icon" src="/review/assets/images/empty-review.png" alt="리뷰 없음">
+            <p class="empty-text">작성된 리뷰가 없습니다.</p>
+        </div>
         <div class="review" th:each="review:${reviews}">
             <div class="head">
                 <img th:src="${review.profileImg != null ? review.profileImg : '/user/assets/images/profile-sample.png'}"

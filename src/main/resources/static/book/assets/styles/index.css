@@ -104,6 +104,23 @@
     margin-top: 0.25rem;
 }
 
+#reviewContainer > .message-empty {
+    grid-column: span 2;
+    
+    padding: 2rem;
+    background-color: #f9f9f9;
+    border-radius: 0.75rem;
+
+    text-align: center;
+    color: #999999;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+#reviewContainer > .message-empty > .empty-icon {
+    width: 9rem;
+}
+
 #reviewContainer > .review {
     width: 100%;
     align-items: stretch;
