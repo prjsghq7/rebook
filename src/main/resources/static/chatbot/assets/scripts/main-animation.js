@@ -1,101 +1,123 @@
-const CARD_REM = 12; // 책 너비
-const GAP_REM  = 2;  // 간격
-const VIEW_CNT = 4;  // 한 페이지 카드 수
-const AUTO_MS  = 3500; // 자동 슬라이드 간격 (ms)
+/* carousel.js — click‑lock safe */
+const CARD_REM = 12;
+// 카드 한 장의 너비 12rem
+const GAP_REM  = 2;
+// 카드 사이 여백이 2rem
+const VIEW_CNT = 4;
+// 한 화면에 보이는 카드 개수
+const AUTO_MS  = 3500;
+//3.5초
 
-const rem2px = rem => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+const rem2px = rem =>
+    rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+// js에서는 rem 단위를 이해 못하기때문에
 
 function initCarousel(section) {
-    if (!section) return;
+    if (!section || section._c) return;
 
-    const track = section.querySelector('.carousel-track');
-    const list  = section.querySelector('.book-track');
-    const prev  = section.querySelector('.carousel-control.prev');
-    const next  = section.querySelector('.carousel-control.next');
-
-    const originals = [...list.children];
+    const track     = section.querySelector('.book-track');
+    const originals = [...track.children];
     if (!originals.length) return;
 
     const CARD = rem2px(CARD_REM);
     const GAP  = rem2px(GAP_REM);
     const STEP = (CARD + GAP) * VIEW_CNT;
 
-    // 앞뒤 클론
-    originals.slice(-VIEW_CNT).forEach(n => list.prepend(n.cloneNode(true)));
-    originals.slice(0,  VIEW_CNT).forEach(n => list.append(n.cloneNode(true)));
+    originals.slice(-VIEW_CNT).forEach(n => track.prepend(n.cloneNode(true)));
+    // 마지막 4개 카드 복제해서 앞에 붙임
+    originals.slice(0,  VIEW_CNT).forEach(n => track.append(n.cloneNode(true)));
+    // 처음 4개 카드 복제해서 뒤에 붙임 그래야 슬라이드를 했을때 무한루프로 돌 수 있기때문
+    track.style.width = `${track.children.length * (CARD + GAP) - GAP}px`;
+    // 마지막 갭을 빼는 이유는 마지막 카드에는 갭이 없기때문에
 
-    list.style.width = `${list.children.length * (CARD + GAP) - GAP}px`;
-
-    const realPages  = Math.ceil(originals.length / VIEW_CNT);
+    const pages      = Math.ceil(originals.length / VIEW_CNT);
+    // 예를들어 총 북이8개이고 한 페이지에 보여야될 북이4개라고하면 pages = 2
     const FIRST      = 1;
-    const LAST       = realPages;
-    const LAST_CLONE = realPages + 1;
-    let pageIdx      = FIRST;
-    let timer;
+    const LAST       = pages;
+    const LAST_CLONE = pages + 1;
 
-    const go = (idx, instant = false) => {
-        list.style.transition = instant ? 'none' : 'transform .6s ease';
-        list.style.transform  = `translateX(${-idx * STEP}px)`;
-        pageIdx = idx;
+    let page   = FIRST;
+    let timer  = null;
+    let busy   = false;             // ← 클릭 잠금 플래그
+
+    const move = idx => {
+        if (busy) return;             // 애니 중이면 무시
+        busy = true;
+        track.style.transition = 'transform .6s ease';
+        track.style.transform  = `translateX(${-idx * STEP}px)`;
+        page = idx;
     };
 
-    const nextPage = () => go(pageIdx + 1);
-    const prevPage = () => go(pageIdx - 1);
+    const snap = idx => {
+        track.style.transition = 'none';
+        track.style.transform  = `translateX(${-idx * STEP}px)`;
+        page  = idx;
+    };
 
-    list.addEventListener('transitionend', () => {
-        if (pageIdx === 0) go(LAST, true);
-        else if (pageIdx === LAST_CLONE) go(FIRST, true);
+    track.addEventListener('transitionend', () => {
+        if (page === 0)        snap(LAST);
+        else if (page === LAST_CLONE) snap(FIRST);
+        busy = false;          // 애니 끝났으니 잠금 해제
     });
 
-    const start = () => (timer = setInterval(nextPage, AUTO_MS));
-    const stop  = () => clearInterval(timer);
+    const start = () => {
+        stop();
+        timer = setInterval(() => move(page + 1), AUTO_MS);
+    };
+    const stop  = () => timer && clearInterval(timer);
 
-    next.onclick = () => { stop(); nextPage(); start(); };
-    prev.onclick = () => { stop(); prevPage(); start(); };
+    section.querySelectorAll('.carousel-control').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            if (busy) return;           // 애니 중이면 무시
+            stop();
+            btn.classList.contains('next') ? move(page + 1) : move(page - 1);
+            start();
+        });
+    });
 
-    go(FIRST, true);
+    snap(FIRST);  // 처음 위치
     start();
 
-    // 캐러셀 다시 접근했을 때 위치 리셋 (뒤로가기 대비)
-    section.dataset.carouselStep = STEP;
+    // 노출(visibility) 관리용 최소 API
+    section._c = { stop, start, snapCurrent: () => snap(page) };
 }
 
-function observeAndInitCarousel(sectionSelector) {
-    const section = document.querySelector(sectionSelector);
-    if (!section) return;
-
-    const list = section.querySelector('.book-track');
-    if (list && list.children.length) return initCarousel(section);
-
-    const ob = new MutationObserver((_, o) => {
-        if (list.children.length) {
-            o.disconnect();
-            initCarousel(section);
-        }
-    });
-    ob.observe(list, { childList: true });
-}
-
-function resetCarousel(sectionSelector) {
-    const section = document.querySelector(sectionSelector);
-    if (!section) return;
-    const list = section.querySelector('.book-track');
-    if (!list || !list.children.length) return;
-
-    const STEP = section.dataset.carouselStep || (rem2px(CARD_REM + GAP_REM) * VIEW_CNT);
-    list.style.transition = 'none';
-    list.style.transform  = `translateX(${-STEP}px)`;
-}
-
+/* 초기 세팅 */
 document.addEventListener('DOMContentLoaded', () => {
-    observeAndInitCarousel('[data-type="bestseller"]');
-    observeAndInitCarousel('[data-type="keyword"]');
+    ['[data-type="bestseller"]', '[data-type="keyword"]']
+        .forEach(sel => {
+            const sec = document.querySelector(sel);
+            if (!sec) return;
+            const track = sec.querySelector('.book-track');
+            if (track.children.length) {
+                initCarousel(sec);
+            } else {
+                new MutationObserver((_, ob) => {
+                    if (track.children.length) {
+                        ob.disconnect();
+                        initCarousel(sec);
+                    }
+                }).observe(track, { childList: true });
+            }
+        });
 });
 
-// 뒤로가기/앞으로가기 복귀 시 캐러셀 위치 리셋
+/* BFCache 복원 */
 window.addEventListener('pageshow', e => {
     if (e.persisted) {
-        resetCarousel('[data-type="bestseller"]');
-        resetCarousel('[data-type="keyword"]');
+        document.querySelectorAll('[data-type]').forEach(sec => sec._c?.snapCurrent());
+    }
+});
+
+/* 탭 전환 */
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        document.querySelectorAll('[data-type]').forEach(sec => sec._c?.stop());
+    } else {
+        document.querySelectorAll('[data-type]').forEach(sec => {
+            sec._c?.snapCurrent();
+            sec._c?.start();
+        });
     }
 });
