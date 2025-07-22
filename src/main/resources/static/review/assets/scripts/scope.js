@@ -30,7 +30,8 @@ export class Scope {
         this.$scope = $element.querySelector('[name="scope"]');
         this.$stars = $element.querySelectorAll('.star');
         this.$scopeGuide = $element.parentElement.querySelector('.scope-guide');
-        this.scopeNum = 5
+        this.scopeNum = this.$scope.value;
+        this.$scopeGuide.innerText = this.ratingDesc[this.scopeNum];
 
         document.addEventListener('mousemove', (e) => this.#documentOnMousemove(e));
         document.addEventListener('mouseup', (e) => this.#documentOnMouseup());

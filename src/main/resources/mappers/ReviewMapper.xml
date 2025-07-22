@@ -1,6 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.dev.rebook.mappers.ReviewMapper">
+
+    <select id="selectReviewsById" resultType="com.dev.rebook.entities.ReviewEntity">
+        SELECT `id`          AS `id`,
+               `user_id`     AS `userId`,
+               `book_id`     AS `bookId`,
+               `scope`       AS `scope`,
+               `comment`     AS `comment`,
+               `created_at`  AS `createdAt`,
+               `modified_at` AS `modifiedAt`,
+               `is_deleted`  AS `isDeleted`
+        FROM `rebook`.`reviews`
+        WHERE `id` = #{id}
+          AND `is_deleted` = FALSE
+        LIMIT 1
+    </select>
+
+    <select id="selectReviewsByBookId" resultType="com.dev.rebook.dtos.ReviewWithProfileDto">
+        SELECT `r`.`id`          AS `id`,
+               `r`.`user_id`     AS `userId`,
+               `r`.`book_id`     AS `bookId`,
+               `u`.`nickname`    AS `nickname`,
+               `u`.`profile_img` AS `profileImg`,
+               `r`.`comment`     AS `comment`,
+               `r`.`scope`       AS `scope`,
+               `r`.`created_at`  AS `reviewDate`
+        FROM `rebook`.`reviews` AS `r`
+                 JOIN `rebook`.`users` AS `u` ON `r`.user_id = `u`.`id`
+        WHERE `r`.`book_id` = #{bookId}
+          AND `r`.`is_deleted` = FALSE
+        ORDER BY `r`.created_at DESC
+    </select>
+
     <select id="selectRecentReviews" resultType="com.dev.rebook.dtos.RecentReviewDto">
         SELECT `b`.`title`   AS `bookTitle`,
                `r`.`comment` AS `comment`,
@@ -44,4 +76,17 @@
                 #{review.modifiedAt},
                 #{review.isDeleted})
     </insert>
+
+    <update id="update">
+        UPDATE `rebook`.`reviews`
+        SET `user_id` = #{review.userId},
+            `book_id`    = #{review.bookId},
+            `scope` = #{review.scope},
+            `comment` = #{review.comment},
+            `modified_at` = #{review.modifiedAt},
+            `is_deleted` = #{review.isDeleted}
+        WHERE `id` = #{review.id}
+        LIMIT 1
+    </update>
+
 </mapper>

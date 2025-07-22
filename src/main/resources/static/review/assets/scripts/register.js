@@ -10,6 +10,20 @@ window.scope = new Scope($reviewRegisterForm.querySelector('.scope-area'));
 $reviewRegisterForm.addEventListener('submit', (e) => {
     e.preventDefault();
 
+    if ($reviewRegisterForm['scope'].value < 1
+        || $reviewRegisterForm['scope'].value > 5) {
+        dialog.showSimpleOk('리뷰 등록', '리뷰 점수로는 1점 이상 5점 이하로 입력해주세요.');
+        return;
+    }
+    if ($reviewRegisterForm['comment'].validity.valueMissing) {
+        dialog.showSimpleOk('리뷰 등록', '리뷰 코멘트를 입력해주세요.');
+        return;
+    }
+    if ($reviewRegisterForm['comment'].validity.tooLong) {
+        dialog.showSimpleOk('리뷰 등록', '리뷰 코멘트는 100자 이내로 작성해 주세요.');
+        return;
+    }
+
     const xhr = new XMLHttpRequest();
     const formData = new FormData();
     const bookId = new URL(location.href).searchParams.get('id');
@@ -27,6 +41,9 @@ $reviewRegisterForm.addEventListener('submit', (e) => {
 
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
+            case 'failure_duplicate':
+                dialog.showSimpleOk('리뷰 등록', '책 한권당 리뷰는 한번만 등록 가능합니다.\n기존 리뷰를 삭제하거나 수정하여 사용해주세요.');
+                break;
             case 'failure_session_expired':
                 dialog.showSimpleOk('리뷰 등록', '세션이 만료되었습니다.\n로그인 후 리뷰 등록 해주세요.');
                 break;
@@ -56,4 +73,10 @@ $reviewRegisterForm.addEventListener('submit', (e) => {
     xhr.open('POST', '/review/register');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+});
+
+$reviewRegisterForm['comment'].addEventListener('input', () => {
+    const length = $reviewRegisterForm['comment'].value.length;
+    const $count = $reviewRegisterForm.querySelector('.count');
+    $count.textContent = length +'/100';
 });

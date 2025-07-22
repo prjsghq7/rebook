@@ -39,4 +39,24 @@ public class ReviewController {
 
         return "review/register";
     }
+
+    @RequestMapping(value = "/modify", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String patchModify(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                               ReviewEntity review) {
+        Result result = this.reviewService.modify(signedUser, review);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toStringLower());
+        return response.toString();
+    }
+
+    @RequestMapping(value = "/modify", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getModify(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                              @RequestParam(value = "id", required = false) int id,
+                              Model model) {
+        model.addAttribute("signedUser", signedUser);
+        ReviewEntity review = this.reviewService.getReviewById(id);
+        model.addAttribute("review", review);
+        return "review/modify";
+    }
 }

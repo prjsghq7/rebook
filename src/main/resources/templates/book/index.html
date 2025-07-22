@@ -55,56 +55,41 @@
 
 
     <div class="review-header">
-        <h2 class="sub-title">리뷰 (0)</h2>
+        <h2 class="sub-title" th:text="|리뷰 (${reviews.length})|">리뷰 (0)</h2>
         <button class="-object-button -color-blue" name="reviewRegisterButton" type="button">
             <span class="--caption">리뷰 등록하기</span>
         </button>
     </div>
 
     <div id="reviewContainer">
-        <div class="review">
-            <img src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
-            <div class="review-info-area">
-                <div class="head">
-                    <span class="writer">작성자 자리</span>
-                    <span class="-flex-stretch"></span>
-                    <span class="timestamp">0000-00-00 00:00:00</span>
-                </div>
-                <div class="body">
-                    <div class="top">
+        <div class="review" th:each="review:${reviews}">
+            <div class="head">
+                <img th:src="${review.profileImg != null ? review.profileImg : '/user/assets/images/profile-sample.png'}"
+                     alt="프로필 이미지" class="profile-image">
+                <div class="info-wrapper -flex-stretch">
+                    <div class="info">
+                        <span class="writer" th:text="${review.nickname}"></span>
+                        <span class="-flex-stretch"></span>
+                        <span class="timestamp" th:text="${#temporals.format(review.reviewDate)}"></span>
+                    </div>
+                    <div class="info">
                         <span class="scope">
-                            <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
-                            <img class="star" src="/review/assets/images/star-empty.png" alt="empty">
+                            <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                                <img class="star"
+                                    th:src="${i <= review.scope ? '/review/assets/images/star-fill.png' : '/review/assets/images/star-empty.png'}"
+                                     th:alt="${i <= review.scope ? 'fill' : 'empty'}">
+                            </th:block>
                         </span>
                         <span class="-flex-stretch"></span>
-                        <a class="action">수정</a>
-                        <a class="action">삭제</a>
+                        <th:block th:if="${review.hasPermission}">
+                            <button class="action modify" th:attr="data-rb-id=${review.id}">수정</button>
+                            <a class="action delete" th:attr="data-rb-id=${review.id}">삭제</a>
+                        </th:block>
                     </div>
-                    <span class="comment">리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment</span>
                 </div>
             </div>
-        </div>
-
-        <div class="review">
-            <img src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
-            <div class="review-info-area">
-                <div class="head">
-                    <span class="writer">작성자 자리</span>
-                    <span class="-flex-stretch"></span>
-                    <span class="timestamp">0000-00-00 00:00:00</span>
-                </div>
-                <div class="body">
-                    <div class="top">
-                        <span class="scope">
-                            <img class="star" src="/review/assets/images/star-fill.png" alt="fill">
-                            <img class="star" src="/review/assets/images/star-empty.png" alt="empty">
-                        </span>
-                        <span class="-flex-stretch"></span>
-                        <a class="action">수정</a>
-                        <a class="action">삭제</a>
-                    </div>
-                    <span class="comment">리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment리뷰에 대한 comment</span>
-                </div>
+            <div class="body">
+                <span class="comment" th:text="${review.comment}"></span>
             </div>
         </div>
     </div>

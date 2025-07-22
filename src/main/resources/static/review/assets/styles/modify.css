@@ -3,7 +3,7 @@ body {
     min-width: 30rem;
 }
 
-#reviewRegisterForm {
+#reviewModifyForm {
     width: 100%;
 
     box-sizing: border-box;
@@ -16,17 +16,17 @@ body {
     justify-content: flex-start;
 }
 
-#reviewRegisterForm > .title {
+#reviewModifyForm > .title {
     font-size: 2rem;
     font-weight: 700;
 }
 
-#reviewRegisterForm > .caption {
+#reviewModifyForm > .caption {
     font-size: 1.625rem;
     font-weight: 600;
 }
 
-#reviewRegisterForm > .scope-area {
+#reviewModifyForm > .scope-area {
     position: relative;
 
     align-items: center;
@@ -36,14 +36,17 @@ body {
     justify-content: center;
 
     padding: 0.5rem 0.75rem;
+
+    /*height: 2.5rem;*/
+    /*width: 6.5rem;*/
 }
 
-#reviewRegisterForm > .scope-area > .star {
+#reviewModifyForm > .scope-area > .star {
     width: 3.625rem;
     pointer-events: none;
 }
 
-#reviewRegisterForm > .scope-area > .pointer {
+#reviewModifyForm > .scope-area > .pointer {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -51,7 +54,7 @@ body {
     z-index: 5;
 }
 
-#reviewRegisterForm > .scope-guide {
+#reviewModifyForm > .scope-guide {
     padding: 0.25rem 1rem 1rem 1rem;
 
     font-size: 1.625rem;
@@ -62,11 +65,11 @@ body {
     margin-bottom: 1rem;
 }
 
-#reviewRegisterForm > .-object-label {
+#reviewModifyForm > .-object-label {
     position: relative;
 }
 
-#reviewRegisterForm > .-object-label > .-object-field {
+#reviewModifyForm > .-object-label > .-object-field {
     padding: 0.5rem 0.5rem;
     border: 0.0625rem solid #268dfa;
     border-radius: 0.5rem;
@@ -77,14 +80,14 @@ body {
     overflow: auto;
 }
 
-#reviewRegisterForm > .-object-label > .count {
+#reviewModifyForm > .-object-label > .count {
     position: absolute;
 
     right: 0.5rem;
     top: -1.25rem;
 }
 
-#reviewRegisterForm > .-object-button {
+#reviewModifyForm > .-object-button {
     margin-top: 2rem;
     border-radius: 0.375rem;
 }
