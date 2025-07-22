@@ -13,7 +13,7 @@ import com.dev.rebook.regexes.UserRegex;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
-import com.dev.rebook.results.review.ModifyResult;
+import com.dev.rebook.results.user.ModifyResult;
 import com.dev.rebook.results.user.RegisterResult;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
