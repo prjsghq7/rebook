@@ -141,18 +141,40 @@
     align-items: center;
     display: flex;
     flex-direction: row;
+    gap: 0.25rem;
     justify-content: stretch;
 }
 
 #reviews-section > .review-list > .review-item > .header > .title {
-    font-weight: bold;
+    font-weight: 700;
     color: #268DFA;
     margin-bottom: 0.25rem;
+    margin-right: 1rem;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-#reviews-section > .review-list > .review-item > .header > .date {
+#reviews-section > .review-list > .review-item > .header > .title:hover {
+    text-decoration: underline;
+    font-weight: 900;
+}
+
+#reviews-section > .review-list > .review-item > .header > .action {
+    white-space: nowrap;
+    font-weight: 500;
+}
+
+#reviews-section > .review-list > .review-item > .header > .action:hover {
+    text-decoration: underline;
+}
+
+/*#reviews-section > .review-list > .review-item > .header > .date {*/
+#reviews-section > .review-list > .review-item > .content > .date {
     font-size: 0.85rem;
     color: #999;
+    white-space: nowrap;
 }
 
 #reviews-section > .review-list > .review-item > .content {
@@ -164,7 +186,8 @@
 }
 
 #reviews-section > .review-list > .review-item > .content > .scope {
-
+    display: inline-block;
+    white-space: nowrap;
 }
 
 #reviews-section > .review-list > .review-item > .content > .scope > .star {
@@ -173,6 +196,10 @@
 
 #reviews-section > .review-list > .review-item > .content > .comment {
     font-size: 0.95rem;
-    color: #444;
+    color: #444444;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 

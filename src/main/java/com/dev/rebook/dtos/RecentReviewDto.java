@@ -12,6 +12,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class RecentReviewDto {
+    private int id;
+    private String bookId;
     private String bookTitle;
     private String comment;
     private int scope;

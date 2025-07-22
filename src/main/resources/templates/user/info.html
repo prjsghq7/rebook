@@ -67,16 +67,20 @@
             </li>
             <li class="review-item" th:each="review:${recentReviews}">
                 <span class="header">
-                    <span class="title -flex-stretch" th:text="${review.bookTitle}"></span>
-                    <span class="date" th:text="${review.reviewDate}">2025-07-05</span>
+                    <a class="title -flex-stretch" th:text="${review.bookTitle}" th:href="@{'/book/' (id=${review.bookId})}"></a>
+                    <button class="action modify" th:attr="data-rb-id=${review.id}">수정</button>
+                    <a class="action delete" th:attr="data-rb-id=${review.id}">삭제</a>
                 </span>
                 <span class="content">
                     <span class="scope">
-                        <img class="star" src="/review/assets/images/star-fill.png" alt="fill" th:each="i : ${#numbers.sequence(1, review.scope)}">
-                        <img class="star" src="/review/assets/images/star-empty.png" alt="empty"
-                             th:each="i : ${#numbers.sequence(1, 5 - review.scope)}">
+                        <th:block th:each="i : ${#numbers.sequence(1, 5)}">
+                            <img class="star"
+                                 th:src="${i <= review.scope ? '/review/assets/images/star-fill.png' : '/review/assets/images/star-empty.png'}"
+                                 th:alt="${i <= review.scope ? 'fill' : 'empty'}">
+                        </th:block>
                     </span>
                     <span class="comment -flex-stretch" th:text="${review.comment}"></span>
+                    <span class="date" th:text="${review.reviewDate}">2025-07-05</span>
                 </span>
             </li>
         </ul>
