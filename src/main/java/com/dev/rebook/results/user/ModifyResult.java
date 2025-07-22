@@ -1,4 +1,4 @@
-package com.dev.rebook.results.review;
+package com.dev.rebook.results.user;
 
 import com.dev.rebook.results.Result;
 

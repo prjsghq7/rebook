@@ -4,11 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Re:Book</title>
     <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
     <link href="/book/assets/styles/index.css" rel="stylesheet" type="text/css">
     <script defer src="/common/assets/scripts/common.js" rel="text/javascript"></script>
+    <script defer src="/common/assets/scripts/dialog.js" rel="text/javascript"></script>
     <script defer src="/book/assets/scripts/index.js" rel="text/javascript"></script>
 </head>
 <body>
@@ -83,7 +86,7 @@
                         <span class="-flex-stretch"></span>
                         <th:block th:if="${review.hasPermission}">
                             <button class="action modify" th:attr="data-rb-id=${review.id}">수정</button>
-                            <a class="action delete" th:attr="data-rb-id=${review.id}">삭제</a>
+                            <button class="action delete" th:attr="data-rb-id=${review.id}">삭제</button>
                         </th:block>
                     </div>
                 </div>

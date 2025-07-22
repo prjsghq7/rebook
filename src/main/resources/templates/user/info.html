@@ -69,7 +69,7 @@
                 <span class="header">
                     <a class="title -flex-stretch" th:text="${review.bookTitle}" th:href="@{'/book/' (id=${review.bookId})}"></a>
                     <button class="action modify" th:attr="data-rb-id=${review.id}">수정</button>
-                    <a class="action delete" th:attr="data-rb-id=${review.id}">삭제</a>
+                    <button class="action delete" th:attr="data-rb-id=${review.id}">삭제</button>
                 </span>
                 <span class="content">
                     <span class="scope">

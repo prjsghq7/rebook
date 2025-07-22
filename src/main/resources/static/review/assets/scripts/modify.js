@@ -41,7 +41,7 @@ $reviewModifyForm.addEventListener('submit', (e) => {
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_no_permission':
-                dialog.showSimpleOk('리뷰 수정', '해당 리뷰글에 대한 삭제 권한이 없습니다.');
+                dialog.showSimpleOk('리뷰 수정', '해당 리뷰글에 대한 수정 권한이 없습니다.');
                 break;
             case 'failure_absent':
                 dialog.showSimpleOk('리뷰 수정', '해당 리뷰글이 이미 삭제되었거나 존재 하지 않습니다.');

@@ -8,6 +8,7 @@ import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.ReviewMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
+import com.dev.rebook.results.review.DeleteResult;
 import com.dev.rebook.results.review.ModifyResult;
 import com.dev.rebook.services.uesr.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +57,30 @@ public class ReviewService {
         return reviewMapper.selectReviewSummary(userId);
     }
 
+    public Result delete(UserEntity signedUser, int id) {
+        if (UserService.isInvalidUser(signedUser)) {
+            if (signedUser == null || signedUser.isDeleted()) {
+                return CommonResult.FAILURE_SESSION_EXPIRED;
+            }
+            return CommonResult.FAILURE_SUSPENDED;
+        }
+
+        ReviewEntity dbReview = reviewMapper.selectReviewsById(id);
+        if (dbReview == null || dbReview.isDeleted()) {
+            return CommonResult.FAILURE_ABSENT;
+        }
+        if (dbReview.getUserId() != signedUser.getId()) {
+            return DeleteResult.FAILURE_NO_PERMISSION;
+        }
+
+        dbReview.setDeleted(true);
+        dbReview.setModifiedAt(LocalDateTime.now());
+
+        return this.reviewMapper.update(dbReview) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
+    }
+
     public Result modify(UserEntity signedUser, ReviewEntity review) {
         if (UserService.isInvalidUser(signedUser)) {
             if (signedUser == null || signedUser.isDeleted()) {
@@ -70,7 +95,7 @@ public class ReviewService {
         }
 
         ReviewEntity dbReview = reviewMapper.selectReviewsById(review.getId());
-        if (dbReview == null) {
+        if (dbReview == null || dbReview.isDeleted()) {
             return CommonResult.FAILURE_ABSENT;
         }
         if (dbReview.getUserId() != signedUser.getId()) {

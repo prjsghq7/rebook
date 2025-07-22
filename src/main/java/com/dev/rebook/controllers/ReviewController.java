@@ -40,9 +40,19 @@ public class ReviewController {
         return "review/register";
     }
 
+    @RequestMapping(value = "/delete", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String deleteReview(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                               @RequestParam(value = "id", required = false) int id) {
+        Result result = this.reviewService.delete(signedUser, id);
+        JSONObject response = new JSONObject();
+        response.put("result", result.toStringLower());
+        return response.toString();
+    }
+
     @RequestMapping(value = "/modify", method = RequestMethod.PATCH, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String patchModify(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+    public String patchReview(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
                                ReviewEntity review) {
         Result result = this.reviewService.modify(signedUser, review);
         JSONObject response = new JSONObject();
