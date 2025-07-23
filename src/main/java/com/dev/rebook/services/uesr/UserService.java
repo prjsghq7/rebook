@@ -15,6 +15,7 @@ import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.results.user.ModifyResult;
 import com.dev.rebook.results.user.RegisterResult;
+import com.dev.rebook.results.user.RemoveAccountResult;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -73,6 +74,37 @@ public class UserService {
         this.javaMailSender = javaMailSender;
         this.springTemplateEngine = springTemplateEngine;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public Result removeAccount(UserEntity signedUser, EmailTokenEntity emailToken) {
+        if (UserService.isInvalidUser(signedUser)) {
+            if (signedUser == null || signedUser.isDeleted()) {
+                return CommonResult.FAILURE_SESSION_EXPIRED;
+            }
+            return CommonResult.FAILURE_SUSPENDED;
+        }
+
+        if (emailToken == null
+                || !EmailTokenRegex.emailCode.matches(emailToken.getCode())
+                || !EmailTokenRegex.emailSalt.matches(emailToken.getSalt())) {
+            return CommonResult.FAILURE;
+        }
+        EmailTokenEntity dbEmailToken = this.emailTokenMapper.selectByEmailAndCodeAndSalt(emailToken.getEmail(), emailToken.getCode(), emailToken.getSalt());
+        if (dbEmailToken == null
+                || !dbEmailToken.isUsed()
+                || !dbEmailToken.getUserAgent().equals(emailToken.getUserAgent())) {
+            return CommonResult.FAILURE;
+        }
+
+        if (!signedUser.getEmail().equals(emailToken.getEmail())) {
+            return RemoveAccountResult.FAILURE_NO_PERMISSION;
+        }
+
+        signedUser.setDeleted(true);
+        signedUser.setModifiedAt(LocalDateTime.now());
+        return this.userMapper.update(signedUser) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
     }
 
     public Result modify(UserEntity user, UserEntity signedUser) {
@@ -181,6 +213,58 @@ public class UserService {
         return this.userMapper.selectUserByProviderId(provider, providerId);
     }
 
+    public ResultTuple<EmailTokenEntity> sendRemoveAccountEmail(UserEntity signedUser, String email, String userAgent) throws MessagingException {
+        if (!UserRegex.email.matches(email) || userAgent == null) {
+            return ResultTuple.<EmailTokenEntity>builder()
+                    .result(CommonResult.FAILURE)
+                    .build();
+        }
+
+        if (UserService.isInvalidUser(signedUser)) {
+            if (signedUser == null || signedUser.isDeleted()) {
+                return ResultTuple.<EmailTokenEntity>builder()
+                        .result(CommonResult.FAILURE_SESSION_EXPIRED)
+                        .build();
+            }
+            return ResultTuple.<EmailTokenEntity>builder()
+                    .result(CommonResult.FAILURE_SUSPENDED)
+                    .build();
+        }
+
+        if (!signedUser.getEmail().equals(email)) {
+            return ResultTuple.<EmailTokenEntity>builder()
+                    .result(RemoveAccountResult.FAILURE_NO_PERMISSION)
+                    .build();
+        }
+
+        String code = RandomStringUtils.randomNumeric(6);   // "000000" ~ "999999"
+        String salt = RandomStringUtils.randomAlphanumeric(128); // a-z A~Z 0~9
+        EmailTokenEntity emailToken = UserService.generateEmailToken(email, userAgent, code, salt, 10);
+
+        if (this.emailTokenMapper.insert(emailToken) < 1) {
+            return ResultTuple.<EmailTokenEntity>builder().result(CommonResult.FAILURE).build();
+        }
+
+        //이메일 전송
+        Context context = new Context();
+        // thymeleaf 에서 사용할 데이터 입력
+        context.setVariable("code", emailToken.getCode());
+        // 보낼 html 파일 경로
+        String mailText = this.springTemplateEngine.process("user/removeAccountEmail", context);
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
+        mimeMessageHelper.setFrom("prjsghq7@gmail.com");
+        mimeMessageHelper.setTo(emailToken.getEmail());
+        mimeMessageHelper.setSubject("[ReBook] 회원탈퇴 인증번호");
+        mimeMessageHelper.setText(mailText, true);
+        this.javaMailSender.send(mimeMessage);
+
+        return ResultTuple.<EmailTokenEntity>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(emailToken)
+                .build();
+    }
+
     public ResultTuple<EmailTokenEntity> sendRecoverPasswordEmail(String email, String userAgent) throws MessagingException {
         if (!UserRegex.email.matches(email) || userAgent == null) {
             return ResultTuple.<EmailTokenEntity>builder()
@@ -222,9 +306,6 @@ public class UserService {
 
     public ResultTuple<EmailTokenEntity> sendRegisterEmail(String email, String userAgent) throws MessagingException {
         if (!UserRegex.email.matches(email) || userAgent == null) {
-//            ResultTuple<EmailTokenEntity> result = new ResultTuple<>();
-//            result.setResult(CommonResult.FAILURE);
-//            return result;
             return ResultTuple.<EmailTokenEntity>builder()
                     .result(CommonResult.FAILURE)
                     .build();
@@ -302,6 +383,13 @@ public class UserService {
                     || !EmailTokenRegex.emailSalt.matches(emailToken.getSalt())) {
                 return CommonResult.FAILURE;
             }
+            EmailTokenEntity dbEmailToken = this.emailTokenMapper.selectByEmailAndCodeAndSalt(emailToken.getEmail(), emailToken.getCode(), emailToken.getSalt());
+            if (dbEmailToken == null
+                    || !dbEmailToken.isUsed()
+                    || !dbEmailToken.getUserAgent().equals(emailToken.getUserAgent())) {
+                return CommonResult.FAILURE;
+            }
+
             if (!UserRegex._name.matches(user.getName())
                     || !UserRegex.email.matches(user.getEmail())
                     || !UserRegex.password.matches(user.getPassword())) {

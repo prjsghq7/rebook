@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>[ReBook] 회원 탈퇴 인증번호</title>
+</head>
+<body>
+<div style="width: 30rem; border: 0.0625rem solid #c0c0c0; border-radius: 0.25rem; box-sizing: border-box; margin: 0 auto; padding: 2rem 2.5rem; text-align: center">
+    <div class="logo" style="font-size: 1.375rem; font-weight: lighter; letter-spacing: 0.5rem">ReBook</div>
+    <div class="message" style="font-size: 1.5rem; margin-bottom: 1rem;">회원 탈퇴 인증번호</div>
+    <code class="code" style="background-color: #f0f0f0; display: block; font-family: monospace; font-size: 1.25rem; letter-spacing: 0.5rem; padding: 0.75rem 1.5rem;" th:text="${code}">000000</code>
+    <div class="line" style="height: 0.0625rem; background-color: #d0d0d0; display: block; margin: 1.5rem 0"></div>
+    <div class="messaage" style="color: #757575; margin-bottom: 0.375rem; text-align: start">
+        회원 탈퇴 요청에 따라 인증번호를 전송하였습니다. 위 인증번호를 정확하게 입력해 주세요.
+    </div>
+    <div class="messaage" style="color: #757575; text-align: start">
+        회원 탈퇴를 요청하지 않았다면 다른 사람이 계정을 사용하는 것일 수 있습니다. 지금 계정 보안을 점검하고 강화하세요.
+    </div>
+</div>
+<div class="copyright" style="width: 30rem; box-sizing: border-box; color: #a0a0a0; font-size: 0.85rem; line-height: 1.5; margin: 0 auto; padding-top: 1rem; text-align: center">
+    이 이메일은 ReBook 계정 서비스의 중요한 사항을 알려드리기 위해 발송되었습니다.<br>&copy; 2025 ReBook.
+</div>
+</body>
+</html>
