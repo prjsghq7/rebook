@@ -64,6 +64,21 @@
           AND `book_id` = #{bookId}
           AND `is_deleted` = FALSE
     </select>
+    <select id="selectPopularUserBooks">
+        SELECT `T1`.`book_id` AS `bookId`,
+               `T2`.`title` AS `title`,
+               `T2`.`cover` AS `cover`,
+               `T2`.`author` AS `author`,
+               COUNT(`T1`.id) AS `reviewCount`,
+               ROUND(AVG(`T1`.scope), 1) AS `avgScope`
+        FROM `rebook`.`reviews` AS `T1`
+        JOIN `rebook`.`books` AS `T2` ON `T1`.`book_id` = `T2`.`id`
+        WHERE `T1`.is_deleted = FALSE
+        GROUP BY `T1`.`book_id`
+        HAVING COUNT(`T1`.id) >= 1
+        ORDER BY `reviewCount` DESC, avgScope DESC
+        LIMIT 10
+    </select>
 
     <insert id="insert"
             useGeneratedKeys="true"

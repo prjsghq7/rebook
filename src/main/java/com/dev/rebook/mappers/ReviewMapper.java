@@ -1,5 +1,6 @@
 package com.dev.rebook.mappers;
 
+import com.dev.rebook.dtos.PopularBookDto;
 import com.dev.rebook.dtos.RecentReviewDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
@@ -22,4 +23,6 @@ public interface ReviewMapper {
     int insert(@Param("review") ReviewEntity review);
 
     int update(@Param("review") ReviewEntity review);
+
+    PopularBookDto[] selectPopularUserBooks();
 }

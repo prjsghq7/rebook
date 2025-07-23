@@ -1,5 +1,6 @@
 package com.dev.rebook.controllers;
 
+import com.dev.rebook.dtos.PopularBookDto;
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.entities.UserEntity;
@@ -62,5 +63,21 @@ public class HomeController {
                                                         ) {
         return this.bookService.searchBooksFromUserKeyword(categoryId, signedUser);
 
+    }
+
+    @RequestMapping(value = "/api/aladin/new-top-book", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public BookEntity[] getBooksNewTopBooks() {
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksNewAlladin();
+        if (result.getResult() != CommonResult.SUCCESS) {
+            return new BookEntity[0];
+        }
+        return result.getPayload();
+    }
+
+    @RequestMapping(value = "/book/popular-book", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public PopularBookDto[] getUserPopularBooks() {
+        return this.bookService.selectPopularUserBooks();
     }
 }

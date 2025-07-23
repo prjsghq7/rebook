@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const $bestsellerTrack = document.querySelector('[data-type="bestseller"] .book-track');
     const $keywordForm     = document.getElementById('keywordForm');
     const $keywordTrack    = $keywordForm.querySelector('.book-track');
+    const $newBookTrack = document.querySelector('.new-book-cover .book-track');
+    const $popularBookTopTrack = document.querySelector('.user-book-cover .book-track-top');
+    const $popularBookBottomTrack = document.querySelector('.user-book-cover .book-track-bottom');
 
     function renderBookCard(book, $container) {
         const card = document.createElement('div');
@@ -87,6 +90,107 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    async function fetchAndRenderNewBook() {
+        try {
+            const res = await fetch('/api/aladin/new-top-book');
+            if (!res.ok) {
+                dialog.showSimpleOk('오류', '오류로 인하여 신간 리스트 책 정보를 불러 올 수 없습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+
+            const books = await res.json(); // 그냥 배열임
+            $newBookTrack.innerHTML = '';
+
+            if (books.length === 0) {
+                $newBookTrack.classList.add('empty');
+            } else {
+                $newBookTrack.classList.remove('empty');
+                books.forEach(book => renderBookCard(book, $newBookTrack));
+            }
+
+        } catch (e) {
+            console.log(e);
+            dialog.showSimpleOk('오류', '책 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+        }
+    }
+
+    async function getUserPopularBooks() {
+        try {
+            const res = await fetch('/book/popular-book');
+            console.log(res);
+            if (!res.ok) {
+                dialog.showSimpleOk('오류', '책 정보를 불러 올 수 없습니다. 잠시 후 다시 시도해주세요.');
+                return;
+            }
+
+            const books = await res.json();
+            console.log(books);
+            const $root = document.querySelector('.user-book-cover');
+            $root.innerHTML = '';
+
+
+            const $left = document.createElement('div');
+            $left.className = 'left-column';
+
+            books.slice(0, 2).forEach((book, idx) => {
+                const card = document.createElement('div');
+                console.log(card);
+                card.className = 'rank-book-featured';
+                card.dataset.bookId = book.bookId;
+
+                const img = document.createElement('img');
+                img.src = book.cover;
+                img.alt = book.title;
+
+                const info = document.createElement('div');
+                info.className = 'rank-info';
+
+                info.innerHTML = `
+        <span class="rank-number">${idx + 1}</span>
+        <span class="rank-title">${book.title}</span>
+      `;
+
+                card.append(img, info);
+                card.onclick = () => location.href = `${window.origin}/book/?id=${book.bookId}`;
+                $left.append(card);
+            });
+            const $right   = document.createElement('div');
+            const $grid    = document.createElement('ul');
+            $right.className = 'right-column';
+            $grid.className  = 'rank-grid';
+
+            const leftRanks  = books.slice(2, 6);
+            const rightRanks = books.slice(6, 10);
+
+            for (let i = 0; i < 4; i++) {
+                [leftRanks[i], rightRanks[i]].forEach((bk, colIdx) => {
+                    if (!bk) return;
+                    const li = document.createElement('li');
+                    li.className = 'rank-book';
+                    li.dataset.bookId = bk.bookId;
+                    li.innerHTML = `
+          <span class="rank-number">${bk.rank ?? (colIdx ? 7 + i : 3 + i)}</span>
+          <span class="rank-title">${bk.title}</span>
+        `;
+                    li.onclick = () => location.href = `${window.origin}/book/?id=${bk.id}`;
+                    $grid.append(li);
+                });
+            }
+
+            $right.append($grid);
+            $root.append($left, $right);
+
+        } catch (e) {
+            dialog.showSimpleOk('오류', '책 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
+        }
+    }
+
+
+
+
+
     fetchAndRenderBestSeller();
     fetchAndRenderKeywordBooks();
+    fetchAndRenderNewBook();
+    getUserPopularBooks();
 });

@@ -1,10 +1,12 @@
 package com.dev.rebook.services;
 
+import com.dev.rebook.dtos.PopularBookDto;
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.BookMapper;
 import com.dev.rebook.mappers.CategoryMapper;
+import com.dev.rebook.mappers.ReviewMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.uesr.UserService;
@@ -33,14 +35,16 @@ import java.util.List;
 public class BookService {
     private final BookMapper bookMapper;
     private final CategoryMapper categoryMapper;
+    private final ReviewMapper reviewMapper;
 
     @Value("${api-aladin-api-key}")
     private String aladinApiKey;
 
     @Autowired
-    public BookService(BookMapper bookMapper, CategoryMapper categoryMapper) {
+    public BookService(BookMapper bookMapper, CategoryMapper categoryMapper, ReviewMapper reviewMapper) {
         this.bookMapper = bookMapper;
         this.categoryMapper = categoryMapper;
+        this.reviewMapper = reviewMapper;
     }
 
     public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
@@ -243,6 +247,30 @@ public class BookService {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
+    public ResultTuple<BookEntity[]> searchBooksNewAlladin() {
+        try {
+            StringBuilder aladinUrl = new StringBuilder();
+            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
+                    .append(aladinApiKey); // API 키
+            aladinUrl.append("&QueryType=ItemNewAll&Cover=Big&MaxResults=4&start=1&SearchTarget=Book&output=xml&Version=20131101");
+
+
+            // RestTemplate으로 API 호출
+            RestTemplate restTemplate = new RestTemplate();
+            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
+
+            // XML 응답을 BookEntity 배열로 파싱
+            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            System.out.println(books[0].getTitle());
+            return ResultTuple.<BookEntity[]>builder()
+                    .payload(books)
+                    .result(CommonResult.SUCCESS)
+                    .build();
+        } catch (Exception e) {
+            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
+        }
+    }
 
     public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId ,UserEntity signedUser) {
         try {
@@ -271,6 +299,10 @@ public class BookService {
             System.out.println("bookService : searchBooksFromAladin 예외처리");
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
+    }
+
+    public PopularBookDto[] selectPopularUserBooks() {
+        return this.reviewMapper.selectPopularUserBooks();
     }
 
     // 카테고리 thymeleaf
