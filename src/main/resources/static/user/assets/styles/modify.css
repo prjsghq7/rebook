@@ -83,9 +83,12 @@
     width: 15%;
 }
 
-#modifyForm > .input-wrapper > .-object-label > .category-wrapper > .category {
-    margin-right: 0.5rem;
-    display: inline-block;
+#modifyForm > .input-wrapper > .-object-label > .category-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+
+    margin-top: 0.25rem;
 }
 
 #modifyForm > .button-container {

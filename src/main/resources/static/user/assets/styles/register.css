@@ -215,9 +215,12 @@ body {
     scrollbar-color: #268dfa #caccce;
 }
 
-#registerForm > .container  > .input-wrapper > .-object-label > .category-wrapper > .category {
-    margin-right: 0.5rem;
-    display: inline-block;
+#registerForm > .container  > .input-wrapper > .-object-label > .category-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+
+    margin-top: 0.25rem;
 }
 
 #registerForm > .button-container {

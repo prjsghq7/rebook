@@ -1,0 +1,31 @@
+.-object-category-label {
+    border: 0.0625rem solid #c7e0ff;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.9375rem;
+    background-color: #f0f6ff;
+    color: #0065e0;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    user-select: none;
+}
+
+.-object-category-label:hover {
+    background-color: #e1efff;
+    border-color: #9fcbff;
+}
+
+.-object-category-label:has(.--input:checked) {
+    border-color: #abd1fd;
+    outline: 0.0625rem solid #2475cd;
+    background-color: #0065e0;
+}
+
+.-object-category-label > .--input {
+    display: none;
+}
+
+.-object-category-label > .--input:checked + .--caption {
+    font-weight: 600;
+    color: #ffffff;
+}

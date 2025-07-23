@@ -98,9 +98,9 @@
             <label class="-object-label">
                 <span class="--caption">관심 카테고리 선택</span>
                 <span class="category-wrapper">
-                    <label class="category" th:each="category : ${categories}">
-                        <input type="radio" name="categoryId" th:value="${category.id}" th:checked="${user.categoryId == category.id}">
-                        <span th:text="${category.displayText}"></span>
+                    <label class="-object-category-label" th:each="category : ${categories}">
+                        <input class="--input" type="radio" name="categoryId" th:value="${category.id}" th:checked="${user.categoryId == category.id}">
+                        <span class="--caption" th:text="${category.displayText}"></span>
                     </label>
                 </span>
                 <span class="--warning">관심 카테고리 선택해 주세요.</span>
