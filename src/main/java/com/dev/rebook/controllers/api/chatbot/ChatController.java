@@ -16,6 +16,7 @@ import com.dev.rebook.services.chatbot.GPTService;
 import com.dev.rebook.services.uesr.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -79,11 +80,11 @@ public class ChatController {
     @RequestMapping(value = "/room/delete", method = RequestMethod.DELETE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public Result deleteRoom(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
-                             @RequestParam(value = "room", required = false) ChatRoomEntity room) {
-        if (signedUser == null || signedUser.isDeleted() || signedUser.isSuspended() || !signedUser.isAdmin()) {
+                             @RequestParam(value = "roomId", required = false) int roomId) {
+        if (signedUser == null || signedUser.isDeleted() || signedUser.isSuspended()) {
             return CommonResult.FAILURE_SESSION_EXPIRED;
         }
-        return this.chatRoomService.deletedChatRoom(signedUser, room);
+        return this.chatRoomService.deletedChatRoom(signedUser, roomId);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

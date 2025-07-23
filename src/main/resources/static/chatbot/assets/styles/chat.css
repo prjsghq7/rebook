@@ -150,7 +150,7 @@
     transition: background-color 0.2s ease-in-out;
     display: block;
     width: 100%;
-    margin-bottom: 1.75rem;
+    margin-bottom: 0.5rem;
     border-radius: 0.875rem;
     height: 4rem;
 }
@@ -371,6 +371,7 @@
     border: none;
     cursor: pointer;
     transition: color 0.2s ease, transform 0.2s ease;
+    z-index: 99;
 }
 
 #chatbot > .chatbot-layout > .chat-room-view > ul.chat-room-list > li.item > .chat-room-delete-button:hover {

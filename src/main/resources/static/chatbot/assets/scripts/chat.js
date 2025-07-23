@@ -49,11 +49,6 @@ async function sendChatMessage() {
         return;
     }
 
-    if (!currentRoomId) {
-        dialog.showSimpleOk('오류', '먼저 채팅을 시작해주세요.');
-        return;
-    }
-
     if (!silentSend) {
         appendMessage('user', message);
     }
@@ -301,6 +296,32 @@ async function loadChatRooms() {
                     <div class="chat-room-date">${date}</div>
                 </div>
             `;
+            const $deleteCR = $item.querySelector('.chat-room-delete-button');
+            $deleteCR.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                dialog.show({
+                    title: '삭제',
+                    content: `${room.roomId}` + '채팅방을 정말 삭제하시겠습니까?',
+                    buttons: [
+                        {
+                            caption: '취소',
+                            color: 'gray',
+                            onClickCallback: ($modal) => {
+                                dialog.hide($modal);
+                            }
+                        },
+                        {
+                            caption: '확인',
+                            color: 'blue',
+                            onClickCallback: ($modal) => {
+                                dialog.hide($modal);
+                                deleteChatRoom(room.roomId);
+                            }
+                        }
+                    ]
+                });
+                return;
+            });
 
             // 클릭 시 진입 등 이벤트도 추가 가능
             $item.addEventListener('click', async () => {
@@ -309,7 +330,6 @@ async function loadChatRooms() {
                 clearMessage();
                 await loadChatMessage(currentRoomId);
             });
-
             $chatRoomList.appendChild($item);
         });
     } catch (e) {
@@ -355,5 +375,33 @@ async function loadChatMessage(roomId) {
     } catch (e) {
         dialog.showSimpleOk('오류', '알 수 없는 오류로인하여 채팅내역을 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
     }
+}
 
+async function deleteChatRoom(roomId) {
+    try {
+        const res = await fetch(`/api/chat/room/delete?roomId=${roomId}`, {
+            method: 'DELETE',
+            credentials: 'include'
+        });
+        const result = await res.json();
+        console.log(result);
+        if (result.result === 'FAILURE_SESSION_EXPIRED') {
+            dialog.showSimpleOk('오류', '로그인이 만료되었거나 권한이 없습니다. 잠시 후 다시 시도해주세요.', () => {
+                location.href = `${window.origin}/user/login`;
+            });
+            return;
+        }
+        if (result.result === 'FAILURE') {
+            dialog.showSimpleOk('오류', '채팅방을 삭제하지 못하였습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+        if (result.result === 'SUCCESS') {
+            alert('zz');
+            dialog.showSimpleOk('삭제', '채팅방을 삭제하였습니다.');
+            await loadChatRooms();
+
+        }
+    } catch (e) {
+        dialog.showSimpleOk('오류', '알 수 없는 오류로인하여 채팅방을 삭제하지 못하였습니다. 잠시 후 다시 시도해주세요.');
+    }
 }

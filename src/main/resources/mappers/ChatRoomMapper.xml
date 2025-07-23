@@ -42,6 +42,7 @@
                `is_deleted`  AS `isDeleted`
         FROM `rebook`.`chat_rooms`
         WHERE `user_id` = #{userId}
+        AND `is_deleted` = FALSE
     </select>
     <select id="selectedChatRoomByUserId" resultType="com.dev.rebook.entities.ChatRoomEntity">
         SELECT `id`          AS `id`,

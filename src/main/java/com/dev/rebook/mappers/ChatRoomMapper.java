@@ -18,7 +18,7 @@ public interface ChatRoomMapper {
 
     int updateChatRoomTitle(@Param(value = "id") int id, @Param(value = "title") String title);
 
-    int deleteChatRoom(@Param(value = "id") int id);
+    int deleteChatRoom(@Param(value = "id") int roomId, @Param(value = "userId") int userId);
 
     ChatRoomWithLastMessageDto[] selectChatRoomsWithLastMessageByUserId(@Param("userId") int userId);
 
