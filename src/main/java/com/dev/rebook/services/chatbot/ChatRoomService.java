@@ -93,25 +93,27 @@ public class ChatRoomService {
     }
 
     // 채팅방 삭제
-    public Result deletedChatRoom(UserEntity signedUser, ChatRoomEntity room) {
+    public Result deletedChatRoom(UserEntity signedUser, Integer roomId) {
         if (UserService.isInvalidUser(signedUser)) {
+            System.out.println("2");
             return CommonResult.FAILURE_SESSION_EXPIRED;
         }
 
-        if (room == null || room.getId() == null || room.getId() <= 0) {
+        if (roomId == null || roomId <= 0) {
             return ChatbotResult.FAILURE_ROOM_FIRED;
         }
 
-        ChatRoomEntity dbRoom = this.chatRoomMapper.selectChatRoomById(room.getId(), signedUser.getId());
+        ChatRoomEntity dbRoom = this.chatRoomMapper.selectChatRoomById(roomId, signedUser.getId());
 
         if (dbRoom == null || dbRoom.isDeleted()) {
             return CommonResult.FAILURE_ABSENT;
         }
 
         if (!dbRoom.getUserId().equals(signedUser.getId())) {
+            System.out.println("111111111111111111");
             return CommonResult.FAILURE_SESSION_EXPIRED;
         }
-        return chatRoomMapper.deleteChatRoom(dbRoom.getId()) > 0 ? CommonResult.SUCCESS : CommonResult.FAILURE;
+        return chatRoomMapper.deleteChatRoom(dbRoom.getId(), signedUser.getId()) > 0 ? CommonResult.SUCCESS : CommonResult.FAILURE;
     }
 
     public ResultTuple<ChatRoomWithLastMessageDto[]> getChatRoomsLastMessage(UserEntity signedUser) {
