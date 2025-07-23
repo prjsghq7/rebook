@@ -51,7 +51,6 @@ const requestDeleteReview = (reviewId) => {
                             color: 'blue',
                             onClickCallback: ($modal) => {
                                 dialog.hide($modal);
-                                window.close();
                             }
                         }
                     ]

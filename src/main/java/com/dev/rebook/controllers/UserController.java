@@ -121,6 +121,7 @@ public class UserController {
             return "redirect:/user/login";
         }
         model.addAttribute("signedUser", signedUser);
+        model.addAttribute("category", this.userService.getCategory(signedUser.getCategoryId()));
         model.addAttribute("recentReviews", this.reviewService.getRecentReviews(signedUser.getId()));
         System.out.println(this.reviewService.getRecentReviews(signedUser.getId()) == null);
         RecentReviewDto[] reviews = this.reviewService.getRecentReviews(signedUser.getId());

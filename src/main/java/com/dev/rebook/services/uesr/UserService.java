@@ -366,6 +366,10 @@ public class UserService {
         return contactMvnoMapper.selectAll();
     }
 
+    public CategoryEntity getCategory(String id) {
+        return this.categoryMapper.selectById(id);
+    }
+
     public List<CategoryEntity> getCategories() {
         return categoryMapper.selectAll();
     }

@@ -67,7 +67,7 @@
 
 #modifyForm > .title {
     font-size: 1.75rem;
-    font-weight: 200;
+    font-weight: 600;
     margin-bottom: 1rem;
 }
 
@@ -81,24 +81,6 @@
 
 #modifyForm > .input-wrapper > .-object-label > .--row > .-object-field.tel-input {
     width: 15%;
-}
-
-#modifyForm > .input-wrapper > .-object-label > .term-detail {
-    height: 10rem;
-
-    font: inherit;
-    padding: 0.5rem 0.5rem;
-    width: 100%;
-    border: 0.0625rem solid #268dfa;
-    border-top-left-radius: 0.5rem;
-    border-bottom-left-radius: 0.5rem;
-    outline: none;
-    background-color: #f3f3f3;
-    color: #272727;
-    resize: none;
-    overflow: auto;
-
-    scrollbar-color: #268dfa #caccce;
 }
 
 #modifyForm > .input-wrapper > .-object-label > .category-wrapper > .category {
