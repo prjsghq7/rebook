@@ -119,6 +119,10 @@ async function sendChatMessage() {
 
 $chatStartBtn.addEventListener('click', async (e) => {
     e.preventDefault();
+    if ($chatStartBtn.classList.contains('danger-text')) {
+        location.href = `${window.origin}/user/login`;
+        return;
+    }
     await startNewChatRoom();
 });
 

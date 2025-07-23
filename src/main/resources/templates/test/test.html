@@ -16,7 +16,6 @@
     <script defer src="/common/assets/scripts/dialog.js"></script>
     <script defer src="/chatbot/assets/scripts/chat.js"></script>
     <script type="module" defer src="/common/assets/scripts/loading.js"></script>
-<!--    <script defer src="/test/assets/scripts/keyword.js" type="module"></script>-->
     <script defer src="/test/assets/scripts/index.js" type="module"></script>
     <script defer src="/chatbot/assets/scripts/main-animation.js"></script>
 </head>
@@ -31,7 +30,7 @@
 <div id="default-area" class="main">
     <section data-type="bestseller" class="container book-section">
         <div class="div-title">
-            <h2 class="title">베스트 셀러</h2>
+            <h2 class="title">📚 베스트 셀러</h2>
             <span class="caption">이 달의 베스트셀러 도서 리스트입니다.</span>
         </div>
         <div class="carousel-cover">
@@ -43,6 +42,35 @@
                     </div>
                 </div>
                 <button class="carousel-control next" aria-label="다음">&gt;</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="container book-section" data-type="review-book">
+        <div class="div-title-d">
+            <h2 class="title">🔥 유저 PICK! 인기 급상승 도서</h2>
+            <span class="caption">무슨 책 볼지 고민될 땐? 남들이 본 책부터!</span>
+        </div>
+        <div class="user-recommend-book">
+            <div class="user-book-cover">
+                    <ul class="book-track-top">
+
+                    </ul>
+                <ul class="book-track-bottom">
+
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="container book-section" data-type="newBook">
+        <div class="div-title">
+            <h2 class="title">🌟 주목할 만한 신간리스트</h2>
+            <span class="caption">주목할 만한 신간리스트입니다.</span>
+        </div>
+        <div class="new-book">
+            <div class="new-book-cover">
+                <div class="book-track"></div>
             </div>
         </div>
     </section>
@@ -127,16 +155,13 @@
                             <button class="feature-button" data-target="main">
                                 <span class="caption">📚챗봇 도서 추천</span>
                             </button>
-                        </li>
-                        <li class="item">
-                            <button class="feature-button" data-target="keyword-search">
-                                <span class="caption">🔍키워드 검색</span>
-                            </button>
+                            <span class="sub-caption">"어떤 책을 읽을지 고민이라면? 챗봇에게 물어보세요"</span>
                         </li>
                         <li class="item">
                             <button class="feature-button" data-target="room">
                                 <span class="caption">💬채팅방 관리</span>
                             </button>
+                            <span class="sub-caption">"지금까지 나눈 대화들을 확인해보세요"</span>
                         </li>
                     </ul>
                 </div>
@@ -177,6 +202,7 @@
             </div>
 
             <div class="chat-view chat-room-view" data-view="room">
+                <button class="chat-close-button" aria-label="닫기">&times;</button>
                 <ul id="chatRoomList" class="chat-room-list">
                     <li class="item">ㅋㅋ</li>
                     <li class="item">1</li>
@@ -240,7 +266,31 @@
     </section>
 
 
+    <footer>
+        <div class="foot-header">
+            <ul class="list">
+                <li class="item">
+                    <a href="#" class="link">프로젝트 소개</a>
+                </li>
+                <li class="item">
+                    <a href="#" class="link">이용약관</a>
+                </li>
+                <li class="item">
+                    <a href="#" class="link">개인정보처리방</a>
+                </li>
+                <li class="item">
+                    <a href="#" class="link">광고 안내</a>
+                </li>
+            </ul>
+        </div>
+        <div class="foot-body">
+            <h2 class="title"></h2>
+        </div>
+    </footer>
+
+
 </div>
+
 
 
 </body>
