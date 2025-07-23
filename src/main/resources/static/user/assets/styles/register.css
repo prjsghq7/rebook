@@ -223,6 +223,10 @@ body {
     margin-top: 0.25rem;
 }
 
+#registerForm > .container  > .input-wrapper > .-object-label > .-object-check {
+    z-index: 1;
+}
+
 #registerForm > .button-container {
     align-items: stretch;
     display: flex;
