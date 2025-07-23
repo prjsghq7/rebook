@@ -36,8 +36,22 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         UserEntity user = this.userService.selectByProviderId(oauthUser.getAttribute("provider"),
                 oauthUser.getAttribute("providerId"));
         if (user != null) {
-            session.setAttribute("signedUser", user);
-            response.sendRedirect("/");
+            if (user.isDeleted() || user.isSuspended()) {
+                session.setAttribute("invalidEmail", oauthUser.getAttribute("email"));
+
+                String invalidReason;
+                if (user.isDeleted()) {
+                    invalidReason = "deleted";
+                } else {
+                    invalidReason = "suspended";
+                }
+                session.setAttribute("invalidReason", invalidReason);
+
+                response.sendRedirect("/user/login-fail");
+            } else {
+                session.setAttribute("signedUser", user);
+                response.sendRedirect("/");
+            }
         } else {
             // 세션에 사용자 정보 저장
             session.setAttribute("oauthUser", oauthUser);

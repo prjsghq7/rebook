@@ -1,0 +1,35 @@
+#default-area.login-fail {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#loginFailInfo {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    justify-content: center;
+}
+
+#loginFailInfo > .icon {
+    width: 10rem;
+}
+
+#loginFailInfo > .title {
+    font-size: 2.125rem;
+    font-weight: 700;
+    margin: 0.25rem 0 0.75rem 0;
+}
+
+#loginFailInfo > .caption {
+    font-size: 1.125rem;
+    font-weight: 400;
+}
+
+#loginFailInfo > .caption > .accent {
+    font-size: 1.125rem;
+    font-weight: 600;
+    text-decoration: underline;
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>Re:Book</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/user/assets/styles/login-fail.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}"></th:block>
+<div id="default-area" class="login-fail">
+
+    <div id="loginFailInfo">
+        <img class="icon" src="/user/assets/images/login/login-fail-icon.png" alt="login-fail">
+        <h1 class="title">로그인 실패</h1>
+        <span class="caption">
+        <span class="accent" th:text="${invalidEmail}"></span>
+         계정은 현재 사용할 수 없습니다.
+    </span>
+        <span class="caption" th:if="${invalidReason == 'suspended'}">해당 계정은 정지된 상태입니다.</span>
+        <span class="caption" th:if="${invalidReason == 'deleted'}">해당 계정은 탈퇴 처리중인 상태입니다.</span>
+        <span class="caption" th:if="${invalidReason != 'suspended' && invalidReason != 'deleted'}">알 수 없는 오류로 로그인에 실패하였습니다.</span>
+        <span class="caption">관리자에게 문의 해주세요.</span>
+    </div>
+
+</div>
+</body>
+</html>

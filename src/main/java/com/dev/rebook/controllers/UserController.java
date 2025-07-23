@@ -284,6 +284,14 @@ public class UserController {
         return "redirect:/user/login";
     }
 
+    @RequestMapping(value = "/login-fail", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
+    public String getLoginFail(HttpSession session,
+                               Model model) {
+        model.addAttribute("invalidEmail", session.getAttribute("invalidEmail"));
+        model.addAttribute("invalidReason", session.getAttribute("invalidReason"));
+        return "user/loginFail";
+    }
+
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String postLogin(@RequestParam(value = "email") String email,
