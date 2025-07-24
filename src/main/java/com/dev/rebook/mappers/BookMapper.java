@@ -17,4 +17,6 @@ public interface BookMapper {
 
     // DB에 저장된 전체 책 검색
     BookEntity[] selectAll();
+
+    int increaseView(@Param("id") String id);
 }

@@ -29,11 +29,6 @@ public class BookController {
         this.reviewService = reviewService;
     }
 
-//    @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-//    public String getSearch() {
-//        return "book/search";
-//    }
-
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getSearch(@RequestParam(value = "keyword", required = false) String keyword,
                             SearchVo searchVo,
@@ -62,6 +57,7 @@ public class BookController {
     public String getIndex(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
                            @RequestParam(value = "id", required = false) String id,
                            Model model) {
+        this.bookService.incrementView(id);
         BookEntity book = this.bookService.getBookById(id);
         model.addAttribute("book", book);
         ReviewWithProfileDto[] reviews = this.reviewService.getReviewsByBookId(id, signedUser);

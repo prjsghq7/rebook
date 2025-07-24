@@ -50,4 +50,12 @@
                `view`        AS 'view'
         FROM `rebook`.`books`
     </select>
+
+    <update id="increaseView">
+        UPDATE `rebook`.`books`
+        SET `view` = `view` + 1
+        WHERE `id` = #{id}
+        LIMIT 1
+    </update>
+
 </mapper>

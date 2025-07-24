@@ -23,6 +23,16 @@
     <div class="info-wrapper">
         <img class="cover" th:src="${book.cover}" th:alt="${book.title}">
         <table class="book-info -flex-stretch">
+            <thead>
+            <tr>
+                <td colspan="2">
+                    <div class="view-area">
+                        <img class="icon" src="/book/assets/images/book-views.png" alt="조회수">
+                        <span class="views" th:text="${book.view}"></span>
+                    </div>
+                </td>
+            </tr>
+            </thead>
             <tbody>
             <tr>
                 <th>저자</th>
