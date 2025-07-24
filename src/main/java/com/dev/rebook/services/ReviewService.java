@@ -147,7 +147,7 @@ public class ReviewService {
             page = 1;
         }
 
-        int totalCount = this.reviewMapper.selectCountReview();
+        int totalCount = this.reviewMapper.selectCountReview(signedUser, reviewPageButtonVo);
         ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
         ReviewPageItemDto[] reviews = this.reviewMapper.selectReviewAll(signedUser, reviewPageVo, reviewPageButtonVo);
         return Pair.of(reviews, reviewPageVo);

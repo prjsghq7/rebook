@@ -112,6 +112,9 @@
                  JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
                  JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
         WHERE `r`.`is_deleted` = FALSE
+        <if test="reviewPageButtonVo.mine == true">
+            AND `r`.`user_id` = #{user.id}
+        </if>
     </select>
 
     <select id="selectReviewAll" resultType="com.dev.rebook.dtos.ReviewPageItemDto">

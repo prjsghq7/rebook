@@ -30,7 +30,8 @@ public interface ReviewMapper {
 
     PopularBookDto[] selectPopularUserBooks();
 
-    int selectCountReview();
+    int selectCountReview(@Param("user") UserEntity user,
+                          @Param("reviewPageButtonVo") ReviewPageButtonVo reviewPageButtonVo);
 
     ReviewPageItemDto[] selectReviewAll(@Param("user") UserEntity user,
                                         @Param("reviewPageVo") ReviewPageVo reviewPageVo,
