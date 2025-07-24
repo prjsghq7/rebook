@@ -201,13 +201,14 @@
     background:linear-gradient(to bottom right,var(--white),var(--blue-50));
 }
 
-/* ----- Book Cover ----- */
+
 .book-section .carousel-track .book-card>.book-cover{
     width:100%;
     padding-top:150%;
     position:relative;
     background-color:var(--blue-50);
     overflow:hidden;
+    cursor: pointer;
 }
 .book-section .carousel-track .book-card>.book-cover>img{
     position:absolute;
@@ -370,6 +371,7 @@
     gap: 1rem;
     align-items: center;
     width: 12.5rem;
+    cursor: pointer;
 }
 .book-section > .new-book > .new-book-cover > .book-track > .book-card > .book-title {
     padding: 1rem;
@@ -404,6 +406,10 @@
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    cursor: pointer;
+}
+.user-book-cover .left-column .rank-book-featured:hover > .rank-info > .rank-title {
+    color: #579aef;
 }
 
 .user-book-cover .left-column .rank-book-featured img {
@@ -411,11 +417,16 @@
     height: auto;
     border-radius: 0.25rem;
 }
+.user-book-cover .left-column .rank-book-featured .rank-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
 
 .user-book-cover .left-column .rank-book-featured .rank-info .rank-number {
     font-size: 1.125rem;
     font-weight: 700;
-    color: #333333;
+    color: #e74c3c;
 }
 
 .user-book-cover .left-column .rank-book-featured .rank-info .rank-title {
@@ -449,9 +460,8 @@
     border-bottom: 0.0625rem solid #e0e0e0;
     cursor: pointer;
 }
-
-.user-book-cover .right-column .rank-grid .rank-book:last-child {
-    border-bottom: none;
+.user-book-cover .right-column .rank-grid .rank-book:hover > .rank-title {
+    color: #579aef;
 }
 
 .user-book-cover .right-column .rank-grid .rank-book .rank-number {
