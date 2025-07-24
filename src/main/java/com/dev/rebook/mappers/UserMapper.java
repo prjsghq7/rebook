@@ -1,8 +1,14 @@
 package com.dev.rebook.mappers;
 
+import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
+import com.dev.rebook.dtos.dashboard.GenderStatsDto;
+import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
 import com.dev.rebook.entities.UserEntity;
+import com.nimbusds.openid.connect.sdk.claims.Gender;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface UserMapper {
@@ -28,4 +34,11 @@ public interface UserMapper {
     int selectCountByContact(@Param(value = "contactFirst") String contactFirst,
                              @Param(value = "contactSecond") String contactSecond,
                              @Param(value = "contactThird") String contactThird);
+
+    List<ProviderStatsDto> selectProviderStats();
+
+    List<GenderStatsDto> selectGenderStats();
+
+    List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats();
+
 }

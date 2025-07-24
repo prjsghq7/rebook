@@ -177,4 +177,26 @@
           AND `contact_second` = #{contactSecond}
           AND `contact_third` = #{contactThird}
     </select>
+
+    <select id="selectProviderStats" resultType="com.dev.rebook.dtos.dashboard.ProviderStatsDto">
+        SELECT `provider` AS `provider`,
+               COUNT(0)   AS `userCount`
+        FROM `rebook`.`users`
+        GROUP BY `provider`
+    </select>
+
+    <select id="selectGenderStats" resultType="com.dev.rebook.dtos.dashboard.GenderStatsDto">
+        SELECT `gender` AS `gender`,
+               COUNT(0) AS `userCount`
+        FROM `rebook`.`users`
+        GROUP BY `gender`
+    </select>
+
+    <select id="selectDailyUserRegisterStats"
+            resultType="com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto">
+        SELECT `created_at` AS `date`,
+               COUNT(0)     AS `userCount`
+        FROM `rebook`.`users`
+        GROUP BY `created_at`
+    </select>
 </mapper>

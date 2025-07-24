@@ -1,5 +1,8 @@
 package com.dev.rebook.services.uesr;
 
+import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
+import com.dev.rebook.dtos.dashboard.GenderStatsDto;
+import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
 import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.entities.ContactMvnoEntity;
 import com.dev.rebook.entities.EmailTokenEntity;
@@ -74,6 +77,18 @@ public class UserService {
         this.javaMailSender = javaMailSender;
         this.springTemplateEngine = springTemplateEngine;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    public List<ProviderStatsDto> getProviderStats() {
+        return this.userMapper.selectProviderStats();
+    }
+
+    public List<GenderStatsDto> getGenderStats() {
+        return this.userMapper.selectGenderStats();
+    }
+
+    public List<DailyUserRegisterStatsDto> getDailyUserRegisterStats() {
+        return this.userMapper.selectDailyUserRegisterStats();
     }
 
     public Result removeAccount(UserEntity signedUser, EmailTokenEntity emailToken) {

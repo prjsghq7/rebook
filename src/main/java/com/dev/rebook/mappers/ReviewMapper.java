@@ -5,12 +5,15 @@ import com.dev.rebook.dtos.RecentReviewDto;
 import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
+import com.dev.rebook.dtos.dashboard.DailyReviewRegisterStatsDto;
 import com.dev.rebook.entities.ReviewEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.vos.ReviewPageButtonVo;
 import com.dev.rebook.vos.ReviewPageVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 @Mapper
 public interface ReviewMapper {
@@ -36,4 +39,7 @@ public interface ReviewMapper {
     ReviewPageItemDto[] selectReviewAll(@Param("user") UserEntity user,
                                         @Param("reviewPageVo") ReviewPageVo reviewPageVo,
                                         @Param("reviewPageButtonVo") ReviewPageButtonVo reviewPageButtonVo);
+
+    List<DailyReviewRegisterStatsDto> selectDailyReviewRegisterStats();
+
 }

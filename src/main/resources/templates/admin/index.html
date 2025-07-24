@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/admin/assets/styles/index.css" rel="stylesheet" type="text/css">
+    <script defer src="/common/assets/scripts/common.js" rel="text/javascript"></script>
+    <script defer src="/common/assets/scripts/dialog.js" rel="text/javascript"></script>
+    <script defer src="/admin/assets/scripts/index.js" rel="text/javascript"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}">
+</th:block>
+<div id="default-area" class="admin">
+    <h1 class="title">관리자 페이지</h1>
+
+    <section id="dashboardSection">
+        <h2 class="sub-title">회원 통계</h2>
+        <div class="chart-wrapper">
+            <!-- provider 별 회원 수 -->
+            <div class="chart-pie" id="userProvider"></div>
+            <!-- 회원 성별 비율 -->
+            <div class="chart-pie" id="userGender"></div>
+        </div>
+        <div class="chart-wrapper">
+            <!-- 날짜 별 회원가입한 회원 수 -->
+            <div class="chart-line" id="userRegister"></div>
+        </div>
+
+<!--        <h2 class="sub-title">책 통계</h2>-->
+<!--        <div class="chart-wrapper">-->
+<!--            -->
+<!--        </div>-->
+
+        <h2 class="sub-title">리뷰 통계</h2>
+        <div class="chart-wrapper">
+            <!-- 날짜 별 등록 리뷰 수 -->
+            <div class="chart-line" id="reviewRegister"></div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

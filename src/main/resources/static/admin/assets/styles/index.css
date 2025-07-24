@@ -1,0 +1,49 @@
+#default-area.admin {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    justify-content: flex-start;
+}
+
+#default-area > .title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+#dashboardSection {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+#dashboardSection > .sub-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+#dashboardSection > .chart-wrapper {
+    align-items: stretch;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+#dashboardSection > .chart-wrapper > .chart-pie {
+    flex-grow: 1;
+
+    height: 22.5rem;
+    background-color: #86b6f6;
+}
+
+#dashboardSection > .chart-wrapper > .chart-line {
+    flex-grow: 1;
+
+    height: 30rem;
+    background-color: #e4a5f4;
+}

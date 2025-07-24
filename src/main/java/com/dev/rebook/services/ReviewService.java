@@ -4,6 +4,7 @@ import com.dev.rebook.dtos.RecentReviewDto;
 import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
+import com.dev.rebook.dtos.dashboard.DailyReviewRegisterStatsDto;
 import com.dev.rebook.entities.ReviewEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.ReviewMapper;
@@ -19,6 +20,7 @@ import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReviewService {
@@ -29,6 +31,10 @@ public class ReviewService {
     @Autowired
     public ReviewService(ReviewMapper reviewMapper) {
         this.reviewMapper = reviewMapper;
+    }
+
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegisterStats() {
+        return this.reviewMapper.selectDailyReviewRegisterStats();
     }
 
     public ReviewEntity getReviewById(int id) {

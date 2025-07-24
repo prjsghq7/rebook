@@ -15,7 +15,10 @@
             <a href="/review/" class="link">Review</a>
         </li>
         <li class="item">
-            <a href="/user/info" class="link">MYPage</a>
+            <a href="/user/info" class="link">MyPage</a>
+        </li>
+        <li class="item" th:if="${signedUser != null && signedUser.Admin == true}">
+            <a href="/admin/" class="link">AdminPage</a>
         </li>
     </ul>
     <span role="none" class="-flex-stretch"></span>

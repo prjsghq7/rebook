@@ -154,4 +154,13 @@
         </choose>
         LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}
     </select>
+
+    <select id="selectDailyReviewRegisterStats"
+            resultType="com.dev.rebook.dtos.dashboard.DailyReviewRegisterStatsDto">
+        SELECT `created_at` AS `date`,
+               COUNT(0)     AS `reviewCount`
+        FROM `rebook`.`reviews`
+        GROUP BY `created_at`
+    </select>
+
 </mapper>
