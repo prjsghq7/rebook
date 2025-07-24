@@ -11,6 +11,7 @@ const $chatCloseBtn = document.querySelectorAll('.chat-close-button');
 const $chatFeatureList = $chatLayout.querySelectorAll(':scope > .chat-view.chat-intro-view > .intro-body > .intro-feature-list > .item > .feature-button');
 const $chatMessage = document.getElementById('chat-message');
 const $chatBackBtn = $chatMessage.querySelector(':scope > .chat-form-header > .chat-back-button');
+const $infoItems = document.querySelectorAll('.chat-room-info .info-list .item');
 
 let currentRoomId = null;
 let silentSend = false;
@@ -33,7 +34,6 @@ $chatIcon.addEventListener('click', () => {
         $chatIcon.setVisible(false);
     }
 });
-
 
 
 $chatForm.onsubmit = async (e) => {
@@ -63,7 +63,7 @@ async function sendChatMessage() {
 
         const res = await fetch('/api/chat/register', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body),
             credentials: 'include'
         });
@@ -409,3 +409,45 @@ async function deleteChatRoom(roomId) {
         dialog.showSimpleOk('오류', '알 수 없는 오류로인하여 채팅방을 삭제하지 못하였습니다. 잠시 후 다시 시도해주세요.');
     }
 }
+
+const help_answers = {
+    service: `Re:Book은 사용자의 선호와 리뷰 데이터를 기반으로
+도서를 추천하고, 챗봇·키워드 검색·리뷰 기능을 지원하는
+AI 서점 서비스입니다.`,
+
+    recommend: `추천 로직은
+1) 리뷰 수,
+2) 평균 평점,
+3) 사용자 선호 카테고리,
+4) GPT 연관 키워드
+를 종합하여 순위를 매깁니다.`,
+
+    chatbot: `챗봇은 OpenAI GPT‑4o API를 사용합니다.
+대화 내역과 키워드 입력을 컨텍스트로 보내고,
+책 메타데이터를 결합해 답변을 생성합니다.`,
+
+    privacy: `모든 개인정보는 암호화되어 저장되며,
+결제·주문 정보를 포함한 민감 데이터는
+국내 클라우드 KISA 인증 기준을 준수합니다.`,
+
+    delete: `마이페이지 > 회원탈퇴 메뉴에서 즉시 탈퇴할 수 있습니다.
+탈퇴 후 7일간 복구 가능하며,
+그 이후에는 데이터가 완전히 삭제됩니다.`
+};
+$infoItems.forEach($item => {
+    $item.addEventListener('clikc', () => {
+        const key = $item.dataset.key;
+        if (!key || !help_answers[key]) {
+            return;
+        }
+        showChatView('main');
+        clearMessage();
+
+        const $typingLi = appendMessage('bot', 'typing');
+
+        setTimeout(() => {
+            removeTypingBubble();
+            appendMessage('bot', help_answers[key]);
+        }, 600);
+    });
+});
