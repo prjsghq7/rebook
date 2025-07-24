@@ -2,9 +2,13 @@ package com.dev.rebook.mappers;
 
 import com.dev.rebook.dtos.PopularBookDto;
 import com.dev.rebook.dtos.RecentReviewDto;
+import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
 import com.dev.rebook.entities.ReviewEntity;
+import com.dev.rebook.entities.UserEntity;
+import com.dev.rebook.vos.ReviewPageButtonVo;
+import com.dev.rebook.vos.ReviewPageVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -25,4 +29,10 @@ public interface ReviewMapper {
     int update(@Param("review") ReviewEntity review);
 
     PopularBookDto[] selectPopularUserBooks();
+
+    int selectCountReview();
+
+    ReviewPageItemDto[] selectReviewAll(@Param("user") UserEntity user,
+                                        @Param("reviewPageVo") ReviewPageVo reviewPageVo,
+                                        @Param("reviewPageButtonVo") ReviewPageButtonVo reviewPageButtonVo);
 }

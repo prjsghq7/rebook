@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Re:Book(리뷰 게시판)</title>
+    <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
+    <link href="/review/assets/styles/index.css" rel="stylesheet" type="text/css">
+    <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/review/assets/scripts/index.js"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}">
+</th:block>
+<div id="default-area">
+    <form id="button-form">
+        <div class="-object-radio-group">
+            <label class="radio-label">
+                <input type="radio" name="sort" value="0" th:checked="${reviewPageButtonVo.sort eq 0}">
+                <span class="caption">제목순</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="sort" value="1" th:checked="${reviewPageButtonVo.sort eq 1}">
+                <span class="caption">별점순</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="sort" value="2" th:checked="${reviewPageButtonVo.sort eq 2}">
+                <span class="caption">닉네임순</span>
+            </label>
+            <label class="radio-label">
+                <input type="radio" name="sort" value="3" th:checked="${reviewPageButtonVo.sort eq 3}">
+                <span class="caption">작성일순</span>
+            </label>
+            <span class="-flex-stretch"></span>
+            <label class="check-label" th:if="${signedUser != null}">
+                <input type="checkbox" name="mine" th:checked="${reviewPageButtonVo.mine}">
+                <span class="caption">내 작성글</span>
+            </label>
+        </div>
+    </form>
+    <div id="grid-container">
+        <div class="item" th:each="review : ${reviews}">
+            <a th:href="@{'/book/' (id=${review.bookId})}" class="detail">
+                <div class="first">
+                    <img th:src="${review.cover}" alt="#"
+                         class="cover">
+                </div>
+                <div class="second">
+                    <span class="title" th:text="${review.bookTitle}"></span>
+                    <span class="content" th:text="${review.comment}"></span>
+                    <div class="user-scope">
+                        <span class="nickname" th:text="${review.nickname}"></span>
+                        <span class="scope">
+                            <img class="star" src="/review/assets/images/star-fill.png" alt="fill"
+                                 th:each="i : ${#numbers.sequence(1, review.scope)}"><img class="star"
+                                                                                          src="/review/assets/images/star-empty.png"
+                                                                                          alt="empty"
+                                                                                          th:if="${review.scope < 5}"
+                                                                                          th:each="i : ${#numbers.sequence(1, 5 - review.scope)}">
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+    <div class="page-container">
+        <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
+           th:text="${reviewPage}"
+           th:href="@{/review/ (page = ${reviewPage}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
+           th:classappend="${reviewPage == reviewPageVo.page}? '-selected'"></a>
+    </div>
+</div>
+</body>
+</html>

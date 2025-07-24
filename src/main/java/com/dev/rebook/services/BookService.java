@@ -48,12 +48,10 @@ public class BookService {
     }
 
     public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
-        System.out.println("서비스 도착 : " + keyword);
-        if(keyword == null || keyword.isEmpty()) {
-            System.out.println("bookService : keyword 값이 없음");
+        if (keyword == null || keyword.isEmpty()) {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
-        
+
         try {
             // 키워드 URL 인코딩
 //            String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
@@ -76,33 +74,25 @@ public class BookService {
              * SearchTarget : 도서
              * Sort : 관련도
              * */
-            System.out.println("QueryType : " + searchVo.getSearchType());
             if (!searchVo.getSearchType().equals("-1")) {
                 aladinUrl.append("&QueryType=")
                         .append(searchVo.getSearchType()); // 검색어 종류 ( 제목 + 저자, 저자, 제목 등 )
             }
-            System.out.println("SearchTarget : " + searchVo.getSearchTarget());
             if (!searchVo.getSearchTarget().equals("-1")) {
                 aladinUrl.append("&SearchTarget=")
                         .append(searchVo.getSearchTarget()); // 검색 대상 Mall ( 도서, 외국도서, eBook 등 )
             }
-            System.out.println("Sort : " + searchVo.getSort());
             if (!searchVo.getSort().equals("-1")) {
                 aladinUrl.append("&Sort=")
                         .append(searchVo.getSort()); // 정렬순서 ( 출간일, 판매량, 제목 등 )
             }
 
-            System.out.println("aladinUrl : " + aladinUrl.toString());
-
 
             // RestTemplate으로 API 호출
             RestTemplate restTemplate = new RestTemplate();
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-            System.out.println("서비스에서 xmlResponse 받았음");
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse);
-            System.out.println("서비스에서 books 배열에 담았음");
-//            System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
@@ -125,6 +115,8 @@ public class BookService {
             // item 태그들 찾기
             NodeList items = document.getElementsByTagName("item");
 
+            int insertResult = 0; // 신규 추가된 DB
+
             // 각 item을 BookEntity로 변환
             for (int i = 0; i < items.getLength(); i++) {
                 Element item = (Element) items.item(i);
@@ -143,16 +135,14 @@ public class BookService {
                 book.setAdult(parseBoolean(getElementText(item, "adult", false)));
 
                 // DB에 있으면 DB에서 꺼내 저장 없으면 신규로 Insert하기
-
-                if (this.bookMapper.selectCountById(book.getId()) > 0) {
-                    System.out.println("DB에 존재 : " + book.getTitle());
-                } else {
-                    int insertResult = this.bookMapper.insert(book);
-                    System.out.println("DB에 추가 : " + insertResult);
+                if (this.bookMapper.selectCountById(book.getId()) <= 0) {
+                    insertResult += this.bookMapper.insert(book);
                 }
                 booksList.add(this.bookMapper.selectById(book.getId()));
             }
-
+            if (insertResult > 0) {
+                System.out.println("DB에 신규 추가된 책 개수 : " + insertResult);
+            }
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 실패: " + e.getMessage());
         }

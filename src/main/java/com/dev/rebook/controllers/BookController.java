@@ -38,10 +38,17 @@ public class BookController {
     public String getSearch(@RequestParam(value = "keyword", required = false) String keyword,
                             SearchVo searchVo,
                             Model model) {
-        System.out.println("컨트롤러 도착 : " + keyword + "/ SearchVo : getSearchType - " + searchVo.getSearchType() + " getSearchTarget - " + searchVo.getSearchTarget() + " getSort - " + searchVo.getSort());
+        if (keyword != null && !keyword.isEmpty()) {
+            model.addAttribute("keyword", keyword);
+        }
+
+        if (searchVo.getSearchType() != null &&
+                searchVo.getSearchTarget() != null &&
+                searchVo.getSort() != null) {
+            model.addAttribute("searchVo", searchVo);
+        }
 
         ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromAladin(keyword, searchVo);
-        System.out.println(result);
 
         if (result.getResult() != CommonResult.SUCCESS) {
             model.addAttribute("books", null);
@@ -59,7 +66,6 @@ public class BookController {
         model.addAttribute("book", book);
         ReviewWithProfileDto[] reviews = this.reviewService.getReviewsByBookId(id, signedUser);
         model.addAttribute("reviews", reviews);
-        System.out.println(reviews.length);
         return "book/index";
     }
 }

@@ -72,7 +72,7 @@
                COUNT(`T1`.id) AS `reviewCount`,
                ROUND(AVG(`T1`.scope), 1) AS `avgScope`
         FROM `rebook`.`reviews` AS `T1`
-        JOIN `rebook`.`books` AS `T2` ON `T1`.`book_id` = `T2`.`id`
+                 JOIN `rebook`.`books` AS `T2` ON `T1`.`book_id` = `T2`.`id`
         WHERE `T1`.is_deleted = FALSE
         GROUP BY `T1`.`book_id`
         HAVING COUNT(`T1`.id) >= 1
@@ -103,7 +103,52 @@
             `modified_at` = #{review.modifiedAt},
             `is_deleted` = #{review.isDeleted}
         WHERE `id` = #{review.id}
-        LIMIT 1
+            LIMIT 1
     </update>
 
+    <select id="selectCountReview" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`reviews` AS `r`
+                 JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
+                 JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
+        WHERE `r`.`is_deleted` = FALSE
+    </select>
+
+    <select id="selectReviewAll" resultType="com.dev.rebook.dtos.ReviewPageItemDto">
+        SELECT `b`.`id` AS `bookId`,
+        `b`.`title` AS `bookTitle`,
+        `r`.`comment` AS `comment`,
+        `u`.`nickname` AS `nickname`,
+        `b`.`cover` AS `cover`,
+        `r`.`scope` AS `scope`
+        FROM `rebook`.`reviews` AS `r`
+        JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
+        JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
+        WHERE `r`.`is_deleted` = FALSE
+        <if test="reviewPageButtonVo.mine == true">
+            AND `r`.`user_id` = #{user.id}
+        </if>
+        <choose>
+            <!-- 제목순 -->
+            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 0">
+                ORDER BY `b`.`title` DESC
+            </when>
+            <!-- 별점순 -->
+            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 1">
+                ORDER BY `r`.`scope` DESC
+            </when>
+            <!-- 닉네임순 -->
+            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 2">
+                ORDER BY `u`.`nickname` DESC
+            </when>
+            <!-- 작성일순 -->
+            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 3">
+                ORDER BY `r`.`created_at` DESC
+            </when>
+            <otherwise>
+                ORDER BY `b`.`title` DESC
+            </otherwise>
+        </choose>
+        LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}
+    </select>
 </mapper>

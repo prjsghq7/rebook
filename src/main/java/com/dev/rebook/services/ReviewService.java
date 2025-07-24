@@ -1,6 +1,7 @@
 package com.dev.rebook.services;
 
 import com.dev.rebook.dtos.RecentReviewDto;
+import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
 import com.dev.rebook.entities.ReviewEntity;
@@ -11,7 +12,10 @@ import com.dev.rebook.results.Result;
 import com.dev.rebook.results.review.DeleteResult;
 import com.dev.rebook.results.review.ModifyResult;
 import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.vos.ReviewPageButtonVo;
+import com.dev.rebook.vos.ReviewPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -135,5 +139,17 @@ public class ReviewService {
         return this.reviewMapper.insert(review) > 0 ?
                 CommonResult.SUCCESS :
                 CommonResult.FAILURE;
+    }
+
+
+    public Pair<ReviewPageItemDto[], ReviewPageVo> getReviewAll(UserEntity signedUser, int page, ReviewPageButtonVo reviewPageButtonVo) {
+        if (page < 1) {
+            page = 1;
+        }
+
+        int totalCount = this.reviewMapper.selectCountReview();
+        ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
+        ReviewPageItemDto[] reviews = this.reviewMapper.selectReviewAll(signedUser, reviewPageVo, reviewPageButtonVo);
+        return Pair.of(reviews, reviewPageVo);
     }
 }
