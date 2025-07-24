@@ -12,6 +12,8 @@ const $chatFeatureList = $chatLayout.querySelectorAll(':scope > .chat-view.chat-
 const $chatMessage = document.getElementById('chat-message');
 const $chatBackBtn = $chatMessage.querySelector(':scope > .chat-form-header > .chat-back-button');
 const $infoItems = document.querySelectorAll('.chat-room-info .info-list .item');
+const CSRF_TOKEN  = document.querySelector('meta[name="_csrf"]').content;
+const CSRF_HEADER = document.querySelector('meta[name="_csrf_header"]').content;
 
 let currentRoomId = null;
 let silentSend = false;
@@ -63,7 +65,10 @@ async function sendChatMessage() {
 
         const res = await fetch('/api/chat/register', {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+                'Content-Type': 'application/json',
+                [CSRF_HEADER]: CSRF_TOKEN,
+            },
             body: JSON.stringify(body),
             credentials: 'include'
         });
@@ -130,6 +135,10 @@ async function startNewChatRoom(skipGreeting = false) {
     try {
         const res = await fetch('/api/chat/room/register', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [CSRF_HEADER]: CSRF_TOKEN,
+            },
             credentials: 'include'
         });
         const result = await res.json();

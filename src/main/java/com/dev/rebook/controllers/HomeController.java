@@ -36,14 +36,14 @@ public class HomeController {
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String getTest(Model model,
                           @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
-        List<CategoryEntity> CIds = this.bookService.getCategoryId();
-        model.addAttribute("CIds", CIds);
+        List<CategoryEntity> categories = this.bookService.getCategoryId();
+        model.addAttribute("categories", categories);
         if (UserService.isInvalidUser(signedUser)) {
-            model.addAttribute("UserCId", CIds.get(0).getId());
+            model.addAttribute("UserCId", categories.get(0).getId());
         } else {
             model.addAttribute("UserCId", signedUser.getCategoryId());
         }
-        return "test/test";
+        return "home/home";
 
     }
     @RequestMapping(value = "/api/aladin/bestseller", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -61,7 +61,7 @@ public class HomeController {
     public ResultTuple<BookEntity[]> getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId,
                                            @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser
                                                         ) {
-        return this.bookService.searchBooksFromUserKeyword(categoryId, signedUser);
+        return this.bookService.searchBooksFromUsercategory(categoryId, signedUser);
 
     }
 

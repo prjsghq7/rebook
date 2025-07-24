@@ -85,7 +85,7 @@ function initCarousel(section) {
 
 /* 초기 세팅 */
 document.addEventListener('DOMContentLoaded', () => {
-    ['[data-type="bestseller"]', '[data-type="keyword"]']
+    ['[data-type="bestseller"]', '[data-type="category"]']
         .forEach(sel => {
             const sec = document.querySelector(sel);
             if (!sec) return;
