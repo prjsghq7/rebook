@@ -61,7 +61,7 @@ public class HomeController {
     public ResultTuple<BookEntity[]> getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId,
                                            @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser
                                                         ) {
-        return this.bookService.searchBooksFromUsercategory(categoryId, signedUser);
+        return this.bookService.searchBooksFromUserCategory(categoryId, signedUser);
 
     }
 

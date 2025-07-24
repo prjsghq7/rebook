@@ -263,7 +263,7 @@ public class BookService {
         }
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId, UserEntity signedUser) {
+    public ResultTuple<BookEntity[]> searchBooksFromUserCategory(String categoryId ,UserEntity signedUser) {
         try {
 
             StringBuilder aladinUrl = new StringBuilder();
