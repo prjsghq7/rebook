@@ -6,9 +6,9 @@
                                       `mallType`,
                                       `cover`,
                                       `publisher`,
-                                      `adult`)
+                                      `adult`,`view`)
         VALUES (#{book.id}, #{book.title}, #{book.link}, #{book.author}, #{book.pubDate}, #{book.description},
-                #{book.priceSales}, #{book.mallType}, #{book.cover}, #{book.publisher}, #{book.adult});
+                #{book.priceSales}, #{book.mallType}, #{book.cover}, #{book.publisher}, #{book.adult}, #{book.view});
     </insert>
 
     <select id="selectById" resultType="com.dev.rebook.entities.BookEntity">
@@ -22,7 +22,8 @@
                `mallType`    AS 'mallType',
                `cover`       AS 'cover',
                `publisher`   AS 'publisher',
-               `adult`       AS 'adult'
+               `adult`       AS 'adult',
+               `view`        AS 'view'
         FROM `rebook`.`books`
         WHERE `id` = #{id}
         LIMIT 1
@@ -45,7 +46,8 @@
                `mallType`    AS 'mallType',
                `cover`       AS 'cover',
                `publisher`   AS 'publisher',
-               `adult`       AS 'adult'
+               `adult`       AS 'adult',
+               `view`        AS 'view'
         FROM `rebook`.`books`
     </select>
 </mapper>

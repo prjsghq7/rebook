@@ -133,6 +133,7 @@ public class BookService {
                 book.setMallType(getElementText(item, "mallType", false));
                 book.setPublisher(getElementText(item, "publisher", false));
                 book.setAdult(parseBoolean(getElementText(item, "adult", false)));
+                book.setView(0);
 
                 // DB에 있으면 DB에서 꺼내 저장 없으면 신규로 Insert하기
                 if (this.bookMapper.selectCountById(book.getId()) <= 0) {
@@ -262,7 +263,7 @@ public class BookService {
         }
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId ,UserEntity signedUser) {
+    public ResultTuple<BookEntity[]> searchBooksFromUserKeyword(String categoryId, UserEntity signedUser) {
         try {
 
             StringBuilder aladinUrl = new StringBuilder();

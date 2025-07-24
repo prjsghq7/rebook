@@ -22,4 +22,5 @@ public class BookEntity {
     private String cover;
     private String publisher;
     private boolean adult;
+    private int view;
 }
