@@ -304,4 +304,8 @@ public class BookService {
     public BookEntity getBookById(String id) {
         return this.bookMapper.selectById(id);
     }
+
+    public void incrementView(String id) {
+        this.bookMapper.increaseView(id);
+    }
 }
