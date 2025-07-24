@@ -167,12 +167,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!bk) return;
                     const li = document.createElement('li');
                     li.className = 'rank-book';
-                    li.dataset.bookId = bk.id;
+                    li.dataset.bookId = bk.bookId;
                     li.innerHTML = `
           <span class="rank-number">${bk.rank ?? (colIdx ? 7 + i : 3 + i)}</span>
           <span class="rank-title">${bk.title}</span>
         `;
-                    li.onclick = () => location.href = `${window.origin}/book/?id=${bk.id}`;
+                    li.onclick = () => location.href = `${window.origin}/book/?id=${bk.bookId}`;
                     $grid.append(li);
                 });
             }

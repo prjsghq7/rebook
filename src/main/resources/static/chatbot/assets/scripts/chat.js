@@ -97,7 +97,7 @@ async function sendChatMessage() {
             if (Array.isArray(books)) {
                 books.forEach(book => {
                     const bookLine = `"${book.title}"`;
-                    const $li = appendMessage('bot', bookLine);
+                    const $li    = appendMessage('bot', bookLine);
                     if (!$li) {
                         return;
                     }
@@ -173,7 +173,7 @@ function clearMessage() {
     }
 }
 
-function appendMessage(sender, text) {
+function appendMessage(sender, text, link = null) {
     const $list = document.querySelector('#chat-message ul.list');
     if (!$list) return null;
 
@@ -192,7 +192,19 @@ function appendMessage(sender, text) {
         $img.style.backgroundColor = '#f1f1f1';
         $bubble.appendChild($img);
     } else {
-        $bubble.textContent = text;
+        const $textNode = document.createElement('p');
+        $textNode.textContent = text;
+        $bubble.appendChild($textNode);
+
+        if (link) {
+            const $btn = document.createElement('button');
+            $btn.className = 'chat-link-button';
+            $btn.textContent = link.label;
+            $btn.addEventListener('click', () => {
+                location.href = `${window.origin}${link.href}`;
+            });
+            $bubble.appendChild($btn);
+        }
     }
 
     $item.appendChild($bubble);
@@ -200,6 +212,8 @@ function appendMessage(sender, text) {
     $list.scrollTop = $list.scrollHeight;
     return $item;
 }
+
+
 
 function removeTypingBubble() {
     const $list = document.querySelector('#chat-message ul.list');
@@ -431,32 +445,41 @@ AI 서점 서비스입니다.`,
 4) GPT 연관 키워드
 를 종합하여 순위를 매깁니다.`,
 
-    chatbot: `챗봇은 OpenAI GPT‑4o API를 사용합니다.
+    chatbot: `챗봇은 OpenAI GPT‑4o-mini API를 사용합니다.
 대화 내역과 키워드 입력을 컨텍스트로 보내고,
 책 메타데이터를 결합해 답변을 생성합니다.`,
 
     privacy: `모든 개인정보는 암호화되어 저장되며,
 결제·주문 정보를 포함한 민감 데이터는
-국내 클라우드 KISA 인증 기준을 준수합니다.`,
+국내 클라우드 KISA 인증 기준을 준수합니다. 챗봇 대화 이력은 Re:Book 서비스의 원할한 챗봇 서비스를 위하여 사용자들의 대화 데이터들을 임시 저장 및 활용할 수 있습니다.`,
 
-    delete: `마이페이지 > 회원탈퇴 메뉴에서 즉시 탈퇴할 수 있습니다.
-탈퇴 후 7일간 복구 가능하며,
-그 이후에는 데이터가 완전히 삭제됩니다.`
+    delete: {
+        message: `마이페이지 > 회원탈퇴 메뉴에서 즉시 탈퇴할 수 있습니다.
+회원 탈퇴시 복구가 불가능하며, 그 이후에는 데이터가 완전히 삭제됩니다.`,
+        action: {
+            label: '🔗 회원 탈퇴하러 가기',
+            href: `/user/remove-account`
+        }
+    },
 };
 $infoItems.forEach($item => {
-    $item.addEventListener('clikc', () => {
+    $item.addEventListener('click', () => {
         const key = $item.dataset.key;
-        if (!key || !help_answers[key]) {
-            return;
-        }
+        const entry = help_answers[key];
+        if (!key || !entry) return;
+
         showChatView('main');
         clearMessage();
-
-        const $typingLi = appendMessage('bot', 'typing');
+        appendMessage('user', $item.textContent.trim());
+        appendMessage('bot', 'typing');
 
         setTimeout(() => {
             removeTypingBubble();
-            appendMessage('bot', help_answers[key]);
+            if (typeof entry === 'string') {
+                appendMessage('bot', entry);
+            } else {
+                appendMessage('bot', entry.message, entry.action);
+            }
         }, 600);
     });
 });
