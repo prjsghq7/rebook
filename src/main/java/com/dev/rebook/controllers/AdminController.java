@@ -1,6 +1,6 @@
 package com.dev.rebook.controllers;
 
-import com.dev.rebook.dtos.dashboard.DashboardDto;
+import com.dev.rebook.dtos.dashboard.*;
 import com.dev.rebook.dtos.user.UserDto;
 import com.dev.rebook.entities.ContactMvnoEntity;
 import com.dev.rebook.entities.UserEntity;
@@ -33,6 +33,36 @@ public class AdminController {
         this.dashboardService = dashboardService;
         this.userService = userService;
         this.contactMvnoMapper = contactMvnoMapper;
+    }
+
+    @RequestMapping(value = "/dashboard/user-provider", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<ProviderStatsDto> getDashboardUserProvider() {
+        return this.dashboardService.getUserProviderStats();
+    }
+
+    @RequestMapping(value = "/dashboard/user-gender", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<GenderStatsDto> getDashboardUserGender() {
+        return this.dashboardService.getUserGenderStats();
+    }
+
+    @RequestMapping(value = "/dashboard/user-age-group", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<AgeGroupStatsDto> getDashboardUserAgeGroup() {
+        return this.dashboardService.getUserAgeGroupStats();
+    }
+
+    @RequestMapping(value = "/dashboard/daily-user-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<DailyUserRegisterStatsDto> getDailyUserRegister() {
+        return this.dashboardService.getDailUserRegisterStats();
+    }
+
+    @RequestMapping(value = "/dashboard/daily-review-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegister() {
+        return this.dashboardService.getDailyReviewRegisterStats();
     }
 
     @RequestMapping(value = "/dashboard/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

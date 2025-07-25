@@ -4,8 +4,8 @@ const header = document.querySelector('meta[name="_csrf_header"]').getAttribute(
 const $userProvider = document.getElementById('userProvider');
 const $userGender = document.getElementById('userGender');
 const $userAgeGroup = document.getElementById('userAgeGroup');
-const $userRegister = document.getElementById('userRegister');
-const $reviewRegister = document.getElementById('reviewRegister');
+const $dailyUserRegister = document.getElementById('dailyUserRegister');
+const $dailyReviewRegister = document.getElementById('dailyReviewRegister');
 
 const updateUserProvider = (providerStats) => {
     console.log(providerStats);
@@ -75,7 +75,7 @@ const updateUserGender = (genderStats) => {
     genderChart.render()
 }
 
-const updateAgeGroup = (ageGroupStats) => {
+const updateUserAgeGroup = (ageGroupStats) => {
     console.log(ageGroupStats);
 
     const labels = [];
@@ -110,7 +110,7 @@ const updateAgeGroup = (ageGroupStats) => {
     ageGroupChart.render();
 }
 
-const updateUserRegister = (dailyUserRegisterStats) => {
+const updateDailyUserRegister = (dailyUserRegisterStats) => {
     console.log(dailyUserRegisterStats);
 
     const dates = [];
@@ -172,12 +172,12 @@ const updateUserRegister = (dailyUserRegisterStats) => {
         }
     };
 
-    $userRegister.innerHTML = '';
-    const dailyUserChart = new ApexCharts($userRegister, options);
+    $dailyUserRegister.innerHTML = '';
+    const dailyUserChart = new ApexCharts($dailyUserRegister, options);
     dailyUserChart.render();
 }
 
-const updateReviewRegister = (dailyReviewRegisterStats) => {
+const updateDailyReviewRegister = (dailyReviewRegisterStats) => {
     console.log(dailyReviewRegisterStats);
 
     const dates = [];
@@ -239,15 +239,13 @@ const updateReviewRegister = (dailyReviewRegisterStats) => {
         }
     };
 
-    $reviewRegister.innerHTML = '';
-    const dailyReviewChart = new ApexCharts($reviewRegister, options);
+    $dailyReviewRegister.innerHTML = '';
+    const dailyReviewChart = new ApexCharts($dailyReviewRegister, options);
     dailyReviewChart.render();
 }
 
 const loadDashBoard = () => {
     const xhr = new XMLHttpRequest();
-    const formData = new FormData();
-    
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
@@ -261,12 +259,97 @@ const loadDashBoard = () => {
 
         updateUserProvider(stats.providerStats);
         updateUserGender(stats.genderStats);
-        updateAgeGroup(stats.ageGroupStats);
-        updateUserRegister(stats.dailyUserRegisterStats);
-        updateReviewRegister(stats.dailyReviewRegisterStats);
+        updateUserAgeGroup(stats.ageGroupStats);
+        updateDailyUserRegister(stats.dailyUserRegisterStats);
+        updateDailyReviewRegister(stats.dailyReviewRegisterStats);
     };
-    xhr.open('GET', '/admin/dashboard/all');
-    xhr.send(formData);
+    xhr.open('GET', `${origin}/admin/dashboard/all`);
+    xhr.send();
 };
 
 loadDashBoard();
+
+document.getElementById('reloadUserProvider').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('소셜 로그인 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
+            return;
+        }
+        const providerStats = JSON.parse(xhr.responseText);
+        updateUserProvider(providerStats);
+    };
+    xhr.open('GET', `${origin}/admin/dashboard/user-provider`);
+    xhr.send();
+});
+
+document.getElementById('reloadUserGender').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('회원 성별 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
+            return;
+        }
+        const genderStats = JSON.parse(xhr.responseText);
+        updateUserGender(genderStats);
+    };
+    xhr.open('GET', `${origin}/admin/dashboard/user-gender`);
+    xhr.send();
+});
+
+document.getElementById('reloadUserAgeGroup').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('회원 연령 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
+            return;
+        }
+        const userGroupStats = JSON.parse(xhr.responseText);
+        updateUserAgeGroup(userGroupStats);
+    };
+    xhr.open('GET', `${origin}/admin/dashboard/user-age-group`);
+    xhr.send();
+});
+
+document.getElementById('reloadDailyUserRegister').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('일별 회원가입 수 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
+            return;
+        }
+        const dailyUserRegisterStats = JSON.parse(xhr.responseText);
+        updateDailyUserRegister(dailyUserRegisterStats);
+    };
+    xhr.open('GET', `${origin}/admin/dashboard/daily-user-register`);
+    xhr.send();
+});
+
+document.getElementById('reloadDailyReviewRegister').addEventListener('click', () => {
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== XMLHttpRequest.DONE) {
+            return;
+        }
+        if (xhr.status < 200 || xhr.status >= 300) {
+            dialog.showSimpleOk('일별 리뷰 등록 수 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
+            return;
+        }
+        const dailyReviewRegisterStats = JSON.parse(xhr.responseText);
+        updateDailyReviewRegister(dailyReviewRegisterStats);
+    };
+    xhr.open('GET', `${origin}/admin/dashboard/daily-review-register`);
+    xhr.send();
+});

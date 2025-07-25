@@ -57,6 +57,22 @@
     margin: 0;
 }
 
+#dashboardSection > .chart-wrapper > .chart > .header > .reload > .icon {
+    width: 1.3125rem;
+
+    transition-duration: 250ms;
+    transition-property: transform, top;
+    transition-timing-function: ease;
+}
+
+#dashboardSection > .chart-wrapper > .chart > .header > .reload:hover > .icon {
+    transform: rotateZ(180deg) scale(1.15);
+}
+
+#dashboardSection > .chart-wrapper > .chart > .header > .reload:active > .icon {
+    transform: rotateZ(0deg) scale(0.9);
+}
+
 #dashboardSection > .chart-wrapper > .chart > .chart-pie {
 }
 

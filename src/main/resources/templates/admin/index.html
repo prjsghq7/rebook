@@ -31,7 +31,9 @@
                 <!-- provider 별 회원 수 -->
                 <div class="header">
                     <h3 class="title">소셜 로그인 비율</h3>
-                    <button class="reload">임시 문구</button>
+                    <button class="reload" id="reloadUserProvider" type="button">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
                 </div>
                 <div class="chart-pie" id="userProvider"></div>
             </div>
@@ -40,7 +42,9 @@
                 <!-- 회원 성별 비율 -->
                 <div class="header">
                     <h3 class="title">회원 성별 비율</h3>
-                    <button class="reload">임시 문구</button>
+                    <button class="reload" id="reloadUserGender" type="button">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
                 </div>
                 <div class="chart-pie" id="userGender"></div>
             </div>
@@ -49,7 +53,9 @@
                 <!-- 회원 성별 비율 -->
                 <div class="header">
                     <h3 class="title">회원 연령 비율</h3>
-                    <button class="reload">임시 문구</button>
+                    <button class="reload" id="reloadUserAgeGroup" type="button">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
                 </div>
                 <div class="chart-pie" id="userAgeGroup"></div>
             </div>
@@ -59,9 +65,11 @@
                 <!-- 날짜 별 회원가입한 회원 수 -->
                 <div class="header">
                     <h3 class="title">일별 회원가입 수</h3>
-                    <button class="reload">임시 문구</button>
+                    <button class="reload" id="reloadDailyUserRegister" type="button">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
                 </div>
-                <div class="chart-line" id="userRegister"></div>
+                <div class="chart-line" id="dailyUserRegister"></div>
             </div>
         </div>
 
@@ -75,10 +83,12 @@
             <div class="chart">
                 <!-- 날짜 별 등록 리뷰 수 -->
                 <div class="header">
-                    <h3 class="title">일별 회원가입 수</h3>
-                    <button class="reload">임시 문구</button>
+                    <h3 class="title">일별 리뷰 등록 수</h3>
+                    <button class="reload" id="reloadDailyReviewRegister" type="button">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
                 </div>
-                <div class="chart-line" id="reviewRegister"></div>
+                <div class="chart-line" id="dailyReviewRegister"></div>
             </div>
         </div>
     </section>
