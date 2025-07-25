@@ -1,5 +1,6 @@
 package com.dev.rebook.services.uesr;
 
+import com.dev.rebook.dtos.dashboard.AgeGroupStatsDto;
 import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
 import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
@@ -87,6 +88,10 @@ public class UserService {
 
     public List<GenderStatsDto> getGenderStats() {
         return this.userMapper.selectGenderStats();
+    }
+
+    public List<AgeGroupStatsDto> getAgeGroupStats() {
+        return this.userMapper.selectAgeGroupStats();
     }
 
     public List<DailyUserRegisterStatsDto> getDailyUserRegisterStats() {

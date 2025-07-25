@@ -211,12 +211,19 @@
         GROUP BY `gender`
     </select>
 
+    <select id="selectAgeGroupStats" resultType="com.dev.rebook.dtos.dashboard.AgeGroupStatsDto">
+        SELECT CONCAT(FLOOR(TIMESTAMPDIFF(YEAR, `birth`, CURDATE()) / 10) * 10, '대') AS `ageGroup`,
+               COUNT(0)                                                              AS `userCount`
+        FROM `rebook`.`users`
+        GROUP BY `ageGroup`
+    </select>
+
     <select id="selectDailyUserRegisterStats"
             resultType="com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto">
-        SELECT `created_at` AS `date`,
+        SELECT DATE(`created_at`) AS `date`,
                COUNT(0)     AS `userCount`
         FROM `rebook`.`users`
-        GROUP BY `created_at`
+        GROUP BY `date`
     </select>
     <select id="selectAllUser" resultType="com.dev.rebook.dtos.user.UserDto">
         SELECT `id` AS `id`,

@@ -23,12 +23,14 @@ public class DashboardService {
     public DashboardDto getDashBoardAll() {
         List<ProviderStatsDto> providerStats = this.userService.getProviderStats();
         List<GenderStatsDto> genderStats = this.userService.getGenderStats();
+        List<AgeGroupStatsDto> ageGroupStats = this.userService.getAgeGroupStats();
         List<DailyUserRegisterStatsDto> dailyUserStats = this.userService.getDailyUserRegisterStats();
         List<DailyReviewRegisterStatsDto> dailyReviewStats = this.reviewService.getDailyReviewRegisterStats();
 
         return DashboardDto.builder()
                 .providerStats(providerStats)
                 .genderStats(genderStats)
+                .ageGroupStats(ageGroupStats)
                 .dailyUserRegisterStats(dailyUserStats)
                 .dailyReviewRegisterStats(dailyReviewStats)
                 .build();

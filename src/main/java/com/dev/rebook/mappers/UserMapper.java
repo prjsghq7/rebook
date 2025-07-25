@@ -1,5 +1,6 @@
 package com.dev.rebook.mappers;
 
+import com.dev.rebook.dtos.dashboard.AgeGroupStatsDto;
 import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
 import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
@@ -41,6 +42,8 @@ public interface UserMapper {
     List<ProviderStatsDto> selectProviderStats();
 
     List<GenderStatsDto> selectGenderStats();
+
+    List<AgeGroupStatsDto> selectAgeGroupStats();
 
     List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats();
 

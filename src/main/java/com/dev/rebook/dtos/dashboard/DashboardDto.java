@@ -12,6 +12,7 @@ import java.util.List;
 public class DashboardDto {
     private List<ProviderStatsDto> providerStats;
     private List<GenderStatsDto> genderStats;
+    private List<AgeGroupStatsDto> ageGroupStats;
     private List<DailyUserRegisterStatsDto> dailyUserRegisterStats;
     private List<DailyReviewRegisterStatsDto> dailyReviewRegisterStats;
 }

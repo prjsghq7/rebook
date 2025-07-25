@@ -157,10 +157,10 @@
 
     <select id="selectDailyReviewRegisterStats"
             resultType="com.dev.rebook.dtos.dashboard.DailyReviewRegisterStatsDto">
-        SELECT `created_at` AS `date`,
+        SELECT DATE(`created_at`) AS `date`,
                COUNT(0)     AS `reviewCount`
         FROM `rebook`.`reviews`
-        GROUP BY `created_at`
+        GROUP BY `date`
     </select>
 
 </mapper>

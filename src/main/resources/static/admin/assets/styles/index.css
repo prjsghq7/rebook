@@ -30,20 +30,40 @@
     align-items: stretch;
     display: flex;
     flex-direction: row;
-    gap: 1rem;
+    justify-content: space-between;
+}
+
+#dashboardSection > .chart-wrapper > .chart {
+    padding: 1rem;
+    border: 0.0625rem solid #3a3a3a;
+
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
     justify-content: flex-start;
+
+    background-color: #f5f6f6;
 }
 
-#dashboardSection > .chart-wrapper > .chart-pie {
-    flex-grow: 1;
-
-    height: 22.5rem;
-    background-color: #86b6f6;
+#dashboardSection > .chart-wrapper > .chart > .header {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
-#dashboardSection > .chart-wrapper > .chart-line {
-    flex-grow: 1;
+#dashboardSection > .chart-wrapper > .chart > .header > .title {
+    margin: 0;
+}
 
-    height: 30rem;
-    background-color: #e4a5f4;
+#dashboardSection > .chart-wrapper > .chart > .chart-pie {
+}
+
+#dashboardSection > .chart-wrapper > .chart:has(.chart-line) {
+    flex-grow: 1;
+}
+
+#dashboardSection > .chart-wrapper > .chart > .chart-line {
+
 }

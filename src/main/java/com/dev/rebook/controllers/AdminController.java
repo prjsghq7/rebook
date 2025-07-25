@@ -35,8 +35,17 @@ public class AdminController {
         this.contactMvnoMapper = contactMvnoMapper;
     }
 
+    @RequestMapping(value = "/dashboard/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public DashboardDto getDashboardAll() {
+        return this.dashboardService.getDashBoardAll();
+    }
+
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getIndex(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return "redirect:/";
+        }
         return "admin/index";
     }
 
@@ -46,14 +55,6 @@ public class AdminController {
         model.addAttribute("contactMvnos", contactMvnos);
         model.addAttribute("user", new UserDto());
         return "admin/user";
-    }
-    @RequestMapping(value = "/dashboard/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public String getDashboard(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
-        DashboardDto dashboardDto = this.dashboardService.getDashBoardAll();
-        JSONObject response = new JSONObject();
-        response.put("stats", dashboardDto);
-        return response.toString();
     }
 
     @RequestMapping(value = "/user/get", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
