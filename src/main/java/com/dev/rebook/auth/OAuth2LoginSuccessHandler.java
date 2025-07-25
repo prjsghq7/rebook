@@ -1,6 +1,8 @@
 package com.dev.rebook.auth;
 
 import com.dev.rebook.entities.UserEntity;
+import com.dev.rebook.results.CommonResult;
+import com.dev.rebook.results.Result;
 import com.dev.rebook.services.uesr.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -48,9 +51,15 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
                 session.setAttribute("invalidReason", invalidReason);
 
                 response.sendRedirect("/user/login-fail");
-            } else {
-                session.setAttribute("signedUser", user);
-                response.sendRedirect("/");
+            } else {;
+                if (CommonResult.FAILURE == this.userService.updateLoginHistory(user, oauthUser.getAttribute("userAgent"))) {
+                    session.setAttribute("invalidEmail", oauthUser.getAttribute("email"));
+                    session.setAttribute("invalidReason", "login_fail");
+                    response.sendRedirect("/user/login-fail");
+                } else {
+                    session.setAttribute("signedUser", user);
+                    response.sendRedirect("/");
+                }
             }
         } else {
             // 세션에 사용자 정보 저장

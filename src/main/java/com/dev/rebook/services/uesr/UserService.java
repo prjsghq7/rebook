@@ -491,16 +491,21 @@ public class UserService {
                     .build();
         }
 
-        dbUser.setLastSignedAt(LocalDateTime.now());
-        dbUser.setLastSignedUa(userAgent);
-
-        Result result = this.userMapper.update(dbUser) > 0
-                ? CommonResult.SUCCESS
-                : CommonResult.FAILURE;
+        Result result = updateLoginHistory(dbUser, userAgent);
 
         return ResultTuple.<UserEntity>builder()
                 .result(result)
                 .payload(dbUser)
                 .build();
+    }
+
+    public Result updateLoginHistory(UserEntity user,
+                                     String lastSignedUa) {
+        user.setLastSignedAt(LocalDateTime.now());
+        user.setLastSignedUa(lastSignedUa);
+
+        return this.userMapper.update(user) > 0
+                ? CommonResult.SUCCESS
+                : CommonResult.FAILURE;
     }
 }
