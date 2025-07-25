@@ -3,6 +3,7 @@ package com.dev.rebook.services.uesr;
 import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
 import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
+import com.dev.rebook.dtos.user.UserDto;
 import com.dev.rebook.entities.CategoryEntity;
 import com.dev.rebook.entities.ContactMvnoEntity;
 import com.dev.rebook.entities.EmailTokenEntity;
@@ -28,6 +29,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
@@ -507,5 +509,43 @@ public class UserService {
         return this.userMapper.update(user) > 0
                 ? CommonResult.SUCCESS
                 : CommonResult.FAILURE;
+    }
+
+    public ResultTuple<List<UserDto>> selectUserInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return ResultTuple.<List<UserDto>>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
+        }
+        List<UserDto> dbUserDto = this.userMapper.selectAllUser();
+        return ResultTuple.<List<UserDto>>builder()
+                .payload(dbUserDto)
+                .build();
+    }
+
+    public Result editUserInfo(UserEntity signedUser, UserDto userDto) {
+        if (UserService.isInvalidUser(signedUser)) {
+            return CommonResult.FAILURE_SESSION_EXPIRED;
+        }
+        UserDto dbUser = this.userMapper.selectUserById(userDto.getId());
+        System.out.println("수정 요청된 ID: " + userDto.getId());
+        System.out.println(dbUser);
+        if (dbUser == null) {
+            System.out.println("1");
+            return CommonResult.FAILURE_ABSENT;
+        }
+        dbUser.setName(userDto.getName());
+        dbUser.setNickname(userDto.getNickname());
+        dbUser.setGender(userDto.getGender());
+        dbUser.setBirth(userDto.getBirth());
+        dbUser.setContactMvnoCode(userDto.getContactMvnoCode());
+        System.out.println("1" + userDto.getContactMvnoCode());
+        dbUser.setContactFirst(userDto.getContactFirst());
+        dbUser.setContactSecond(userDto.getContactSecond());
+        dbUser.setContactThird(userDto.getContactThird());
+        dbUser.setLastSignedAt(userDto.getLastSignedAt());
+        dbUser.setAdmin(userDto.isAdmin());
+        dbUser.setDeleted(userDto.isDeleted());
+        dbUser.setSuspended(userDto.isSuspended());
+
+        return this.userMapper.editUser(dbUser) > 0 ? CommonResult.SUCCESS : CommonResult.FAILURE;
     }
 }

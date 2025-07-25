@@ -3,6 +3,7 @@ package com.dev.rebook.mappers;
 import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
 import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
+import com.dev.rebook.dtos.user.UserDto;
 import com.dev.rebook.entities.UserEntity;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import org.apache.ibatis.annotations.Mapper;
@@ -15,6 +16,8 @@ public interface UserMapper {
     int insert(@Param("user") UserEntity user);
 
     int update(@Param("user") UserEntity user);
+
+    int editUser(UserDto dbUser);
 
     UserEntity selectLocalUserByContact(@Param(value = "contactMvno") String contactMvno,
                                         @Param(value = "contactFirst") String contactFirst,
@@ -40,5 +43,9 @@ public interface UserMapper {
     List<GenderStatsDto> selectGenderStats();
 
     List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats();
+
+    List<UserDto> selectAllUser();
+
+    UserDto selectUserById(@Param(value = "id") int id);
 
 }

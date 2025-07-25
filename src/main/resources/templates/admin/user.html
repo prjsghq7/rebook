@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <title>회원 관리</title>
+    <link rel="stylesheet" href="/common/assets/styles/common.css">
+    <link rel="stylesheet" href="/admin/user/assets/styles/user.css">
+    <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/dialog.js"></script>
+    <script defer src="/admin/user/assets/scripts/user.js"></script>
+</head>
+<body>
+<th:block th:replace="~{/fragments/header :: header}" />
+
+<div id="default-area" class="admin">
+    <h1 class="title">회원 관리</h1>
+
+    <section class="user-management">
+        <table class="user-table">
+            <thead>
+            <tr>
+                <th>번호</th>
+                <th>이메일</th>
+                <th>이름</th>
+                <th>닉네임</th>
+                <th>가입일</th>
+                <th>탈퇴 여부</th>
+                <th>정지 여부</th>
+                <th>최근 로그인</th>
+            </tr>
+            </thead>
+            <tbody id="userTableBody">
+            <!-- JS로 동적 데이터 렌더링 -->
+            </tbody>
+        </table>
+    </section>
+    <div class="user-edit-modal hidden" id="userEditModal">
+        <div class="modal-content">
+            <h2 class="modal-title">회원 정보 수정</h2>
+            <form id="userEditForm" method="POST" action="/admin/user/edit">
+            <input type="hidden" name="id">
+
+                <label class="-object-info-label">
+                    <input class="--input" type="email" id="email" name="email" readonly>
+                    <span class="--caption">이메일</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <input class="--input" type="text" id="name" name="name" required>
+                    <span class="--caption">이름</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <input class="--input" type="text" id="provider" name="provider" required>
+                    <span class="--caption">계정 종류</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <input class="--input" type="text" id="nickname" name="nickname" required>
+                    <span class="--caption">닉네임</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <select class="--input" id="gender" name="gender" required>
+                        <option value="M">남</option>
+                        <option value="F">여</option>
+                    </select>
+                    <span class="--caption">성별</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <input class="--input" type="date" id="birth" name="birth" required>
+                    <span class="--caption">생년월일</span>
+                </label>
+
+                <div class="-object-info-label contact-group">
+                    <label class="-object-contact-label">
+                        <select required class="-object-field" name="contactMvno">
+                            <option disabled hidden selected value="-1">통신사</option>
+                            <option th:each="mvon:${contactMvnos}" th:value="${mvon.code}"
+                                    th:text="${mvon.displayText}" th:selected="${user.contactMvnoCode == mvon.code}"></option>
+                        </select>
+                    </label>
+                    <label class="-object-contact-label">
+                        <input class="--input" type="text" name="contactFirst" id="contactFirst" maxlength="4" placeholder="010" required>
+                    </label>
+                    <label class="-object-contact-label">
+                        <input class="--input" type="text" name="contactSecond" id="contactSecond" maxlength="4" required>
+                    </label>
+                    <label class="-object-contact-label">
+                        <input class="--input" type="text" name="contactThird" id="contactThird" maxlength="4" required>
+                    </label>
+                    <span class="--caption">연락처</span>
+                </div>
+
+                <label class="-object-info-label">
+                    <input class="--input" id="createdAt" type="text">
+                    <span class="--caption">가입일자</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <input class="--input" id="lastSignedAt" type="text">
+                    <span class="--caption">최근 로그인</span>
+                </label>
+
+
+                <label class="-object-info-label">
+                    <select class="--input" id="admin" name="admin">
+                        <option value="false">X</option>
+                        <option value="true">O</option>
+                    </select>
+                    <span class="--caption">관리자 여부</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <select class="--input" id="deleted" name="deleted">
+                        <option value="false">X</option>
+                        <option value="true">O</option>
+                    </select>
+                    <span class="--caption">탈퇴 여부</span>
+                </label>
+
+                <label class="-object-info-label">
+                    <select class="--input" id="suspended" name="suspended">
+                        <option value="false">X</option>
+                        <option value="true">O</option>
+                    </select>
+                    <span class="--caption">정지 여부</span>
+                </label>
+
+                <div class="modal-actions">
+                    <button type="submit" id="editBtn">저장</button>
+                    <button type="button" id="cancelEditBtn">취소</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

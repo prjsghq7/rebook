@@ -49,6 +49,25 @@
         WHERE `id` = #{user.id}
         LIMIT 1
     </update>
+    <update id="editUser">
+        UPDATE `rebook`.`users`
+        SET
+            `name` = #{name},
+            `nickname` = #{nickname},
+            `gender` = #{gender},
+            `birth` = #{birth},
+            `contact_mvno_code` = #{contactMvnoCode},
+            `contact_first` = #{contactFirst},
+            `contact_second` = #{contactSecond},
+            `contact_third` = #{contactThird},
+            `last_signed_at` = #{lastSignedAt},
+            `is_admin` = #{admin},
+            `is_deleted` = #{deleted},
+            `is_suspended` = #{suspended},
+            `modified_at` = NOW()
+        WHERE `id` = #{id}
+        LIMIT 1
+    </update>
 
     <select id="selectLocalUserByContact" resultType="com.dev.rebook.entities.UserEntity">
         SELECT `id`                AS `id`,
@@ -198,5 +217,45 @@
                COUNT(0)     AS `userCount`
         FROM `rebook`.`users`
         GROUP BY `created_at`
+    </select>
+    <select id="selectAllUser" resultType="com.dev.rebook.dtos.user.UserDto">
+        SELECT `id` AS `id`,
+               `email` AS `email`,
+               `name` AS `name`,
+               `provider` AS `provider`,
+               `nickname` AS `nickname`,
+               `gender` AS `gender`,
+               `birth` AS `birth`,
+               `contact_mvno_code` AS `contactMvnoCode`,
+               `contact_first` AS `contactFirst`,
+               `contact_second` AS `contactSecond`,
+               `contact_third` AS `contactThird`,
+               `created_at` AS `createdAt`,
+               `last_signed_at` AS `lastSignedAt`,
+               `is_admin` AS `isAdmin`,
+               `is_deleted` AS `isDeleted`,
+               `is_suspended` AS `isSuspended`
+        FROM `rebook`.`users`
+    </select>
+    <select id="selectUserById" resultType="com.dev.rebook.dtos.user.UserDto">
+        SELECT `id`                AS `id`,
+               `email`             AS `email`,
+               `password`          AS `password`,
+               `name`              AS `name`,
+               `provider`          AS `provider`,
+               `nickname`          AS `nickname`,
+               `gender`            AS `gender`,
+               `birth`             AS `birth`,
+               `contact_mvno_code` AS `contactMvnoCode`,
+               `contact_first`     AS `contactFirst`,
+               `contact_second`    AS `contactSecond`,
+               `contact_third`     AS `contactThird`,
+               `created_at`        AS `createdAt`,
+               `last_signed_at`    AS `lastSignedAt`,
+               `is_admin`          AS `isAdmin`,
+               `is_deleted`        AS `isDeleted`,
+               `is_suspended`      AS `isSuspended`
+        FROM `rebook`.`users`
+        WHERE id = #{id}
     </select>
 </mapper>
