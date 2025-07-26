@@ -6,6 +6,8 @@ import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
 import com.dev.rebook.dtos.user.UserDto;
 import com.dev.rebook.entities.UserEntity;
+import com.dev.rebook.vos.ReviewPageButtonVo;
+import com.dev.rebook.vos.ReviewPageVo;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -47,8 +49,10 @@ public interface UserMapper {
 
     List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats();
 
-    List<UserDto> selectAllUser();
+    List<UserDto> selectAllUser(@Param("reviewPageVo") ReviewPageVo reviewPageVo);
 
     UserDto selectUserById(@Param(value = "id") int id);
+
+    int selectCountAllUsers();
 
 }

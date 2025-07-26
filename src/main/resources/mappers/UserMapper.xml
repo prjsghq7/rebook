@@ -22,7 +22,6 @@
     <update id="update">
         UPDATE `rebook`.`users`
         SET `email`             = #{user.email},
-            `password`          = #{user.password},
             `name`              = #{user.name},
             `provider`          = #{user.provider},
             `provider_id`       = #{user.providerId},
@@ -42,10 +41,7 @@
             `is_admin`          = #{user.isAdmin},
             `is_deleted`        = #{user.isDeleted},
             `is_suspended`      = #{user.isSuspended},
-            `created_at`        = #{user.createdAt},
-            `modified_at`       = #{user.modifiedAt},
-            `last_signed_at`    = #{user.lastSignedAt},
-            `last_signed_ua`    = #{user.lastSignedUa}
+            `modified_at`       = #{user.modifiedAt}
         WHERE `id` = #{user.id}
         LIMIT 1
     </update>
@@ -243,6 +239,7 @@
                `is_deleted` AS `isDeleted`,
                `is_suspended` AS `isSuspended`
         FROM `rebook`.`users`
+        LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}
     </select>
     <select id="selectUserById" resultType="com.dev.rebook.dtos.user.UserDto">
         SELECT `id`                AS `id`,
@@ -264,5 +261,9 @@
                `is_suspended`      AS `isSuspended`
         FROM `rebook`.`users`
         WHERE id = #{id}
+    </select>
+    <select id="selectCountAllUsers" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`users`
     </select>
 </mapper>

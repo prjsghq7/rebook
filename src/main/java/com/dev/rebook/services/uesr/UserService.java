@@ -21,10 +21,13 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.results.user.ModifyResult;
 import com.dev.rebook.results.user.RegisterResult;
 import com.dev.rebook.results.user.RemoveAccountResult;
+import com.dev.rebook.vos.ReviewPageButtonVo;
+import com.dev.rebook.vos.ReviewPageVo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -516,13 +519,32 @@ public class UserService {
                 : CommonResult.FAILURE;
     }
 
-    public ResultTuple<List<UserDto>> selectUserInfo(UserEntity signedUser) {
-        if (UserService.isInvalidUser(signedUser)) {
-            return ResultTuple.<List<UserDto>>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
+    public Pair<UserDto[], ReviewPageVo> getUserAll(UserEntity signedUser,
+                                                    int page,
+                                                    ReviewPageButtonVo reviewPageButtonVo) {
+        if (page < 1) {
+            page = 1;
         }
-        List<UserDto> dbUserDto = this.userMapper.selectAllUser();
+        int totalCount = this.userMapper.selectCountAllUsers();
+        ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
+        List<UserDto> list = this.userMapper.selectAllUser(reviewPageVo);
+        return Pair.of(list.toArray(new UserDto[0]), reviewPageVo);
+    }
+
+    public ResultTuple<List<UserDto>> selectUserInfo(UserEntity signedUser) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return ResultTuple.<List<UserDto>>builder()
+                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
+                    .build();
+        }
+        int page = 1;
+        int totalCount = this.userMapper.selectCountAllUsers();
+        ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
+        List<UserDto> list = this.userMapper.selectAllUser(reviewPageVo);
+
         return ResultTuple.<List<UserDto>>builder()
-                .payload(dbUserDto)
+                .result(CommonResult.SUCCESS)
+                .payload(list)
                 .build();
     }
 
@@ -546,7 +568,6 @@ public class UserService {
         dbUser.setContactFirst(userDto.getContactFirst());
         dbUser.setContactSecond(userDto.getContactSecond());
         dbUser.setContactThird(userDto.getContactThird());
-        dbUser.setLastSignedAt(userDto.getLastSignedAt());
         dbUser.setAdmin(userDto.isAdmin());
         dbUser.setDeleted(userDto.isDeleted());
         dbUser.setSuspended(userDto.isSuspended());

@@ -11,14 +11,14 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.ReviewService;
 import com.dev.rebook.services.admin.DashboardService;
 import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.vos.ReviewPageButtonVo;
+import com.dev.rebook.vos.ReviewPageVo;
 import org.json.JSONObject;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -80,13 +80,24 @@ public class AdminController {
     }
 
     @RequestMapping(value = "/user", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getUserIndex(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser, Model model) {
-        ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
-        model.addAttribute("contactMvnos", contactMvnos);
-        model.addAttribute("user", new UserDto());
+    public String getUserIndex(
+            @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+            @RequestParam(value = "page", required = false, defaultValue = "1") int page,
+            ReviewPageButtonVo reviewPageButtonVo,
+            Model model) {
+
         if (signedUser == null || !signedUser.isAdmin()) {
             return "redirect:/";
         }
+        ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
+        model.addAttribute("contactMvnos", contactMvnos);
+        model.addAttribute("user", new UserDto());
+
+        Pair<UserDto[], ReviewPageVo> result = userService.getUserAll(signedUser, page, reviewPageButtonVo);
+
+        model.addAttribute("reviewPageButtonVo", reviewPageButtonVo);
+        model.addAttribute("users", result.getFirst());
+        model.addAttribute("reviewPageVo", result.getSecond());
         return "admin/user";
     }
 

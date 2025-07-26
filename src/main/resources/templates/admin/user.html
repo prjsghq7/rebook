@@ -99,12 +99,12 @@
                 </div>
 
                 <label class="-object-info-label">
-                    <input class="--input" id="createdAt" type="text">
+                    <input class="--input" id="createdAt" type="text" readonly disabled tabindex="-1">
                     <span class="--caption">가입일자</span>
                 </label>
 
                 <label class="-object-info-label">
-                    <input class="--input" id="lastSignedAt" type="text">
+                    <input class="--input" id="lastSignedAt" type="text" readonly disabled tabindex="-1">
                     <span class="--caption">최근 로그인</span>
                 </label>
 
@@ -139,6 +139,12 @@
                 </div>
             </form>
         </div>
+    </div>
+    <div class="page-container">
+        <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
+           th:text="${reviewPage}"
+           th:href="@{/review/ (page = ${reviewPage}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
+           th:classappend="${reviewPage == reviewPageVo.page}? '-selected'"></a>
     </div>
 </div>
 </body>
