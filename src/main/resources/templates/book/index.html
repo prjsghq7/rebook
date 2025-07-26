@@ -123,6 +123,13 @@
             </div>
         </div>
     </div>
+
+    <div id="pageContainer">
+        <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
+           th:text="${reviewPage}"
+           th:href="@{/book/ (id=${book.id}, page = ${reviewPage})}"
+           th:classappend="${reviewPage == reviewPageVo.page}? '-selected'"></a>
+    </div>
 </div>
 </body>
 </html>

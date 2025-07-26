@@ -1,5 +1,6 @@
 package com.dev.rebook.controllers;
 
+import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
 import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.UserEntity;
@@ -9,8 +10,10 @@ import com.dev.rebook.services.BookService;
 import com.dev.rebook.services.ReviewService;
 import com.dev.rebook.services.uesr.UserService;
 import com.dev.rebook.utils.Utils;
+import com.dev.rebook.vos.ReviewPageVo;
 import com.dev.rebook.vos.SearchVo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -61,6 +64,7 @@ public class BookController {
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
     public String getIndex(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
                            @RequestParam(value = "id", required = false) String id,
+                           @RequestParam(value = "page", required = false, defaultValue = "1") int page,
                            Model model) {
         this.bookService.incrementView(id);
         BookEntity book = this.bookService.getBookById(id);
@@ -68,8 +72,9 @@ public class BookController {
         boolean isAdult = Utils.isAdult(signedUser);
         if (!book.isAdult() || isAdult) {
             model.addAttribute("book", book);
-            ReviewWithProfileDto[] reviews = this.reviewService.getReviewsByBookId(id, signedUser);
-            model.addAttribute("reviews", reviews);
+            Pair<ReviewWithProfileDto[], ReviewPageVo> reviewPair = this.reviewService.getReviewsByBookId(id, signedUser, page);
+            model.addAttribute("reviews", reviewPair.getFirst());
+            model.addAttribute("reviewPageVo", reviewPair.getSecond());
         }
         model.addAttribute("verification", !book.isAdult() || isAdult);
         model.addAttribute("noLoginState", UserService.isInvalidUser(signedUser));

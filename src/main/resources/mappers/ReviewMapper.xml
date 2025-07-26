@@ -31,6 +31,7 @@
         WHERE `r`.`book_id` = #{bookId}
           AND `r`.`is_deleted` = FALSE
         ORDER BY `r`.created_at DESC
+        LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}
     </select>
 
     <select id="selectRecentReviews" resultType="com.dev.rebook.dtos.RecentReviewDto">
@@ -106,6 +107,13 @@
         WHERE `id` = #{review.id}
             LIMIT 1
     </update>
+
+    <select id="selectCountReviewByBookId" resultType="java.lang.Integer">
+        SELECT COUNT(0)
+        FROM `rebook`.`reviews`
+        WHERE `book_id` = #{bookId}
+          AND `is_deleted` = FALSE
+    </select>
 
     <select id="selectCountReview" resultType="java.lang.Integer">
         SELECT COUNT(0)

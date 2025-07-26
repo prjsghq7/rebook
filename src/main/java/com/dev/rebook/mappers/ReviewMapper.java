@@ -19,7 +19,7 @@ import java.util.List;
 public interface ReviewMapper {
     ReviewEntity selectReviewsById(@Param("id") int id);
 
-    ReviewWithProfileDto[] selectReviewsByBookId(@Param("bookId") String bookId);
+    ReviewWithProfileDto[] selectReviewsByBookId(@Param("bookId") String bookId, @Param("reviewPageVo") ReviewPageVo reviewPageVo);
 
     RecentReviewDto[] selectRecentReviews(@Param("userId") int userId, int limit);
 
@@ -32,6 +32,8 @@ public interface ReviewMapper {
     int update(@Param("review") ReviewEntity review);
 
     PopularBookDto[] selectPopularUserBooks();
+
+    int selectCountReviewByBookId(@Param("bookId") String bookId);
 
     int selectCountReview(@Param("user") UserEntity user,
                           @Param("reviewPageButtonVo") ReviewPageButtonVo reviewPageButtonVo);

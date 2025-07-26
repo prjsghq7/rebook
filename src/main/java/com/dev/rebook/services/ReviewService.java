@@ -27,6 +27,7 @@ import java.util.List;
 @Service
 public class ReviewService {
     private static final int INFO_RECENT_LIMIT = 5;
+    private static final int BOOK_DETAILS_REVIEW_LIMIT = 10;
 
     private final ReviewMapper reviewMapper;
 
@@ -43,8 +44,14 @@ public class ReviewService {
         return reviewMapper.selectReviewsById(id);
     }
 
-    public ReviewWithProfileDto[] getReviewsByBookId(String bookId, UserEntity signedUser) {
-        ReviewWithProfileDto[] reviews = reviewMapper.selectReviewsByBookId(bookId);
+    public Pair<ReviewWithProfileDto[], ReviewPageVo> getReviewsByBookId(String bookId, UserEntity signedUser, int page) {
+        if (page < 1) {
+            page = 1;
+        }
+        int totalCount = this.reviewMapper.selectCountReviewByBookId(bookId);
+        ReviewPageVo reviewPageVo = new ReviewPageVo(BOOK_DETAILS_REVIEW_LIMIT, page, totalCount);
+
+        ReviewWithProfileDto[] reviews = reviewMapper.selectReviewsByBookId(bookId, reviewPageVo);
         boolean isAdmin = false;
         int userId = 0;
         if (signedUser != null) {
@@ -58,7 +65,7 @@ public class ReviewService {
                 review.setHasPermission(true);
             }
         }
-        return reviews;
+        return Pair.of(reviews, reviewPageVo);
     }
 
     public RecentReviewDto[] getRecentReviews(int userId) {
