@@ -9,6 +9,7 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.BookService;
 
 import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.utils.Utils;
 import org.json.JSONArray;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,6 +31,7 @@ public class HomeController {
     public HomeController(BookService bookService) {
         this.bookService = bookService;
     }
+
     private static final List<String> messages = new ArrayList<>();
 
 
@@ -46,10 +48,13 @@ public class HomeController {
         return "home/home";
 
     }
+
     @RequestMapping(value = "/api/aladin/bestseller", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BookEntity[] getBooksBestSeller() {
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksBestSellerAlladin();
+    public BookEntity[] getBooksBestSeller(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        boolean isAdult = Utils.isAdult(signedUser);
+
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksBestSellerAlladin(isAdult);
         if (result.getResult() != CommonResult.SUCCESS) {
             return new BookEntity[0];
         }
@@ -59,16 +64,16 @@ public class HomeController {
     @RequestMapping(value = "/api/aladin/category", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResultTuple<BookEntity[]> getBooksCategoryId(@RequestParam(value = "categoryId") String categoryId,
-                                           @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser
-                                                        ) {
+                                                        @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser
+    ) {
         return this.bookService.searchBooksFromUserCategory(categoryId, signedUser);
-
     }
 
     @RequestMapping(value = "/api/aladin/new-top-book", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public BookEntity[] getBooksNewTopBooks() {
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksNewAlladin();
+    public BookEntity[] getBooksNewTopBooks(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        boolean isAdult = Utils.isAdult(signedUser);
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksNewAlladin(isAdult);
         if (result.getResult() != CommonResult.SUCCESS) {
             return new BookEntity[0];
         }
@@ -77,7 +82,9 @@ public class HomeController {
 
     @RequestMapping(value = "/book/popular-book", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public PopularBookDto[] getUserPopularBooks() {
-        return this.bookService.selectPopularUserBooks();
+    public PopularBookDto[] getUserPopularBooks(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        boolean isAdult = Utils.isAdult(signedUser);
+
+        return this.bookService.selectPopularUserBooks(isAdult);
     }
 }

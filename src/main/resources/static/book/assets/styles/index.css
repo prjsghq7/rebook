@@ -1,3 +1,45 @@
+#verification-area {
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(0.5rem);
+    background-color: #e5e5e5a0;
+    opacity: 1;
+    pointer-events: auto;
+    position: fixed;
+    transition-duration: 125ms;
+    transition-property: opacity;
+    z-index: 1000;
+
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    justify-content: center;
+}
+
+#verification-area > .icon {
+    width: 10rem;
+}
+
+#verification-area > .caption {
+    /*color: #ffffff;*/
+    font-size: 1.5rem;
+    font-weight: 500;
+
+    /*top: 0.75rem;*/
+    position: relative;
+}
+
+#verification-area > .button-container {
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    justify-content: center;
+}
+
 #default-area.book-detail {
     align-items: stretch;
     display: flex;

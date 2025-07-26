@@ -13,4 +13,5 @@ public class PopularBookDto {
     private String cover;
     private int reviewCount;
     private int scope;
+    private boolean adult;
 }

@@ -9,6 +9,7 @@ import com.dev.rebook.mappers.CategoryMapper;
 import com.dev.rebook.mappers.ReviewMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
+import com.dev.rebook.utils.Utils;
 import com.dev.rebook.vos.SearchVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +47,7 @@ public class BookService {
         this.reviewMapper = reviewMapper;
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromAladin(String keyword, SearchVo searchVo) {
+    public ResultTuple<BookEntity[]> searchBooksFromAladin(boolean isAdult, String keyword, SearchVo searchVo) {
         if (keyword == null || keyword.isEmpty()) {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
@@ -91,7 +92,7 @@ public class BookService {
             RestTemplate restTemplate = new RestTemplate();
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
             // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
@@ -102,7 +103,7 @@ public class BookService {
         }
     }
 
-    private BookEntity[] parseXmlToBookArray(String xml) {
+    private BookEntity[] parseXmlToBookArray(String xml, boolean isAdult) {
         List<BookEntity> booksList = new ArrayList<>();
 
         try {
@@ -138,7 +139,10 @@ public class BookService {
                 if (this.bookMapper.selectCountById(book.getId()) <= 0) {
                     insertResult += this.bookMapper.insert(book);
                 }
-                booksList.add(this.bookMapper.selectById(book.getId()));
+
+//                booksList.add(this.bookMapper.selectById(book.getId()));
+                booksList.add(getAdultVerification(book.getId(), isAdult));
+
             }
             if (insertResult > 0) {
                 System.out.println("DB에 신규 추가된 책 개수 : " + insertResult);
@@ -149,6 +153,16 @@ public class BookService {
 
         // List를 배열로 변환하여 반환
         return booksList.toArray(new BookEntity[0]);
+    }
+
+    private BookEntity getAdultVerification(String bookId, boolean isAdult) {
+        BookEntity result = this.bookMapper.selectById(bookId);
+        if (result.isAdult()) {
+            if (!isAdult) {
+                result.setCover("/book/assets/images/adult-limit.png");
+            }
+        }
+        return result;
     }
 
     private String getElementText(Element parent, String tagName, boolean nullable) {
@@ -213,7 +227,7 @@ public class BookService {
         return isbn != null && !isbn.trim().isEmpty() && !"0".equals(isbn.trim());
     }
 
-    public ResultTuple<BookEntity[]> searchBooksBestSellerAlladin() {
+    public ResultTuple<BookEntity[]> searchBooksBestSellerAlladin(boolean isAdult) {
         try {
             StringBuilder aladinUrl = new StringBuilder();
             aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
@@ -226,7 +240,7 @@ public class BookService {
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
 
             // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
@@ -237,7 +251,8 @@ public class BookService {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
-    public ResultTuple<BookEntity[]> searchBooksNewAlladin() {
+
+    public ResultTuple<BookEntity[]> searchBooksNewAlladin(boolean isAdult) {
         try {
             StringBuilder aladinUrl = new StringBuilder();
             aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
@@ -250,7 +265,7 @@ public class BookService {
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
 
             // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
@@ -262,7 +277,7 @@ public class BookService {
         }
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromUserCategory(String categoryId ,UserEntity signedUser) {
+    public ResultTuple<BookEntity[]> searchBooksFromUserCategory(String categoryId, UserEntity signedUser) {
         try {
 
             StringBuilder aladinUrl = new StringBuilder();
@@ -277,8 +292,10 @@ public class BookService {
             RestTemplate restTemplate = new RestTemplate();
             String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
 
+            boolean isAdult = Utils.isAdult(signedUser);
+
             // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse);
+            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             System.out.println(books);
             System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
@@ -291,8 +308,17 @@ public class BookService {
         }
     }
 
-    public PopularBookDto[] selectPopularUserBooks() {
-        return this.reviewMapper.selectPopularUserBooks();
+    public PopularBookDto[] selectPopularUserBooks(boolean isAdult) {
+        PopularBookDto[] books = this.reviewMapper.selectPopularUserBooks();
+        for (PopularBookDto book : books) {
+            if (book.isAdult()) {
+                if(!isAdult) {
+                    book.setCover("/book/assets/images/adult-limit.png");
+                }
+            }
+        }
+
+        return books;
     }
 
     // 카테고리 thymeleaf

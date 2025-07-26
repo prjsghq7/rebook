@@ -61,6 +61,7 @@
 #grid-container > .item {
     /*height: 20rem;*/
     position: relative;
+    border: 0.0625rem solid #f3f3f3;
 
     width: calc(12.5rem + var(--box-right-padding) + var(--box-left-padding));
     height: calc(22rem + var(--box-top-padding) + var(--box-bottom-padding));
@@ -90,6 +91,8 @@
     /*height: 100%;*/
     width: var(--box-width);
     height: var(--box-height); /* .item 값 확인 height: 16rem;  */
+
+    border: 0.0625rem solid #f3f3f3;
 }
 
 #grid-container > .item > .detail > .box > .img {

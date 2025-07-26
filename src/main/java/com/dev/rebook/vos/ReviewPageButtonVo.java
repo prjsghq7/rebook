@@ -10,6 +10,8 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ReviewPageButtonVo {
-    private int sort = 0;
+    private int sortType = 0;
+    private String sort = "DESC";
+    private Boolean adult = false;
     private Boolean mine = false;
 }

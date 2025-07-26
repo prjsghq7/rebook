@@ -16,5 +16,6 @@ public class ReviewPageItemDto {
     private String nickname;
     private String cover;
     private int scope;
+    private boolean adult;
 //    private LocalDate reviewDate;
 }

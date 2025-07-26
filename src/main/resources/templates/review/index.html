@@ -16,24 +16,28 @@
 </th:block>
 <div id="default-area">
     <form id="button-form">
-        <div class="-object-radio-group">
+        <div class="button-container">
             <label class="radio-label">
-                <input type="radio" name="sort" value="0" th:checked="${reviewPageButtonVo.sort eq 0}">
+                <input type="radio" name="sortType" value="0" th:checked="${reviewPageButtonVo.sortType eq 0}">
                 <span class="caption">제목순</span>
             </label>
             <label class="radio-label">
-                <input type="radio" name="sort" value="1" th:checked="${reviewPageButtonVo.sort eq 1}">
+                <input type="radio" name="sortType" value="1" th:checked="${reviewPageButtonVo.sortType eq 1}">
                 <span class="caption">별점순</span>
             </label>
             <label class="radio-label">
-                <input type="radio" name="sort" value="2" th:checked="${reviewPageButtonVo.sort eq 2}">
+                <input type="radio" name="sortType" value="2" th:checked="${reviewPageButtonVo.sortType eq 2}">
                 <span class="caption">닉네임순</span>
             </label>
             <label class="radio-label">
-                <input type="radio" name="sort" value="3" th:checked="${reviewPageButtonVo.sort eq 3}">
+                <input type="radio" name="sortType" value="3" th:checked="${reviewPageButtonVo.sortType eq 3}">
                 <span class="caption">작성일순</span>
             </label>
             <span class="-flex-stretch"></span>
+            <label class="check-label">
+                <input type="checkbox" name="sort" th:checked="${reviewPageButtonVo.sort eq 'ASC'}">
+                <span class="caption">오름차순</span>
+            </label>
             <label class="check-label" th:if="${signedUser != null}">
                 <input type="checkbox" name="mine" th:checked="${reviewPageButtonVo.mine}">
                 <span class="caption">내 작성글</span>

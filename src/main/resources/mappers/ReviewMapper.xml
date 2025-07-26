@@ -65,12 +65,13 @@
           AND `is_deleted` = FALSE
     </select>
     <select id="selectPopularUserBooks">
-        SELECT `T1`.`book_id` AS `bookId`,
-               `T2`.`title` AS `title`,
-               `T2`.`cover` AS `cover`,
-               `T2`.`author` AS `author`,
-               COUNT(`T1`.id) AS `reviewCount`,
-               ROUND(AVG(`T1`.scope), 1) AS `avgScope`
+        SELECT `T1`.`book_id`            AS `bookId`,
+               `T2`.`title`              AS `title`,
+               `T2`.`cover`              AS `cover`,
+               `T2`.`author`             AS `author`,
+               COUNT(`T1`.id)            AS `reviewCount`,
+               ROUND(AVG(`T1`.scope), 1) AS `avgScope`,
+               `T2`.`adult`              AS `adult`
         FROM `rebook`.`reviews` AS `T1`
                  JOIN `rebook`.`books` AS `T2` ON `T1`.`book_id` = `T2`.`id`
         WHERE `T1`.is_deleted = FALSE
@@ -109,8 +110,8 @@
     <select id="selectCountReview" resultType="java.lang.Integer">
         SELECT COUNT(0)
         FROM `rebook`.`reviews` AS `r`
-                 JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
-                 JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
+        JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
+        JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
         WHERE `r`.`is_deleted` = FALSE
         <if test="reviewPageButtonVo.mine == true">
             AND `r`.`user_id` = #{user.id}
@@ -123,7 +124,8 @@
         `r`.`comment` AS `comment`,
         `u`.`nickname` AS `nickname`,
         `b`.`cover` AS `cover`,
-        `r`.`scope` AS `scope`
+        `r`.`scope` AS `scope`,
+        `b`.`adult` AS 'adult'
         FROM `rebook`.`reviews` AS `r`
         JOIN `rebook`.`books` AS `b` ON `r`.`book_id` = `b`.`id`
         JOIN `rebook`.`users` AS `u` ON `r`.`user_id` = `u`.`id`
@@ -133,23 +135,23 @@
         </if>
         <choose>
             <!-- 제목순 -->
-            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 0">
-                ORDER BY `b`.`title` DESC
+            <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 0">
+                ORDER BY `b`.`title` ${reviewPageButtonVo.sort}
             </when>
             <!-- 별점순 -->
-            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 1">
-                ORDER BY `r`.`scope` DESC
+            <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 1">
+                ORDER BY `r`.`scope` ${reviewPageButtonVo.sort}
             </when>
             <!-- 닉네임순 -->
-            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 2">
-                ORDER BY `u`.`nickname` DESC
+            <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 2">
+                ORDER BY `u`.`nickname` ${reviewPageButtonVo.sort}
             </when>
             <!-- 작성일순 -->
-            <when test="reviewPageButtonVo.sort != null and reviewPageButtonVo.sort == 3">
-                ORDER BY `r`.`created_at` DESC
+            <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 3">
+                ORDER BY `r`.`created_at` ${reviewPageButtonVo.sort}
             </when>
             <otherwise>
-                ORDER BY `b`.`title` DESC
+                ORDER BY `b`.`title` ${reviewPageButtonVo.sort}
             </otherwise>
         </choose>
         LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}

@@ -7,6 +7,8 @@ import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.BookService;
 import com.dev.rebook.services.ReviewService;
+import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.utils.Utils;
 import com.dev.rebook.vos.SearchVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -30,7 +32,8 @@ public class BookController {
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)
-    public String getSearch(@RequestParam(value = "keyword", required = false) String keyword,
+    public String getSearch(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                            @RequestParam(value = "keyword", required = false) String keyword,
                             SearchVo searchVo,
                             Model model) {
         if (keyword != null && !keyword.isEmpty()) {
@@ -43,7 +46,9 @@ public class BookController {
             model.addAttribute("searchVo", searchVo);
         }
 
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromAladin(keyword, searchVo);
+        boolean isAdult = Utils.isAdult(signedUser);
+
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromAladin(isAdult, keyword, searchVo);
 
         if (result.getResult() != CommonResult.SUCCESS) {
             model.addAttribute("books", null);
@@ -59,9 +64,15 @@ public class BookController {
                            Model model) {
         this.bookService.incrementView(id);
         BookEntity book = this.bookService.getBookById(id);
-        model.addAttribute("book", book);
-        ReviewWithProfileDto[] reviews = this.reviewService.getReviewsByBookId(id, signedUser);
-        model.addAttribute("reviews", reviews);
+
+        boolean isAdult = Utils.isAdult(signedUser);
+        if (!book.isAdult() || isAdult) {
+            model.addAttribute("book", book);
+            ReviewWithProfileDto[] reviews = this.reviewService.getReviewsByBookId(id, signedUser);
+            model.addAttribute("reviews", reviews);
+        }
+        model.addAttribute("verification", !book.isAdult() || isAdult);
+        model.addAttribute("noLoginState", UserService.isInvalidUser(signedUser));
         return "book/index";
     }
 }

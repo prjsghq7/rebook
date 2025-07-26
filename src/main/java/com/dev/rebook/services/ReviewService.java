@@ -5,6 +5,7 @@ import com.dev.rebook.dtos.ReviewPageItemDto;
 import com.dev.rebook.dtos.ReviewSummaryDto;
 import com.dev.rebook.dtos.ReviewWithProfileDto;
 import com.dev.rebook.dtos.dashboard.DailyReviewRegisterStatsDto;
+import com.dev.rebook.entities.BookEntity;
 import com.dev.rebook.entities.ReviewEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.ReviewMapper;
@@ -13,6 +14,7 @@ import com.dev.rebook.results.Result;
 import com.dev.rebook.results.review.DeleteResult;
 import com.dev.rebook.results.review.ModifyResult;
 import com.dev.rebook.services.uesr.UserService;
+import com.dev.rebook.utils.Utils;
 import com.dev.rebook.vos.ReviewPageButtonVo;
 import com.dev.rebook.vos.ReviewPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -152,10 +154,17 @@ public class ReviewService {
         if (page < 1) {
             page = 1;
         }
-
         int totalCount = this.reviewMapper.selectCountReview(signedUser, reviewPageButtonVo);
         ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
         ReviewPageItemDto[] reviews = this.reviewMapper.selectReviewAll(signedUser, reviewPageVo, reviewPageButtonVo);
+        for (ReviewPageItemDto review : reviews) {
+            if (review.isAdult()) {
+                if(!Utils.isAdult(signedUser)) {
+                    review.setCover("/book/assets/images/adult-limit.png");
+                }
+            }
+        }
+
         return Pair.of(reviews, reviewPageVo);
     }
 }
