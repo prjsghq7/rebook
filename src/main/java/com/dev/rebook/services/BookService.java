@@ -9,7 +9,6 @@ import com.dev.rebook.mappers.CategoryMapper;
 import com.dev.rebook.mappers.ReviewMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.ResultTuple;
-import com.dev.rebook.services.uesr.UserService;
 import com.dev.rebook.vos.SearchVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

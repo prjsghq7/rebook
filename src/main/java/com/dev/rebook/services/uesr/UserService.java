@@ -516,7 +516,7 @@ public class UserService {
                 : CommonResult.FAILURE;
     }
 
-    public ResultTuple<List<UserDto>> selectUserInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+    public ResultTuple<List<UserDto>> selectUserInfo(UserEntity signedUser) {
         if (UserService.isInvalidUser(signedUser)) {
             return ResultTuple.<List<UserDto>>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
         }

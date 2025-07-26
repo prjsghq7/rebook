@@ -13,10 +13,7 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.services.chatbot.ChatMessageService;
 import com.dev.rebook.services.chatbot.ChatRoomService;
 import com.dev.rebook.services.chatbot.GPTService;
-import com.dev.rebook.services.uesr.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private final ChatRoomService chatRoomService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
     private final ChatMessageService chatMessageService;
     private final GPTService gptService;
 
