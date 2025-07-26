@@ -52,14 +52,17 @@
                 <div class="summary-label">평균 평점</div>
             </div>
             <div class="summary-item">
-                <div class="summary-value" th:text="${reviewSummary.lastReviewDate != null} ? ${#temporals.format(reviewSummary.lastReviewDate, 'yyyy.MM.dd HH:mm')} : '작성 리뷰 없음'"></div>
+                <div class="summary-value" th:text="${reviewSummary.lastReviewDate != null} ? ${#temporals.format(reviewSummary.lastReviewDate, 'yyyy.MM.dd')} : '작성 리뷰 없음'"></div>
                 <div class="summary-label">최근 리뷰 작성일</div>
             </div>
         </div>
     </section>
 
     <section id="reviews-section">
-        <h2 class="subTitle">최근 작성한 리뷰</h2>
+        <div class="header">
+            <h2 class="subTitle">최근 작성한 리뷰</h2>
+            <a class="my-review-link" href="/review/?mine=true">내 리뷰 전체 보기</a>
+        </div>
         <ul class="review-list">
             <li class="message-empty" th:if="${recentReviews.length == 0 || recentReviews == null}">
                 <img  class="empty-icon" src="/review/assets/images/empty-review.png" alt="리뷰 없음">
