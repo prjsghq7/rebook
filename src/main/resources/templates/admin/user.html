@@ -77,12 +77,15 @@
 
                 <div class="-object-info-label contact-group">
                     <label class="-object-contact-label">
-                        <select required class="-object-field" name="contactMvno">
-                            <option disabled hidden selected value="-1">통신사</option>
-                            <option th:each="mvon:${contactMvnos}" th:value="${mvon.code}"
-                                    th:text="${mvon.displayText}" th:selected="${user.contactMvnoCode == mvon.code}"></option>
+                        <select required class="-object-field" id="contactMvnoCode" name="contactMvnoCode">
+                            <option disabled hidden selected value="">통신사</option>
+                            <option th:each="mvno : ${contactMvnos}"
+                                    th:value="${mvno.code}"
+                                    th:text="${mvno.displayText}">
+                            </option>
                         </select>
                     </label>
+
                     <label class="-object-contact-label">
                         <input class="--input" type="text" name="contactFirst" id="contactFirst" maxlength="4" placeholder="010" required>
                     </label>
@@ -140,3 +143,4 @@
 </div>
 </body>
 </html>
+<!--TODO 관리자 사인드유저 비교해서 홈으로 리다이렉트 시켜야됨-->

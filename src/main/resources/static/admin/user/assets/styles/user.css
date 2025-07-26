@@ -1,0 +1,251 @@
+.admin > .user-management {
+    max-width: 100%;
+}
+
+.admin > .user-management > .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 0.875rem;
+    color: #333333;
+    margin-top: 1.5rem;
+}
+
+.admin > .user-management > .user-table > thead > tr > th {
+    background-color: #f9f9f9;
+    padding: 0.75rem 1rem;
+    text-align: center;
+    border: 1px solid #dddddd;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.admin > .user-management > .user-table > tbody > tr > td {
+    padding: 0.75rem 1rem;
+    border: 1px solid #dddddd;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.4;
+    position: relative;
+}
+
+.admin > .user-management > .user-table > tbody > tr:nth-child(even) > td {
+    background-color: #fcfcfc;
+}
+.admin > .user-management > .user-table > tbody > tr {
+    cursor: pointer;
+}
+
+.admin > .user-management > .user-table > tbody > tr:hover > td {
+    background-color: #f0f8ff;
+}
+
+.admin > .user-management > .user-table > tbody > tr > td.yes {
+    color: #008000;
+    font-weight: 600;
+}
+
+.admin > .user-management > .user-table > tbody > tr > td.no {
+    color: #cc0000;
+    font-weight: 400;
+}
+
+/* === 기본 input 스타일 === */
+.-object-info-label {
+    position: relative;
+    display: block;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+}
+
+.--input {
+    width: 100%;
+    padding: 1rem 0.75rem 0.25rem;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 0.5rem;
+    background: transparent;
+    color: #333333;
+    outline: none;
+}
+
+.--caption {
+    position: absolute;
+    left: 0.75rem;
+    top: 1rem;
+    font-size: 0.875rem;
+    color: #999999;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background: #ffffff;
+    padding: 0 0.25rem;
+}
+
+/* === focus or filled 상태일 때 라벨 위로 === */
+.--input:focus + .--caption,
+.--input:not(:placeholder-shown) + .--caption,
+.--input:valid + .--caption {
+    top: -0.6rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    color: #1a7fff;
+    background-color: #ffffff;
+}
+
+/* === select 대응 === */
+select.--input:focus + .--caption,
+select.--input:valid + .--caption {
+    top: -0.6rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    color: #1a7fff;
+    background-color: #ffffff;
+}
+
+/* === 연락처 묶음 === */
+.contact-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.contact-group > .--input {
+    flex: 1;
+    min-width: 5rem;
+}
+.contact-group > .--caption {
+    position: absolute;
+    top: -0.6rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    color: #999999;
+    background-color: #ffffff;
+}
+.admin > .user-edit-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #00000066;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.admin > #userEditModal.hidden {
+    display: none;
+}
+
+.admin > .user-edit-modal > .modal-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 1rem;
+    width: 100%;
+    max-width: 32rem;
+    box-shadow: 0 0.5rem 2rem #00000033;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.admin > .user-edit-modal > .modal-content > .modal-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label {
+    position: relative;
+    display: block;
+    margin-bottom: 1.25rem;
+    font-size: 0.875rem;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label > .--input {
+    width: 100%;
+    padding: 1rem 0.75rem 0.25rem;
+    font-size: 1rem;
+    border: 1px solid #cccccc;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    color: #333333;
+    outline: none;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label > .--caption {
+    position: absolute;
+    left: 0.75rem;
+    top: 1rem;
+    font-size: 0.875rem;
+    color: #999999;
+    pointer-events: none;
+    transition: all 0.2s ease;
+    background-color: #ffffff;
+    padding: 0 0.25rem;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label > .--input:focus + .--caption,
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label > .--input:not(:placeholder-shown) + .--caption,
+.admin > .user-edit-modal > .modal-content > form > .-object-info-label > .--input:valid + .--caption {
+    top: -0.6rem;
+    left: 0.5rem;
+    font-size: 0.75rem;
+    color: #1a7fff;
+    background-color: #ffffff;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group > .--input {
+    flex: 1;
+    min-width: 5rem;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group > .--caption {
+    position: absolute;
+    top: -0.6rem;
+    left: 0.75rem;
+    font-size: 0.75rem;
+    color: #999999;
+    background-color: #ffffff;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .modal-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 2rem;
+    gap: 1rem;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .modal-actions > button {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .modal-actions > button[type="submit"] {
+    background-color: #1a7fff;
+    color: #ffffff;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .modal-actions > #cancelEditBtn {
+    background-color: #cccccc;
+    color: #333333;
+}
+

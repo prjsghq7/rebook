@@ -84,6 +84,9 @@ public class AdminController {
         ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
         model.addAttribute("contactMvnos", contactMvnos);
         model.addAttribute("user", new UserDto());
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return "redirect:/";
+        }
         return "admin/user";
     }
 
