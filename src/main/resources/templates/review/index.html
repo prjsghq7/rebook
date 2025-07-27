@@ -8,7 +8,7 @@
     <title>Re:Book(리뷰 게시판)</title>
     <link href="/common/assets/styles/common.css" rel="stylesheet" type="text/css">
     <link href="/review/assets/styles/index.css" rel="stylesheet" type="text/css">
-    <script defer src="/common/assets/scripts/common.js"></script>
+    <script defer src="/common/assets/scripts/common.js" type="module"></script>
     <script defer src="/review/assets/scripts/index.js"></script>
 </head>
 <body>
@@ -44,6 +44,9 @@
             </label>
         </div>
     </form>
+    <div id="result-container" th:if="${reviews.length == 0 || reviews == null}">
+        <span class="result">작성된 리뷰가 없습니다.</span>
+    </div>
     <div id="grid-container">
         <div class="item" th:each="review : ${reviews}">
             <a th:href="@{'/book/' (id=${review.bookId})}" class="detail">
@@ -69,7 +72,7 @@
             </a>
         </div>
     </div>
-    <div id="pageContainer">
+    <div id="pageContainer" th:if="${reviews != null && reviews.length > 0}">
         <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
            th:text="${reviewPage}"
            th:href="@{/review/ (page = ${reviewPage}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
