@@ -580,26 +580,9 @@ public class UserService {
             page = 1;
         }
         int totalCount = this.userMapper.selectCountAllUsers();
-        ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
+        ReviewPageVo reviewPageVo = new ReviewPageVo(10, page, totalCount);
         List<UserDto> list = this.userMapper.selectAllUser(reviewPageVo);
         return Pair.of(list.toArray(new UserDto[0]), reviewPageVo);
-    }
-
-    public ResultTuple<List<UserDto>> selectUserInfo(UserEntity signedUser) {
-        if (signedUser == null || !signedUser.isAdmin()) {
-            return ResultTuple.<List<UserDto>>builder()
-                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
-                    .build();
-        }
-        int page = 1;
-        int totalCount = this.userMapper.selectCountAllUsers();
-        ReviewPageVo reviewPageVo = new ReviewPageVo(12, page, totalCount);
-        List<UserDto> list = this.userMapper.selectAllUser(reviewPageVo);
-
-        return ResultTuple.<List<UserDto>>builder()
-                .result(CommonResult.SUCCESS)
-                .payload(list)
-                .build();
     }
 
     public Result editUserInfo(UserEntity signedUser, UserDto userDto) {

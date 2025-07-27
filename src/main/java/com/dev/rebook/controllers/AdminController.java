@@ -21,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -106,11 +107,23 @@ public class AdminController {
 
     @RequestMapping(value = "/user/get", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResultTuple<List<UserDto>> getUserInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+    public ResultTuple<List<UserDto>> getUserInfo(
+            @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+            @RequestParam(value = "page", defaultValue = "1") int page) {
+
         if (signedUser == null || !signedUser.isAdmin()) {
-            return ResultTuple.<List<UserDto>>builder().result(CommonResult.FAILURE_SESSION_EXPIRED).build();
+            return ResultTuple.<List<UserDto>>builder()
+                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
+                    .build();
         }
-        return this.userService.selectUserInfo(signedUser);
+
+        Pair<UserDto[], ReviewPageVo> pair = userService.getUserAll(signedUser, page);
+        List<UserDto> payload = Arrays.asList(pair.getFirst());
+
+        return ResultTuple.<List<UserDto>>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(payload)
+                .build();
     }
 
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
