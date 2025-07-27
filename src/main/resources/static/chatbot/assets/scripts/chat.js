@@ -106,8 +106,6 @@ async function sendChatMessage() {
                     $li.addEventListener('click', () => {
                         location.href = `${window.origin}/book/?id=${book.id}`;
                     });
-
-
                 });
             }
         } catch (e) {
@@ -370,8 +368,8 @@ async function loadChatMessage(roomId) {
             method: 'GET',
             credentials: 'include'
         });
-
         const result = await res.json();
+
         if (result.result === 'FAILURE_SESSION_EXPIRED') {
             dialog.showSimpleOk('오류', '로그인이 만료되었거나 권한이없습니다. 로그인 후 다시 시도해주세요.', () => {
                 location.href = `${window.origin}/user/login`;
@@ -382,21 +380,38 @@ async function loadChatMessage(roomId) {
             dialog.showSimpleOk('오류', '채팅내역을 불러 올 수 없습니다. 잠시 후 다시 시도해주세요.');
             return;
         }
-        const messages = result.payload;
-        console.log(result.payload);
+
+        const messages = Array.isArray(result.payload) ? result.payload : [];
         clearMessage();
-        messages.forEach(msg => {
-            console.log('[클릭 가능 여부 체크]', msg.message, msg.id);
 
-            const $li = appendMessage(msg.sender === 'user' ? 'user' : 'bot', msg.message);
-            if (!$li) {
-                return;
+        messages.forEach((msg) => {
+            const sender = msg.sender === 'user' ? 'user' : 'bot';
+
+            // 1) 텍스트(본문)는 항상 먼저
+            if (msg.message && typeof msg.message === 'string' && msg.message.trim() !== '') {
+                appendMessage(sender, msg.message);
             }
-            $li.dataset.id = msg.id;
-            $li.addEventListener('click', () => {
-                location.href = `${window.origin}/book?id=${msg.id}`;
-            });
 
+            // 2) 추천 타입이면 payload 파싱해서 링크 메시지 추가
+            if (msg.messageType === 'book_recommendation' && msg.payload) {
+                try {
+                    const books = JSON.parse(msg.payload);
+                    if (Array.isArray(books)) {
+                        books.forEach((book) => {
+                            if (!book || book.id == null || !book.title) return;
+                            const $bookLi = appendMessage('bot', `"${book.title}"`);
+                            if (!$bookLi) return;
+                            $bookLi.dataset.id = book.id;
+                            $bookLi.classList.add('clickable');
+                            $bookLi.addEventListener('click', () => {
+                                location.href = `${window.origin}/book/?id=${book.id}`;
+                            });
+                        });
+                    }
+                } catch (e) {
+                    console.warn('payload JSON 파싱 실패:', msg.payload, e);
+                }
+            }
         });
 
     } catch (e) {

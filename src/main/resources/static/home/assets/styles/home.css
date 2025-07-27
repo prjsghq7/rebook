@@ -402,8 +402,8 @@
     transition: color var(--transition);
 }
 .book-section > .new-book > .new-book-cover > .book-track > .book-card > .book-cover > img {
-    width: 14rem;
-    height: 17.5rem;
+    width: 10rem;
+    height: 12.5rem;
 }
 /* 유저 PICK! 인기 급상승 도서 */
 .user-book-cover {
