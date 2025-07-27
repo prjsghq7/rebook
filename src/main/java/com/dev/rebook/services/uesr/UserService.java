@@ -108,8 +108,14 @@ public class UserService {
         return this.userMapper.selectAgeGroupStats();
     }
 
-    public List<DailyUserRegisterStatsDto> getDailyUserRegisterStats() {
-        return this.userMapper.selectDailyUserRegisterStats();
+    public List<DailyUserRegisterStatsDto> getDailyUserRegisterStats(LocalDate from, LocalDate to) {
+        if (from == null || to == null) {
+            return null;
+        }
+        if (from.isAfter(to)) {
+            return null;
+        }
+        return this.userMapper.selectDailyUserRegisterStats(from, to);
     }
 
     public Result removeAccount(UserEntity signedUser, EmailTokenEntity emailToken) {

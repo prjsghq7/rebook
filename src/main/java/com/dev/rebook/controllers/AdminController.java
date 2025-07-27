@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -55,20 +56,22 @@ public class AdminController {
 
     @RequestMapping(value = "/dashboard/daily-user-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyUserRegisterStatsDto> getDailyUserRegister() {
-        return this.dashboardService.getDailUserRegisterStats();
+    public List<DailyUserRegisterStatsDto> getDailyUserRegister(@RequestParam(value = "from", required = false) LocalDate from,
+                                                                @RequestParam(value = "to", required = false) LocalDate to) {
+        return this.dashboardService.getDailUserRegisterStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/daily-review-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyReviewRegisterStatsDto> getDailyReviewRegister() {
-        return this.dashboardService.getDailyReviewRegisterStats();
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegister(LocalDate from, LocalDate to) {
+        return this.dashboardService.getDailyReviewRegisterStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public DashboardDto getDashboardAll() {
-        return this.dashboardService.getDashBoardAll();
+    public DashboardDto getDashboardAll(@RequestParam(value = "from", required = false) LocalDate from,
+                                        @RequestParam(value = "to", required = false) LocalDate to) {
+        return this.dashboardService.getDashBoardAll(from, to);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET, produces = MediaType.TEXT_HTML_VALUE)

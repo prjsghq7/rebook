@@ -13,6 +13,7 @@ import com.dev.rebook.vos.ReviewPageVo;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -42,6 +43,7 @@ public interface ReviewMapper {
                                         @Param("reviewPageVo") ReviewPageVo reviewPageVo,
                                         @Param("reviewPageButtonVo") ReviewPageButtonVo reviewPageButtonVo);
 
-    List<DailyReviewRegisterStatsDto> selectDailyReviewRegisterStats();
+    List<DailyReviewRegisterStatsDto> selectDailyReviewRegisterStats(@Param("from") LocalDate from,
+                                                                     @Param("to") LocalDate to);
 
 }

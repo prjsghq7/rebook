@@ -31,6 +31,7 @@
                 <!-- provider 별 회원 수 -->
                 <div class="header">
                     <h3 class="title">소셜 로그인 비율</h3>
+                    <div class="-flex-stretch" role="none"></div>
                     <button class="reload" id="reloadUserProvider" type="button">
                         <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
                     </button>
@@ -42,6 +43,7 @@
                 <!-- 회원 성별 비율 -->
                 <div class="header">
                     <h3 class="title">회원 성별 비율</h3>
+                    <div class="-flex-stretch" role="none"></div>
                     <button class="reload" id="reloadUserGender" type="button">
                         <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
                     </button>
@@ -53,6 +55,7 @@
                 <!-- 회원 성별 비율 -->
                 <div class="header">
                     <h3 class="title">회원 연령 비율</h3>
+                    <div class="-flex-stretch" role="none"></div>
                     <button class="reload" id="reloadUserAgeGroup" type="button">
                         <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
                     </button>
@@ -65,7 +68,11 @@
                 <!-- 날짜 별 회원가입한 회원 수 -->
                 <div class="header">
                     <h3 class="title">일별 회원가입 수</h3>
-                    <button class="reload" id="reloadDailyUserRegister" type="button">
+                    <div class="-flex-stretch" role="none"></div>
+
+                    <label class="label">From: <input type="date" class="date from"></label>/
+                    <label class="label">To: <input type="date" class="date to"></label>
+                    <button class="reload" id="reloadDailyUserRegister" type="submit">
                         <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
                     </button>
                 </div>
@@ -84,6 +91,10 @@
                 <!-- 날짜 별 등록 리뷰 수 -->
                 <div class="header">
                     <h3 class="title">일별 리뷰 등록 수</h3>
+                    <div class="-flex-stretch" role="none"></div>
+
+                    <label class="label">From: <input type="date" class="date from"></label>/
+                    <label class="label">To: <input type="date" class="date to"></label>
                     <button class="reload" id="reloadDailyReviewRegister" type="button">
                         <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
                     </button>

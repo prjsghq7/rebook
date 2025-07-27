@@ -6,6 +6,7 @@ import com.dev.rebook.services.uesr.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -32,20 +33,20 @@ public class DashboardService {
         return this.userService.getAgeGroupStats();
     }
 
-    public List<DailyUserRegisterStatsDto> getDailUserRegisterStats() {
-        return this.userService.getDailyUserRegisterStats();
+    public List<DailyUserRegisterStatsDto> getDailUserRegisterStats(LocalDate from, LocalDate to) {
+        return this.userService.getDailyUserRegisterStats(from, to);
     }
 
-    public List<DailyReviewRegisterStatsDto> getDailyReviewRegisterStats() {
-        return this.reviewService.getDailyReviewRegisterStats();
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegisterStats(LocalDate from, LocalDate to) {
+        return this.reviewService.getDailyReviewRegisterStats(from, to);
     }
 
-    public DashboardDto getDashBoardAll() {
+    public DashboardDto getDashBoardAll(LocalDate from, LocalDate to) {
         List<ProviderStatsDto> providerStats = this.userService.getProviderStats();
         List<GenderStatsDto> genderStats = this.userService.getGenderStats();
         List<AgeGroupStatsDto> ageGroupStats = this.userService.getAgeGroupStats();
-        List<DailyUserRegisterStatsDto> dailyUserStats = this.userService.getDailyUserRegisterStats();
-        List<DailyReviewRegisterStatsDto> dailyReviewStats = this.reviewService.getDailyReviewRegisterStats();
+        List<DailyUserRegisterStatsDto> dailyUserStats = this.userService.getDailyUserRegisterStats(from, to);
+        List<DailyReviewRegisterStatsDto> dailyReviewStats = this.reviewService.getDailyReviewRegisterStats(from, to);
 
         return DashboardDto.builder()
                 .providerStats(providerStats)

@@ -7,6 +7,52 @@ const $userAgeGroup = document.getElementById('userAgeGroup');
 const $dailyUserRegister = document.getElementById('dailyUserRegister');
 const $dailyReviewRegister = document.getElementById('dailyReviewRegister');
 
+const $reloadDailyUserRegister = document.getElementById('reloadDailyUserRegister');
+const $reloadDailyReviewRegister = document.getElementById('reloadDailyReviewRegister');
+
+const checkValidDate = (from, to) => {
+    if (!from || !to) {
+        dialog.showSimpleOk('통계 기간 설정', '기간을 모두 선택해주세요.');
+        return false;
+    }
+
+    const fromDate = new Date(from);
+    const toDate = new Date(to);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (fromDate > toDate) {
+        dialog.showSimpleOk('통계 기간 설정', 'From(시작) 날짜는 To(종료) 날짜보다 이후 날짜 일 수 없습니다.');
+        return false;
+    }
+
+    if (toDate > today) {
+        dialog.showSimpleOk('통계 기간 설정', 'From(시작) 날짜는 To(종료) 날짜보다 이후 날짜 일 수 없습니다.');
+        return false;
+    }
+
+    return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const fromInputs = document.querySelectorAll('.date.from');
+    const toInputs = document.querySelectorAll('.date.to');
+
+    const today = new Date();
+    const oneWeekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+    const fromValue = oneWeekAgo.toISOString().split('T')[0];
+    const toValue = today.toISOString().split('T')[0];
+
+    fromInputs.forEach(fromInput => {
+        fromInput.value = fromValue;
+    });
+    toInputs.forEach(toInput => {
+        toInput.value = toValue;
+    });
+
+    loadDashBoard(fromValue, toValue);
+});
+
 const updateUserProvider = (providerStats) => {
     console.log(providerStats);
 
@@ -244,7 +290,7 @@ const updateDailyReviewRegister = (dailyReviewRegisterStats) => {
     dailyReviewChart.render();
 }
 
-const loadDashBoard = () => {
+const loadDashBoard = (fromValue,  toValue) => {
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
@@ -264,12 +310,10 @@ const loadDashBoard = () => {
         updateDailyUserRegister(stats.dailyUserRegisterStats);
         updateDailyReviewRegister(stats.dailyReviewRegisterStats);
     };
-    xhr.open('GET', `${origin}/admin/dashboard/all`);
+    xhr.open('GET', `${origin}/admin/dashboard/all?from=${fromValue}&to=${toValue}`);
     xhr.send();
     loading.show('관리자 통계 불러오는 중');
 };
-
-loadDashBoard();
 
 document.getElementById('reloadUserProvider').addEventListener('click', () => {
     const xhr = new XMLHttpRequest();
@@ -328,7 +372,12 @@ document.getElementById('reloadUserAgeGroup').addEventListener('click', () => {
     loading.show('회원 연령 비율 통계 갱신 중');
 });
 
-document.getElementById('reloadDailyUserRegister').addEventListener('click', () => {
+$reloadDailyUserRegister.addEventListener('click', () => {
+    const from = $reloadDailyUserRegister.parentElement.querySelector('.from').value;
+    const to = $reloadDailyUserRegister.parentElement.querySelector('.to').value;
+    if (!checkValidDate(from, to)) {
+        return;
+    }
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
@@ -342,12 +391,17 @@ document.getElementById('reloadDailyUserRegister').addEventListener('click', () 
         const dailyUserRegisterStats = JSON.parse(xhr.responseText);
         updateDailyUserRegister(dailyUserRegisterStats);
     };
-    xhr.open('GET', `${origin}/admin/dashboard/daily-user-register`);
+    xhr.open('GET', `${origin}/admin/dashboard/daily-user-register?from=${from}&to=${to}`);
     xhr.send();
     loading.show('일별 회원가입 수 통계 갱신 중');
 });
 
-document.getElementById('reloadDailyReviewRegister').addEventListener('click', () => {
+$reloadDailyReviewRegister.addEventListener('click', () => {
+    const from = $reloadDailyReviewRegister.parentElement.querySelector('.from').value;
+    const to = $reloadDailyReviewRegister.parentElement.querySelector('.to').value;
+    if (!checkValidDate(from, to)) {
+        return;
+    }
     const xhr = new XMLHttpRequest();
     xhr.onreadystatechange = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
@@ -361,7 +415,7 @@ document.getElementById('reloadDailyReviewRegister').addEventListener('click', (
         const dailyReviewRegisterStats = JSON.parse(xhr.responseText);
         updateDailyReviewRegister(dailyReviewRegisterStats);
     };
-    xhr.open('GET', `${origin}/admin/dashboard/daily-review-register`);
+    xhr.open('GET', `${origin}/admin/dashboard/daily-review-register?from=${from}&to=${to}`);
     xhr.send();
     loading.show('일별 리뷰 등록 수 통계 갱신 중');
 });

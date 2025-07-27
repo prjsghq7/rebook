@@ -12,6 +12,7 @@ import com.nimbusds.openid.connect.sdk.claims.Gender;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
@@ -47,7 +48,8 @@ public interface UserMapper {
 
     List<AgeGroupStatsDto> selectAgeGroupStats();
 
-    List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats();
+    List<DailyUserRegisterStatsDto> selectDailyUserRegisterStats(@Param(value = "from") LocalDate from,
+                                                                 @Param(value = "to") LocalDate to);
 
     List<UserDto> selectAllUser(@Param("reviewPageVo") ReviewPageVo reviewPageVo);
 

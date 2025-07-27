@@ -219,6 +219,14 @@
         SELECT DATE(`created_at`) AS `date`,
                COUNT(0)     AS `userCount`
         FROM `rebook`.`users`
+        <where>
+            <if test="from != null">
+                AND DATE(`created_at`) &gt;= #{from}
+            </if>
+            <if test="to != null">
+                AND DATE(`created_at`) &lt;= #{to}
+            </if>
+        </where>
         GROUP BY `date`
     </select>
     <select id="selectAllUser" resultType="com.dev.rebook.dtos.user.UserDto">

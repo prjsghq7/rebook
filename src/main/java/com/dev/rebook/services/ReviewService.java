@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -36,8 +37,14 @@ public class ReviewService {
         this.reviewMapper = reviewMapper;
     }
 
-    public List<DailyReviewRegisterStatsDto> getDailyReviewRegisterStats() {
-        return this.reviewMapper.selectDailyReviewRegisterStats();
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegisterStats(LocalDate from, LocalDate to) {
+        if (from == null || to == null) {
+            return null;
+        }
+        if (from.isAfter(to)) {
+            return null;
+        }
+        return this.reviewMapper.selectDailyReviewRegisterStats(from, to);
     }
 
     public ReviewEntity getReviewById(int id) {
