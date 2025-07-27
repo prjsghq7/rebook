@@ -25,14 +25,6 @@
     justify-content: flex-start;
 }
 
-#profile-section > .profile-image {
-    width: 9rem;
-    height: 9rem;
-    border-radius: 50%;
-    object-fit: cover;
-    border: 0.125rem solid #268DFA;
-}
-
 #profile-section > .profile-info {
     display: grid;
     grid-template-columns: auto 1fr;
@@ -56,6 +48,86 @@
     border-radius: 0.375rem;
 }
 
+
+#profileImageForm {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    justify-content: flex-start;
+
+    position: relative;
+}
+
+#profileImageForm > .profile-image {
+    width: 9rem;
+    height: 9rem;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 0.125rem solid #268DFA;
+}
+#profileImageForm > .profile-image-input {
+    display: none;
+}
+
+#profileImageForm > .-object-button {
+    border-radius: 0.25rem;
+    padding: 0.625rem 1.5rem;
+}
+
+#profileImageForm > .button-container {
+    position: absolute;
+    top: 8.125rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: 80%;
+
+    align-items: stretch;
+    display: none;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#profileImageForm > .button-container[data-rb-visible] {
+    display: flex;
+}
+
+#profileImageForm > .button-container > .btn {
+    padding: 0.3125rem 0.625rem;
+    border-radius: 0.25rem;
+    border: 0.0625rem solid #ffffff;
+
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ffffff;
+
+    cursor: pointer;
+
+    opacity: 0.8;
+    transition-duration: 250ms;
+    transition-property: top, opacity;
+    transition-timing-function: ease;
+}
+
+#profileImageForm > .button-container > .btn:hover {
+    opacity: 1;
+}
+
+#profileImageForm > .button-container > .btn:active {
+    position: relative;
+    top: 0.0625rem;
+}
+
+#profileImageForm > .button-container > .btn.apply {
+    background-color: #268dfa;
+    outline: 0.0625rem solid #3b82f6;
+}
+
+#profileImageForm > .button-container > .btn.cancel {
+    background-color: #3a3d49;
+    outline: 0.0625rem solid #30323a;
+}
 
 #activity-section {
     align-items: stretch;

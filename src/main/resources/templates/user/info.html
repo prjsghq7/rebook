@@ -19,8 +19,17 @@
     <h1 class="title">마이페이지</h1>
 
     <section id="profile-section">
-        <img th:if="${signedUser.profileImg == null}" src="/user/assets/images/profile-sample.png" alt="프로필 이미지" class="profile-image">
-        <img th:if="${signedUser.profileImg != null}" th:src="${signedUser.profileImg}" alt="프로필 이미지" class="profile-image">
+        <form id="profileImageForm">
+            <img th:src="${signedUser.profileImg != null ? signedUser.profileImg : '/user/assets/images/profile-sample.png'}" alt="프로필 이미지" class="profile-image">
+            <input class="profile-image-input" name="image" accept="image/*" type="file">
+            <button class="-object-button -color-blue btn-change-profile" type="button">
+                <span class="--caption">프로필 변경</span>
+            </button>
+            <div class="button-container">
+                <button class="btn apply" type="submit">적용</button>
+                <button class="btn cancel" type="reset">취소</button>
+            </div>
+        </form>
         <div class="profile-info -flex-stretch">
             <span class="label">이름</span><span th:text="${signedUser.name}"></span>
             <span class="label">이메일</span><span th:text="${signedUser.email}"></span>

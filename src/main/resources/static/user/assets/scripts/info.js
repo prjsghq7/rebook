@@ -87,3 +87,68 @@ $reviewList.querySelectorAll(':scope .delete').forEach(($delete) => {
         });
     });
 });
+
+const $profileImageForm = document.getElementById('profileImageForm');
+const $profileImage = $profileImageForm.querySelector(':scope > .profile-image');
+const $profileImageInput = $profileImageForm.querySelector(':scope > .profile-image-input');
+const $btnChangeProfile = $profileImageForm.querySelector(':scope > .btn-change-profile');
+const $buttonContainer = $profileImageForm.querySelector(':scope > .button-container');
+let originalProfileImage = $profileImage.src;
+
+$btnChangeProfile.addEventListener('click', () => {
+    $profileImageInput.click();
+});
+
+$profileImageInput.addEventListener('change', () => {
+    if ($profileImageInput.files.length < 1) return;
+
+    const file = $profileImageInput.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        $profileImage.src = e.target.result;
+        $buttonContainer.setVisible(true);
+    };
+    reader.readAsDataURL(file);
+});
+
+const uploadProfileImage = async () => {
+    if ($profileImageInput.files.length === 0) {
+        dialog.showSimpleOk('프로필 이미지 변경', '업로드할 이미지를 선택하세요.');
+        return;
+    }
+
+    try {
+        const formData = new FormData();
+        formData.append('image', $profileImageInput.files[0]);
+        const response = await fetch('/user/profile/image', {
+            method: 'POST',
+            headers: {
+                [header]: token
+            },
+            body: formData
+        });
+
+        if (response.status < 200 || response.status >= 300) {
+            dialog.showSimpleOk('프로필 이미지 변경', `[${response.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.`);
+            return;
+        }
+
+        $profileImage.src = originalProfileImage = await response.text();
+        $buttonContainer.setVisible(false);
+
+        dialog.showSimpleOk('프로필 이미지 변경', `프로필 이미지가 변경되었습니다.`);
+    } catch (error) {
+        dialog.showSimpleOk('프로필 이미지 변경', `프로필 이미지 업로드 중 문제가 발생했습니다.\n${error}`);
+    }
+};
+
+$profileImageForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    uploadProfileImage();
+});
+
+$profileImageForm.addEventListener('reset', () => {
+    $profileImage.src = originalProfileImage;
+    $buttonContainer.setVisible(false);
+});

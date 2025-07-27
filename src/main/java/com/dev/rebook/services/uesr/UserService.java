@@ -27,6 +27,8 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.util.Pair;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -34,15 +36,24 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Service
 public class UserService {
+
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     private static EmailTokenEntity generateEmailToken(String email, String userAgent, int expMin) {
         String code = RandomStringUtils.randomNumeric(6);   // "000000" ~ "999999"
         String salt = RandomStringUtils.randomAlphanumeric(128); // a-z A~Z 0~9
@@ -179,6 +190,44 @@ public class UserService {
         return userMapper.update(signedUser) > 0
                 ? CommonResult.SUCCESS
                 : CommonResult.FAILURE;
+    }
+
+    public HttpStatus updateProfileImage(UserEntity signedUser, MultipartFile image) {
+        if (UserService.isInvalidUser(signedUser)) {
+            // CommonResult.FAILURE_SESSION_EXPIRED
+            return HttpStatus.UNAUTHORIZED;
+        }
+
+        if (image.isEmpty() || !image.getContentType().startsWith("image/")) {
+            // CommonResult.FAILURE;
+            return HttpStatus.BAD_REQUEST;
+        }
+
+        String profileUploadDir = uploadDir + "profile/";
+        File dir = new File(profileUploadDir);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String extension = Objects.requireNonNull(image.getOriginalFilename())
+                .substring(image.getOriginalFilename().lastIndexOf("."));
+        String fileName = UUID.randomUUID() + extension;
+
+        File file = new File(profileUploadDir, fileName);
+        try {
+            image.transferTo(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return HttpStatus.INTERNAL_SERVER_ERROR;
+        }
+
+        String imageUrl = "/uploads/profile/" + fileName;
+
+        signedUser.setProfileImg(imageUrl);
+        signedUser.setModifiedAt(LocalDateTime.now());
+        return this.userMapper.update(signedUser) > 0
+                ? HttpStatus.OK
+                : HttpStatus.BAD_REQUEST;
     }
 
     public Result recoverPassword(EmailTokenEntity emailToken, String password) {
