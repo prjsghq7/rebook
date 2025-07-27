@@ -569,8 +569,7 @@ public class UserService {
     }
 
     public Pair<UserDto[], ReviewPageVo> getUserAll(UserEntity signedUser,
-                                                    int page,
-                                                    ReviewPageButtonVo reviewPageButtonVo) {
+                                                    int page) {
         if (page < 1) {
             page = 1;
         }

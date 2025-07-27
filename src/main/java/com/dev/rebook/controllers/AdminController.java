@@ -93,7 +93,7 @@ public class AdminController {
         model.addAttribute("contactMvnos", contactMvnos);
         model.addAttribute("user", new UserDto());
 
-        Pair<UserDto[], ReviewPageVo> result = userService.getUserAll(signedUser, page, reviewPageButtonVo);
+        Pair<UserDto[], ReviewPageVo> result = userService.getUserAll(signedUser, page);
 
         model.addAttribute("reviewPageButtonVo", reviewPageButtonVo);
         model.addAttribute("users", result.getFirst());
