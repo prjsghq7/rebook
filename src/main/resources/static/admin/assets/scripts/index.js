@@ -250,6 +250,7 @@ const loadDashBoard = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('관리자 통계', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -265,6 +266,7 @@ const loadDashBoard = () => {
     };
     xhr.open('GET', `${origin}/admin/dashboard/all`);
     xhr.send();
+    loading.show('관리자 통계 불러오는 중');
 };
 
 loadDashBoard();
@@ -275,6 +277,7 @@ document.getElementById('reloadUserProvider').addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('소셜 로그인 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -284,6 +287,7 @@ document.getElementById('reloadUserProvider').addEventListener('click', () => {
     };
     xhr.open('GET', `${origin}/admin/dashboard/user-provider`);
     xhr.send();
+    loading.show('소셜 로그인 비율 통계 갱신 중');
 });
 
 document.getElementById('reloadUserGender').addEventListener('click', () => {
@@ -292,6 +296,7 @@ document.getElementById('reloadUserGender').addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('회원 성별 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -301,6 +306,7 @@ document.getElementById('reloadUserGender').addEventListener('click', () => {
     };
     xhr.open('GET', `${origin}/admin/dashboard/user-gender`);
     xhr.send();
+    loading.show('회원 성별 비율 통계 갱신 중');
 });
 
 document.getElementById('reloadUserAgeGroup').addEventListener('click', () => {
@@ -309,6 +315,7 @@ document.getElementById('reloadUserAgeGroup').addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('회원 연령 비율 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -318,6 +325,7 @@ document.getElementById('reloadUserAgeGroup').addEventListener('click', () => {
     };
     xhr.open('GET', `${origin}/admin/dashboard/user-age-group`);
     xhr.send();
+    loading.show('회원 연령 비율 통계 갱신 중');
 });
 
 document.getElementById('reloadDailyUserRegister').addEventListener('click', () => {
@@ -326,6 +334,7 @@ document.getElementById('reloadDailyUserRegister').addEventListener('click', () 
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('일별 회원가입 수 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -335,6 +344,7 @@ document.getElementById('reloadDailyUserRegister').addEventListener('click', () 
     };
     xhr.open('GET', `${origin}/admin/dashboard/daily-user-register`);
     xhr.send();
+    loading.show('일별 회원가입 수 통계 갱신 중');
 });
 
 document.getElementById('reloadDailyReviewRegister').addEventListener('click', () => {
@@ -343,6 +353,7 @@ document.getElementById('reloadDailyReviewRegister').addEventListener('click', (
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('일별 리뷰 등록 수 통계 갱신', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 재시도 부탁드립니다.`);
             return;
@@ -352,4 +363,5 @@ document.getElementById('reloadDailyReviewRegister').addEventListener('click', (
     };
     xhr.open('GET', `${origin}/admin/dashboard/daily-review-register`);
     xhr.send();
+    loading.show('일별 리뷰 등록 수 통계 갱신 중');
 });

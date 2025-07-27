@@ -28,11 +28,11 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
             if (xhr.readyState !== XMLHttpRequest.DONE) {
                 return;
             }
+            loading.hide();
             if (xhr.status < 200 || xhr.status >= 300) {
                 dialog.showSimpleOk('인증번호 전송', '요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.');
                 return;
             }
-            // $loading.hide();
             const response = JSON.parse(xhr.responseText);
             switch (response.result) {
                 case 'failure_duplicate':
@@ -59,8 +59,7 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
         xhr.open('POST', '/user/register-email');
         xhr.setRequestHeader(header, token);
         xhr.send(formData);
-
-        // $loading.show();
+        loading.show('인증번호 전송 중');
     });
 
     $registerForm['emailCodeVerifyButton'].addEventListener('click', () => {
@@ -83,6 +82,7 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
             if (xhr.readyState !== XMLHttpRequest.DONE) {
                 return;
             }
+            loading.hide();
             if (xhr.status < 200 || xhr.status >= 300) {
                 dialog.showSimpleOk('인증번호 확인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
                 return;
@@ -114,6 +114,7 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
         xhr.open('PATCH', '/user/register-email');
         xhr.setRequestHeader(header, token);
         xhr.send(formData);
+        loading.show('인증번호 확인 중');
     });
 }
 
@@ -150,6 +151,7 @@ const registerUser = () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('회원가입', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
@@ -176,6 +178,7 @@ const registerUser = () => {
     xhr.open('POST', '/user/register');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('회원가입 처리 중');
 }
 
 $registerForm.addEventListener('submit', (e) => {
@@ -361,6 +364,7 @@ $registerForm['nicknameCheckButton'].addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('닉네임 중복 확인', '요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.');
             return;
@@ -401,6 +405,7 @@ $registerForm['nicknameCheckButton'].addEventListener('click', () => {
     xhr.open('POST', '/user/nickname-check');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('닉네임 중복 확인 중')
 });
 
 $registerForm['contactCheckButton'].addEventListener('click', () => {
@@ -428,6 +433,7 @@ $registerForm['contactCheckButton'].addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('연락처 중복 확인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
@@ -474,6 +480,7 @@ $registerForm['contactCheckButton'].addEventListener('click', () => {
     xhr.open('POST', '/user/contact-check');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('연락처 확인 중');
 });
 
 
@@ -487,7 +494,6 @@ $registerForm['addressFindButton'].addEventListener('click', () => {
         width: '100%',
         height: '100%',
         oncomplete: (data) => {
-            console.log(data);
             $registerForm['addressPostal'].value = data['zonecode'];
             $registerForm['addressPrimary'].value = data['roadAddress'];
             $registerForm['addressSecondary'].focus()

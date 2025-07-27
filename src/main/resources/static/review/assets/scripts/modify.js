@@ -33,6 +33,7 @@ $reviewModifyForm.addEventListener('submit', (e) => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('리뷰 수정', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.`);
             return;
@@ -75,6 +76,7 @@ $reviewModifyForm.addEventListener('submit', (e) => {
     xhr.open('PATCH', '/review/modify');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('리뷰 등록');
 });
 
 const updateTextCount = () => {

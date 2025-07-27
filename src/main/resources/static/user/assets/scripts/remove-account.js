@@ -36,6 +36,7 @@ $deleteForm.addEventListener('submit', (e) => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('회원 탈퇴', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
@@ -74,6 +75,7 @@ $deleteForm.addEventListener('submit', (e) => {
     xhr.open('DELETE', '/user/remove-account');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('회원 탈퇴 중');
 });
 
 $deleteForm['emailCodeSendButton'].addEventListener('click', () => {
@@ -95,6 +97,7 @@ $deleteForm['emailCodeSendButton'].addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('인증번호 전송', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
@@ -126,10 +129,12 @@ $deleteForm['emailCodeSendButton'].addEventListener('click', () => {
     xhr.open('POST', '/user/remove-account-email');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('인증번호 전송 중');
 });
 
 $deleteForm['emailCodeVerifyButton'].addEventListener('click', () => {
     const $emailLabel = $deleteForm.querySelector('.-object-label:has(input[name="email"])');
+    $emailLabel.setInValid(false);
     if ($deleteForm['emailCode'].validity.valueMissing) {
         $emailLabel.setInValid(true, '인증번호를 입력해주세요.');
     } else if (!$deleteForm['emailCode'].validity.valid) {
@@ -148,6 +153,7 @@ $deleteForm['emailCodeVerifyButton'].addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('인증번호 확인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
@@ -178,4 +184,5 @@ $deleteForm['emailCodeVerifyButton'].addEventListener('click', () => {
     xhr.open('PATCH', '/user/remove-account-email');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('인증번호 확인 중');
 });

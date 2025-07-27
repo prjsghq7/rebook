@@ -86,6 +86,7 @@ $loginForm.addEventListener('submit', (e) => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('로그인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해주세요.`);
             return;
@@ -110,6 +111,7 @@ $loginForm.addEventListener('submit', (e) => {
     xhr.open('POST', '/user/login');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('로그인 시도 중');
 });
 
 $loginForm['email'].value = localStorage.getItem('loginEmail') ?? '';

@@ -26,7 +26,7 @@ $recoverForm['pRecoverEmailCodeSendButton'].addEventListener('click', () => {
             dialog.showSimpleOk('인증번호 전송', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
-        // $loading.hide();
+        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_absent':
@@ -48,8 +48,7 @@ $recoverForm['pRecoverEmailCodeSendButton'].addEventListener('click', () => {
     xhr.open('POST', '/user/recover-password-email');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
-
-    // $loading.show();
+    loading.show('인증번호 전송 중');
 });
 
 $recoverForm['pRecoverEmailCodeVerifyButton'].addEventListener('click', () => {
@@ -76,6 +75,7 @@ $recoverForm['pRecoverEmailCodeVerifyButton'].addEventListener('click', () => {
             dialog.showSimpleOk('인증번호 확인', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
+        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_expired':
@@ -103,6 +103,7 @@ $recoverForm['pRecoverEmailCodeVerifyButton'].addEventListener('click', () => {
     xhr.open('PATCH', '/user/recover-password-email');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('인증번호 전송 중');
 });
 
 const recoverEmail = () => {
@@ -154,6 +155,7 @@ const recoverEmail = () => {
             dialog.showSimpleOk('계정 복구[이메일 찾기]', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
+        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response['result']) {
             case 'failure_absent':
@@ -185,6 +187,7 @@ const recoverEmail = () => {
     xhr.open('POST', '/user/recover-email');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('계정 복구 중 [이메일 찾기]');
 }
 
 const recoverPassword = () => {
@@ -229,6 +232,7 @@ const recoverPassword = () => {
             dialog.showSimpleOk('계정 복구[비밀번호 재설정]', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
+        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response['result']) {
             case 'failure_suspended':
@@ -251,12 +255,13 @@ const recoverPassword = () => {
                 });
                 break;
             default:
-                dialog.showSimpleOk('계정 복구[이메일 찾기]', '알 수 없는 이유로 이메일 찾기에 실패하였습니다.\n잠시 후 다시 시도해 주세요.');
+                dialog.showSimpleOk('계정 복구[비밀번호 재설정]', '알 수 없는 이유로 이메일 찾기에 실패하였습니다.\n잠시 후 다시 시도해 주세요.');
         }
     };
     xhr.open('POST', '/user/recover-password');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('계정 복구 중 [비밀번호 재설정]');
 }
 
 $recoverForm.addEventListener('submit', (e) => {

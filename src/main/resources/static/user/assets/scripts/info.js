@@ -26,7 +26,7 @@ const requestDeleteReview = (reviewId) => {
             dialog.showSimpleOk('리뷰 삭제', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
-
+        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_no_permission':
@@ -57,12 +57,13 @@ const requestDeleteReview = (reviewId) => {
                 });
                 break;
             default:
-                dialog.showSimpleOk('리뷰 등록', '리뷰 삭제에 실패하였습니다.\n다시 확인해 주세요.')
+                dialog.showSimpleOk('리뷰 삭제', '리뷰 삭제에 실패하였습니다.\n다시 확인해 주세요.')
         }
     };
     xhr.open('DELETE', '/review/delete');
     xhr.setRequestHeader(header, token);
     xhr.send(formData);
+    loading.show('리뷰 삭제 중')
 }
 
 $reviewList.querySelectorAll(':scope .delete').forEach(($delete) => {

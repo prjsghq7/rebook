@@ -70,3 +70,6 @@ HTMLElement.prototype.setVisible = function (b) {
     }
     return this;
 }
+
+import { Loading } from './loading.js';
+window.loading = new Loading();
