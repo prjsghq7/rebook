@@ -21,7 +21,7 @@
 }
 
 #searchForm > .search {
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     flex-direction: row;
     gap: 0.375rem;
