@@ -200,26 +200,51 @@ select.--input:valid + .--caption {
 }
 
 .admin > .user-edit-modal > .modal-content > form > .contact-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: 7.5rem 1fr 1fr 1fr;
+    grid-auto-rows: 2.75rem;
     gap: 0.5rem;
     align-items: center;
-    flex-wrap: wrap;
-    margin-bottom: 1.25rem;
     position: relative;
+    margin-bottom: 1.25rem;
+    margin-top: 1.75rem;
 }
 
-.admin > .user-edit-modal > .modal-content > form > .contact-group > .--input {
-    flex: 1;
-    min-width: 5rem;
+.admin > .user-edit-modal > .modal-content > form > .contact-group > .-object-contact-label {
+    width: 100%;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group select.-object-field,
+.admin > .user-edit-modal > .modal-content > form > .contact-group input.--input {
+    width: 100%;
+    height: 100%;
+    padding: 0 0.75rem;
+    font-size: 1rem;
+    border: 1px solid #cccccc;
+    border-radius: 0.5rem;
+    background-color: #ffffff;
+    color: #333333;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group select.-object-field {
+    min-width: 7.5rem;
+    appearance: none;
+}
+
+.admin > .user-edit-modal > .modal-content > form > .contact-group input.--input {
+    text-align: center;
 }
 
 .admin > .user-edit-modal > .modal-content > form > .contact-group > .--caption {
     position: absolute;
-    top: -0.6rem;
-    left: 0.75rem;
+    top: -0.9rem;
+    left: 0.5rem;
     font-size: 0.75rem;
-    color: #999999;
+    color: #666666;
     background-color: #ffffff;
+    padding: 0 0.25rem;
 }
 
 .admin > .user-edit-modal > .modal-content > form > .modal-actions {

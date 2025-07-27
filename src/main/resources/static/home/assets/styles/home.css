@@ -1,3 +1,20 @@
+:root{
+    --white:#ffffff;
+    --blue-50:#f0f6ff;
+    --blue-100:#e1efff;
+    --blue-200:#c7e0ff;
+    --blue-300:#9fcbff;
+    --blue-400:#6eafff;
+    --blue-500:#3a93ff;
+    --blue-600:#1a7fff;
+    --blue-700:#0065e0;
+    --text-color:#1a1a1a;
+    --radius:1rem;
+    --shadow:0 8px 20px rgba(0,102,204,0.08);
+    --shadow-hover:0 12px 28px rgba(0,102,204,0.12);
+    --transition:0.3s ease;
+}
+
 *{box-sizing:border-box}
 
 
