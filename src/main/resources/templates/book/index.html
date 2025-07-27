@@ -124,7 +124,7 @@
         </div>
     </div>
 
-    <div id="pageContainer">
+    <div id="pageContainer" th:if="${reviews != null && reviews.length > 0}">
         <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
            th:text="${reviewPage}"
            th:href="@{/book/ (id=${book.id}, page = ${reviewPage})}"
