@@ -22,11 +22,11 @@ $recoverForm['pRecoverEmailCodeSendButton'].addEventListener('click', () => {
         if (xhr.readyState !== XMLHttpRequest.DONE) {
             return;
         }
+        loading.hide();
         if (xhr.status < 200 || xhr.status >= 300) {
             dialog.showSimpleOk('인증번호 전송', `[${xhr.status}]요청을 처리하는 도중 오류가 발생하였습니다.\n잠시 후 다시 시도해 주세요.`);
             return;
         }
-        loading.hide();
         const response = JSON.parse(xhr.responseText);
         switch (response.result) {
             case 'failure_absent':
