@@ -17,6 +17,17 @@
 <div id="default-area">
     <form id="button-form">
         <div class="button-container">
+            <div class="search">
+                <label class="button-label">
+                    <input autocomplete="off" maxlength="10" minlength="0" name="keyword"
+                           placeholder="검색할 리뷰를 입력해 주세요." type="text" class="button-input"
+                           th:value="${reviewPageButtonVo.keyword}"
+                           th:classappend="${reviewPageButtonVo.keyword != null and !reviewPageButtonVo.keyword.equals('')} ? 'visible' : ''">
+                </label>
+                <button id="button-search" class="button-search" type="submit">
+                    <img src="/book/assets/images/search-icon.png" alt="검색" class="icon">
+                </button>
+            </div>
             <label class="button-label">
                 <input type="radio" name="sortType" value="0" th:checked="${reviewPageButtonVo.sortType eq 0}">
                 <span class="caption">제목순</span>
@@ -35,7 +46,7 @@
             </label>
             <span class="-flex-stretch"></span>
             <label class="button-label">
-                <input type="checkbox" name="sort" th:checked="${reviewPageButtonVo.sort eq 'ASC'}">
+                <input type="checkbox" name="sort" th:checked="${reviewPageButtonVo.sort}">
                 <span class="caption">오름차순</span>
             </label>
             <label class="button-label" th:if="${signedUser != null}">
@@ -75,7 +86,7 @@
     <div id="pageContainer" th:if="${reviews != null && reviews.length > 0}">
         <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
            th:text="${reviewPage}"
-           th:href="@{/review/ (page = ${reviewPage}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
+           th:href="@{/review/ (page = ${reviewPage}, keyword=${reviewPageButtonVo.keyword}, sortType=${reviewPageButtonVo.sortType}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
            th:classappend="${reviewPage == reviewPageVo.page}? '-selected'"></a>
     </div>
 </div>

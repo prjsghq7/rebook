@@ -124,6 +124,9 @@
         <if test="reviewPageButtonVo.mine == true">
             AND `r`.`user_id` = #{user.id}
         </if>
+        <if test="reviewPageButtonVo.keyword!=null and !reviewPageButtonVo.keyword.equals('')">
+            AND `r`.`comment` LIKE CONCAT('%',#{reviewPageButtonVo.keyword},'%')
+        </if>
     </select>
 
     <select id="selectReviewAll" resultType="com.dev.rebook.dtos.ReviewPageItemDto">
@@ -141,25 +144,29 @@
         <if test="reviewPageButtonVo.mine == true">
             AND `r`.`user_id` = #{user.id}
         </if>
+        <if test="reviewPageButtonVo.keyword!=null and !reviewPageButtonVo.keyword.equals('')">
+            AND `r`.`comment` LIKE CONCAT('%',#{reviewPageButtonVo.keyword},'%')
+        </if>
+        <bind name="sort" value="reviewPageButtonVo.sort == true ? 'ASC' : 'DESC'"/>
         <choose>
             <!-- 제목순 -->
             <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 0">
-                ORDER BY `b`.`title` ${reviewPageButtonVo.sort}
+                ORDER BY `b`.`title` ${sort}
             </when>
             <!-- 별점순 -->
             <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 1">
-                ORDER BY `r`.`scope` ${reviewPageButtonVo.sort}
+                ORDER BY `r`.`scope` ${sort}
             </when>
             <!-- 닉네임순 -->
             <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 2">
-                ORDER BY `u`.`nickname` ${reviewPageButtonVo.sort}
+                ORDER BY `u`.`nickname` ${sort}
             </when>
             <!-- 작성일순 -->
             <when test="reviewPageButtonVo.sortType != null and reviewPageButtonVo.sortType == 3">
-                ORDER BY `r`.`created_at` ${reviewPageButtonVo.sort}
+                ORDER BY `r`.`created_at` ${sort}
             </when>
             <otherwise>
-                ORDER BY `b`.`title` ${reviewPageButtonVo.sort}
+                ORDER BY `b`.`title` ${sort}
             </otherwise>
         </choose>
         LIMIT #{reviewPageVo.rowCount} OFFSET #{reviewPageVo.dbOffset}
