@@ -266,7 +266,6 @@
     transition:width var(--transition);
 }
 .book-section .carousel-track .book-card:hover>.book-title::after{
-    width:50%;
     margin-inline:auto;
 }
 .book-section .carousel-track .book-card:hover>.book-title{color:var(--blue-600);}
@@ -389,9 +388,12 @@
     text-align: center;
     color: var(--text-color);
     line-height: 1.4;
+    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: color var(--transition);
+
+    display: block;
+    max-width: 100%;
 }
 .book-section > .new-book > .new-book-cover > .book-track > .book-card > .book-cover > img {
     width: 10rem;
