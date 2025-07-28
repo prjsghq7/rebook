@@ -596,16 +596,26 @@ public class UserService {
                 : CommonResult.FAILURE;
     }
 
-    public Pair<UserDto[], ReviewPageVo> getUserAll(UserEntity signedUser,
-                                                    int page) {
-        if (page < 1) {
-            page = 1;
+    public ResultTuple<Pair<UserDto[], ReviewPageVo>> getUserAll(UserEntity signedUser, int page) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return ResultTuple.<Pair<UserDto[], ReviewPageVo>>builder()
+                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
+                    .build();
         }
+
+        if (page < 1) page = 1;
+
         int totalCount = this.userMapper.selectCountAllUsers();
         ReviewPageVo reviewPageVo = new ReviewPageVo(10, page, totalCount);
         List<UserDto> list = this.userMapper.selectAllUser(reviewPageVo);
-        return Pair.of(list.toArray(new UserDto[0]), reviewPageVo);
+        Pair<UserDto[], ReviewPageVo> data = Pair.of(list.toArray(new UserDto[0]), reviewPageVo);
+
+        return ResultTuple.<Pair<UserDto[], ReviewPageVo>>builder()
+                .result(CommonResult.SUCCESS)
+                .payload(data)
+                .build();
     }
+
 
     public Result editUserInfo(UserEntity signedUser, UserDto userDto) {
         if (UserService.isInvalidUser(signedUser)) {

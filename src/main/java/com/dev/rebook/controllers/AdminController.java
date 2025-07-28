@@ -97,20 +97,24 @@ public class AdminController {
             ReviewPageButtonVo reviewPageButtonVo,
             Model model) {
 
-        if (signedUser == null || !signedUser.isAdmin()) {
+        ResultTuple<Pair<UserDto[], ReviewPageVo>> result = userService.getUserAll(signedUser, page);
+
+        if (!result.getResult().equals(CommonResult.SUCCESS)) {
             return "redirect:/";
         }
+
+        Pair<UserDto[], ReviewPageVo> data = result.getPayload();
+
         ContactMvnoEntity[] contactMvnos = userService.getContactMvnos();
         model.addAttribute("contactMvnos", contactMvnos);
         model.addAttribute("user", new UserDto());
-
-        Pair<UserDto[], ReviewPageVo> result = userService.getUserAll(signedUser, page);
-
         model.addAttribute("reviewPageButtonVo", reviewPageButtonVo);
-        model.addAttribute("users", result.getFirst());
-        model.addAttribute("reviewPageVo", result.getSecond());
+        model.addAttribute("users", data.getFirst());
+        model.addAttribute("reviewPageVo", data.getSecond());
+
         return "admin/user";
     }
+
 
     @RequestMapping(value = "/user/get", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -118,20 +122,25 @@ public class AdminController {
             @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
             @RequestParam(value = "page", defaultValue = "1") int page) {
 
-        if (signedUser == null || !signedUser.isAdmin()) {
+        ResultTuple<Pair<UserDto[], ReviewPageVo>> result = userService.getUserAll(signedUser, page);
+
+        // 실패 시 바로 반환
+        if (!result.getResult().equals(CommonResult.SUCCESS)) {
             return ResultTuple.<List<UserDto>>builder()
-                    .result(CommonResult.FAILURE_SESSION_EXPIRED)
+                    .result(result.getResult())
                     .build();
         }
 
-        Pair<UserDto[], ReviewPageVo> pair = userService.getUserAll(signedUser, page);
-        List<UserDto> payload = Arrays.asList(pair.getFirst());
+        // 성공이면 payload에서 Pair 꺼내서 List로 변환
+        Pair<UserDto[], ReviewPageVo> data = result.getPayload();
+        List<UserDto> payload = Arrays.asList(data.getFirst());
 
         return ResultTuple.<List<UserDto>>builder()
                 .result(CommonResult.SUCCESS)
                 .payload(payload)
                 .build();
     }
+
 
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
