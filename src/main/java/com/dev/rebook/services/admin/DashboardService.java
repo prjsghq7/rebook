@@ -1,6 +1,7 @@
 package com.dev.rebook.services.admin;
 
 import com.dev.rebook.dtos.dashboard.*;
+import com.dev.rebook.entities.DailyLoginStatsEntity;
 import com.dev.rebook.services.ReviewService;
 import com.dev.rebook.services.uesr.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,10 @@ public class DashboardService {
         return this.userService.getAgeGroupStats();
     }
 
+    public List<DailyLoginStatsEntity> getDailUserLoginStats(LocalDate from, LocalDate to) {
+        return this.userService.getDailyUserLoginStats(from, to);
+    }
+
     public List<DailyUserRegisterStatsDto> getDailUserRegisterStats(LocalDate from, LocalDate to) {
         return this.userService.getDailyUserRegisterStats(from, to);
     }
@@ -45,6 +50,7 @@ public class DashboardService {
         List<ProviderStatsDto> providerStats = this.userService.getProviderStats();
         List<GenderStatsDto> genderStats = this.userService.getGenderStats();
         List<AgeGroupStatsDto> ageGroupStats = this.userService.getAgeGroupStats();
+        List<DailyLoginStatsEntity> dailyUserLoginStats = this.userService.getDailyUserLoginStats(from, to);
         List<DailyUserRegisterStatsDto> dailyUserStats = this.userService.getDailyUserRegisterStats(from, to);
         List<DailyReviewRegisterStatsDto> dailyReviewStats = this.reviewService.getDailyReviewRegisterStats(from, to);
 
@@ -52,6 +58,7 @@ public class DashboardService {
                 .providerStats(providerStats)
                 .genderStats(genderStats)
                 .ageGroupStats(ageGroupStats)
+                .dailyUserLoginStats(dailyUserLoginStats)
                 .dailyUserRegisterStats(dailyUserStats)
                 .dailyReviewRegisterStats(dailyReviewStats)
                 .build();

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.dev.rebook.mappers.DailyLoginStatsMapper">
+    <insert id="incrementUserCount" parameterType="java.time.LocalDate">
+        INSERT INTO `rebook`.`daily_login_stats` (`stat_date`, `user_count`)
+        VALUES (#{statDate}, 1)
+        ON DUPLICATE KEY UPDATE `user_count` = `user_count` + 1
+    </insert>
+
+    <select id="selectDailyLoginStats" resultType="com.dev.rebook.entities.DailyLoginStatsEntity">
+        SELECT `stat_date` AS `statDate`,
+        `user_count` AS `userCount`
+        FROM `rebook`.`daily_login_stats`
+        <where>
+            <if test="from != null">
+                AND DATE(`stat_date`) &gt;= #{from}
+            </if>
+            <if test="to != null">
+                AND DATE(`stat_date`) &lt;= #{to}
+            </if>
+        </where>
+    </select>
+</mapper>

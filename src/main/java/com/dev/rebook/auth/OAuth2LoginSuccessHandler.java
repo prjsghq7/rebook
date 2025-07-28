@@ -52,6 +52,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
                 response.sendRedirect("/user/login-fail");
             } else {;
+                this.userService.updateDailyLoginStats(user);
                 if (CommonResult.FAILURE == this.userService.updateLoginHistory(user, oauthUser.getAttribute("userAgent"))) {
                     session.setAttribute("invalidEmail", oauthUser.getAttribute("email"));
                     session.setAttribute("invalidReason", "login_fail");

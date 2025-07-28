@@ -5,14 +5,8 @@ import com.dev.rebook.dtos.dashboard.DailyUserRegisterStatsDto;
 import com.dev.rebook.dtos.dashboard.GenderStatsDto;
 import com.dev.rebook.dtos.dashboard.ProviderStatsDto;
 import com.dev.rebook.dtos.user.UserDto;
-import com.dev.rebook.entities.CategoryEntity;
-import com.dev.rebook.entities.ContactMvnoEntity;
-import com.dev.rebook.entities.EmailTokenEntity;
-import com.dev.rebook.entities.UserEntity;
-import com.dev.rebook.mappers.CategoryMapper;
-import com.dev.rebook.mappers.ContactMvnoMapper;
-import com.dev.rebook.mappers.EmailTokenMapper;
-import com.dev.rebook.mappers.UserMapper;
+import com.dev.rebook.entities.*;
+import com.dev.rebook.mappers.*;
 import com.dev.rebook.regexes.EmailTokenRegex;
 import com.dev.rebook.regexes.UserRegex;
 import com.dev.rebook.results.CommonResult;
@@ -21,7 +15,6 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.results.user.ModifyResult;
 import com.dev.rebook.results.user.RegisterResult;
 import com.dev.rebook.results.user.RemoveAccountResult;
-import com.dev.rebook.vos.ReviewPageButtonVo;
 import com.dev.rebook.vos.ReviewPageVo;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -35,7 +28,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -81,16 +73,19 @@ public class UserService {
     private final EmailTokenMapper emailTokenMapper;
     private final ContactMvnoMapper contactMvnoMapper;
     private final CategoryMapper categoryMapper;
+    private final DailyLoginStatsMapper dailyLoginStatsMapper;
+
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine springTemplateEngine;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserMapper userMapper, EmailTokenMapper emailTokenMapper, ContactMvnoMapper contactMvnoMapper, CategoryMapper categoryMapper, JavaMailSender javaMailSender, SpringTemplateEngine springTemplateEngine, PasswordEncoder passwordEncoder) {
+    public UserService(UserMapper userMapper, EmailTokenMapper emailTokenMapper, ContactMvnoMapper contactMvnoMapper, CategoryMapper categoryMapper, DailyLoginStatsMapper dailyLoginStatsMapper, JavaMailSender javaMailSender, SpringTemplateEngine springTemplateEngine, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.emailTokenMapper = emailTokenMapper;
         this.contactMvnoMapper = contactMvnoMapper;
         this.categoryMapper = categoryMapper;
+        this.dailyLoginStatsMapper = dailyLoginStatsMapper;
         this.javaMailSender = javaMailSender;
         this.springTemplateEngine = springTemplateEngine;
         this.passwordEncoder = passwordEncoder;
@@ -106,6 +101,16 @@ public class UserService {
 
     public List<AgeGroupStatsDto> getAgeGroupStats() {
         return this.userMapper.selectAgeGroupStats();
+    }
+
+    public List<DailyLoginStatsEntity> getDailyUserLoginStats(LocalDate from, LocalDate to) {
+        if (from == null || to == null) {
+            return null;
+        }
+        if (from.isAfter(to)) {
+            return null;
+        }
+        return this.dailyLoginStatsMapper.selectDailyLoginStats(from, to);
     }
 
     public List<DailyUserRegisterStatsDto> getDailyUserRegisterStats(LocalDate from, LocalDate to) {
@@ -556,6 +561,11 @@ public class UserService {
                     .build();
         }
 
+        boolean bUpdateDailyLoginStats = updateDailyLoginStats(dbUser);
+        if (!bUpdateDailyLoginStats) {
+            //log 처리
+        }
+
         Result result = updateLoginHistory(dbUser, userAgent);
 
         return ResultTuple.<UserEntity>builder()
@@ -564,8 +574,21 @@ public class UserService {
                 .build();
     }
 
+    public boolean updateDailyLoginStats(UserEntity user) {
+        LocalDate today = LocalDate.now();
+        if (user.getLastSignedAt() == null || !user.getLastSignedAt().toLocalDate().isEqual(today)) {
+            try {
+                return this.dailyLoginStatsMapper.incrementUserCount(today) > 0;
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public Result updateLoginHistory(UserEntity user,
                                      String lastSignedUa) {
+        System.out.println("lastSignedAt: " + LocalDateTime.now());
         user.setLastSignedAt(LocalDateTime.now());
         user.setLastSignedUa(lastSignedUa);
 

@@ -3,12 +3,12 @@ package com.dev.rebook.controllers;
 import com.dev.rebook.dtos.dashboard.*;
 import com.dev.rebook.dtos.user.UserDto;
 import com.dev.rebook.entities.ContactMvnoEntity;
+import com.dev.rebook.entities.DailyLoginStatsEntity;
 import com.dev.rebook.entities.UserEntity;
 import com.dev.rebook.mappers.ContactMvnoMapper;
 import com.dev.rebook.results.CommonResult;
 import com.dev.rebook.results.Result;
 import com.dev.rebook.results.ResultTuple;
-import com.dev.rebook.services.ReviewService;
 import com.dev.rebook.services.admin.DashboardService;
 import com.dev.rebook.services.uesr.UserService;
 import com.dev.rebook.vos.ReviewPageButtonVo;
@@ -53,6 +53,13 @@ public class AdminController {
     @ResponseBody
     public List<AgeGroupStatsDto> getDashboardUserAgeGroup() {
         return this.dashboardService.getUserAgeGroupStats();
+    }
+
+    @RequestMapping(value = "/dashboard/daily-user-login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<DailyLoginStatsEntity> getDailyUserLogin(@RequestParam(value = "from", required = false) LocalDate from,
+                                                         @RequestParam(value = "to", required = false) LocalDate to) {
+        return this.dashboardService.getDailUserLoginStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/daily-user-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

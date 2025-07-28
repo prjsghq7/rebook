@@ -22,6 +22,7 @@
     <update id="update">
         UPDATE `rebook`.`users`
         SET `email`             = #{user.email},
+            `password`          = #{user.password},
             `name`              = #{user.name},
             `provider`          = #{user.provider},
             `provider_id`       = #{user.providerId},
@@ -41,7 +42,10 @@
             `is_admin`          = #{user.isAdmin},
             `is_deleted`        = #{user.isDeleted},
             `is_suspended`      = #{user.isSuspended},
-            `modified_at`       = #{user.modifiedAt}
+            `created_at`        = #{user.createdAt},
+            `modified_at`       = #{user.modifiedAt},
+            `last_signed_at`    = #{user.lastSignedAt},
+            `last_signed_ua`    = #{user.lastSignedUa}
         WHERE `id` = #{user.id}
         LIMIT 1
     </update>

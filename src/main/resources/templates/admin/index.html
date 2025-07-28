@@ -65,6 +65,22 @@
         </div>
         <div class="chart-wrapper">
             <div class="chart">
+                <!-- 날짜 별 로그인한 회원 수 -->
+                <div class="header">
+                    <h3 class="title">일별 회원 접속 수</h3>
+                    <div class="-flex-stretch" role="none"></div>
+
+                    <label class="label">From: <input type="date" class="date from"></label>/
+                    <label class="label">To: <input type="date" class="date to"></label>
+                    <button class="reload" id="reloadDailyUserLogin" type="submit">
+                        <img class="icon" src="/admin/assets/images/dashboard-reload.png" alt="reload">
+                    </button>
+                </div>
+                <div class="chart-line" id="dailyUserLogin"></div>
+            </div>
+        </div>
+        <div class="chart-wrapper">
+            <div class="chart">
                 <!-- 날짜 별 회원가입한 회원 수 -->
                 <div class="header">
                     <h3 class="title">일별 회원가입 수</h3>
