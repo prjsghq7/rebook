@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const loading = new Loading();
 
     const $bestsellerTrack = document.querySelector('[data-type="bestseller"] .book-track');
     const $categoryForm     = document.getElementById('categoryForm');
     const $categoryTrack    = $categoryForm.querySelector('.book-track');
     const $newBookTrack = document.querySelector('.new-book-cover .book-track');
-    
+
     function renderBookCard(book, $container) {
         const card = document.createElement('div');
         card.className = 'book-card';
