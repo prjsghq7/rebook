@@ -1,123 +1,190 @@
-/* carousel.js — click‑lock safe */
 const CARD_REM = 12;
-// 카드 한 장의 너비 12rem
 const GAP_REM  = 2;
-// 카드 사이 여백이 2rem
 const VIEW_CNT = 4;
-// 한 화면에 보이는 카드 개수
 const AUTO_MS  = 3500;
-//3.5초
+const DUR_MS   = 600;
+const EASE     = 'ease';
 
 const rem2px = rem =>
     rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-// js에서는 rem 단위를 이해 못하기때문에
 
 function initCarousel(section) {
-    if (!section || section._c) return;
+    if (!section) return;
+    if (section._c) section._c.destroy();
 
-    const track     = section.querySelector('.book-track');
-    const originals = [...track.children];
+    const track = section.querySelector('.book-track');
+    if (!track) return;
+
+    const originals = [...track.children].filter(n => !n.dataset.clone);
     if (!originals.length) return;
 
-    const CARD = rem2px(CARD_REM);
-    const GAP  = rem2px(GAP_REM);
-    const STEP = (CARD + GAP) * VIEW_CNT;
+    let CARD = rem2px(CARD_REM);
+    let GAP  = rem2px(GAP_REM);
+    let STEP = (CARD + GAP) * VIEW_CNT;
 
-    originals.slice(-VIEW_CNT).forEach(n => track.prepend(n.cloneNode(true)));
-    // 마지막 4개 카드 복제해서 앞에 붙임
-    originals.slice(0,  VIEW_CNT).forEach(n => track.append(n.cloneNode(true)));
-    // 처음 4개 카드 복제해서 뒤에 붙임 그래야 슬라이드를 했을때 무한루프로 돌 수 있기때문
-    track.style.width = `${track.children.length * (CARD + GAP) - GAP}px`;
-    // 마지막 갭을 빼는 이유는 마지막 카드에는 갭이 없기때문에
+    let pages   = Math.max(1, Math.ceil(originals.length / VIEW_CNT));
+    const FIRST = 1;
+    const LAST  = pages;
+    const LAST_CLN = pages + 1;
 
-    const pages      = Math.ceil(originals.length / VIEW_CNT);
-    // 예를들어 총 북이8개이고 한 페이지에 보여야될 북이4개라고하면 pages = 2
-    const FIRST      = 1;
-    const LAST       = pages;
-    const LAST_CLONE = pages + 1;
+    let page  = FIRST;
+    let busy  = false;
+    let timer = null;
 
-    let page   = FIRST;
-    let timer  = null;
-    let busy   = false;             // ← 클릭 잠금 플래그
+    const setWidth = () => {
+        track.style.width = `${track.children.length * (CARD + GAP) - GAP}px`;
+    };
+
+    const buildClones = () => {
+        originals.slice(-VIEW_CNT).forEach(n => {
+            const c = n.cloneNode(true);
+            c.dataset.clone = '1';
+            track.prepend(c);
+        });
+        originals.slice(0, VIEW_CNT).forEach(n => {
+            const c = n.cloneNode(true);
+            c.dataset.clone = '1';
+            track.append(c);
+        });
+    };
+
+    const clearClones = () => {
+        [...track.children].forEach(n => { if (n.dataset.clone) n.remove(); });
+    };
 
     const move = idx => {
-        if (busy) return;             // 애니 중이면 무시
+        if (busy) return;
         busy = true;
-        track.style.transition = 'transform .6s ease';
+        track.style.transition = `transform ${DUR_MS}ms ${EASE}`;
         track.style.transform  = `translateX(${-idx * STEP}px)`;
         page = idx;
+        clearTimeout(move._fuse);
+        move._fuse = setTimeout(() => { busy = false; }, DUR_MS + 80);
     };
 
     const snap = idx => {
         track.style.transition = 'none';
         track.style.transform  = `translateX(${-idx * STEP}px)`;
-        page  = idx;
+        page = idx;
     };
 
-    track.addEventListener('transitionend', () => {
-        if (page === 0)        snap(LAST);
-        else if (page === LAST_CLONE) snap(FIRST);
-        busy = false;          // 애니 끝났으니 잠금 해제
-    });
+    const onEnd = () => {
+        if (page === 0) snap(LAST);
+        else if (page === LAST_CLN) snap(FIRST);
+        busy = false;
+    };
 
     const start = () => {
         stop();
         timer = setInterval(() => move(page + 1), AUTO_MS);
     };
-    const stop  = () => timer && clearInterval(timer);
 
+    const stop = () => {
+        if (timer) clearInterval(timer);
+        timer = null;
+    };
+
+    buildClones();
+    setWidth();
+    snap(FIRST);
+
+    track.addEventListener('transitionend', onEnd);
     section.querySelectorAll('.carousel-control').forEach(btn => {
         btn.addEventListener('click', e => {
             e.preventDefault();
-            if (busy) return;           // 애니 중이면 무시
+            if (busy) return;
             stop();
             btn.classList.contains('next') ? move(page + 1) : move(page - 1);
             start();
         });
     });
 
-    snap(FIRST);  // 처음 위치
     start();
 
-    // 노출(visibility) 관리용 최소 API
-    section._c = { stop, start, snapCurrent: () => snap(page) };
+    section._c = {
+        stop,
+        start,
+        snapCurrent: () => snap(page),
+        destroy() {
+            stop();
+            track.removeEventListener('transitionend', onEnd);
+            clearTimeout(move._fuse);
+            clearClones();
+            track.style.transition = 'none';
+            track.style.transform  = '';
+            track.style.width      = '';
+            delete section._c;
+        },
+        refresh() {
+            stop();
+            clearTimeout(move._fuse);
+            clearClones();
+            const fresh = [...track.children].filter(n => !n.dataset.clone);
+            if (!fresh.length) { this.destroy(); return; }
+            CARD = rem2px(CARD_REM);
+            GAP  = rem2px(GAP_REM);
+            STEP = (CARD + GAP) * VIEW_CNT;
+            pages = Math.max(1, Math.ceil(fresh.length / VIEW_CNT));
+            buildClones();
+            setWidth();
+            snap(FIRST);
+            start();
+        }
+    };
+
+    const mo = new MutationObserver(records => {
+        const changedByExternal = records.some(rec =>
+            [...rec.addedNodes, ...rec.removedNodes].some(n => !(n instanceof Element && n.dataset && n.dataset.clone))
+        );
+        if (changedByExternal) section._c?.refresh();
+    });
+    mo.observe(track, { childList: true });
+
+    const _destroy = section._c.destroy.bind(section._c);
+    section._c.destroy = () => { mo.disconnect(); _destroy(); };
 }
 
-/* 초기 세팅 */
 document.addEventListener('DOMContentLoaded', () => {
-    ['[data-type="bestseller"]', '[data-type="category"]']
-        .forEach(sel => {
-            const sec = document.querySelector(sel);
-            if (!sec) return;
-            const track = sec.querySelector('.book-track');
-            if (track.children.length) {
-                initCarousel(sec);
-            } else {
-                new MutationObserver((_, ob) => {
-                    if (track.children.length) {
-                        ob.disconnect();
-                        initCarousel(sec);
-                    }
-                }).observe(track, { childList: true });
-            }
-        });
+    ['[data-type="bestseller"]', '[data-type="category"]'].forEach(sel => {
+        const sec = document.querySelector(sel);
+        if (!sec) return;
+        const track = sec.querySelector('.book-track');
+        if (track && track.children.length) {
+            initCarousel(sec);
+        } else if (track) {
+            const ob = new MutationObserver((records, self) => {
+                if (track.children.length) {
+                    self.disconnect();
+                    initCarousel(sec);
+                }
+            });
+            ob.observe(track, { childList: true });
+        }
+    });
 });
 
-/* BFCache 복원 */
 window.addEventListener('pageshow', e => {
     if (e.persisted) {
         document.querySelectorAll('[data-type]').forEach(sec => sec._c?.snapCurrent());
     }
 });
 
-/* 탭 전환 */
 document.addEventListener('visibilitychange', () => {
+    const all = document.querySelectorAll('[data-type]');
     if (document.hidden) {
-        document.querySelectorAll('[data-type]').forEach(sec => sec._c?.stop());
+        all.forEach(sec => sec._c?.stop());
     } else {
-        document.querySelectorAll('[data-type]').forEach(sec => {
-            sec._c?.snapCurrent();
-            sec._c?.start();
-        });
+        all.forEach(sec => { sec._c?.snapCurrent(); sec._c?.start(); });
     }
 });
+
+(() => {
+    let raf = 0;
+    const onResize = () => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+            document.querySelectorAll('[data-type]').forEach(sec => sec._c?.refresh());
+        });
+    };
+    window.addEventListener('resize', onResize, { passive: true });
+})();

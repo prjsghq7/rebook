@@ -12,6 +12,8 @@
     top: 0;
     left: 0;
     backdrop-filter: blur(0.5rem);
+    background-color: #e5e5e5bb;
+    gap: 1rem;
 }
 
 .-object-loading .icon {
@@ -40,5 +42,5 @@
 
 .-object-loading .caption {
     font-size: 1.5rem;
-    font-weight: 400;
+    font-weight: 600;
 }
