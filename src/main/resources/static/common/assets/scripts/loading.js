@@ -9,7 +9,7 @@ export class Loading {
 
         const $icon = document.createElement('img');
         $icon.className = 'icon';
-        $icon.src = '/home/assets/loading.gif';
+        $icon.src = '/common/assets/images/loading.gif';
 
         this.#$caption = document.createElement('div');
         this.#$caption.className = 'caption';
