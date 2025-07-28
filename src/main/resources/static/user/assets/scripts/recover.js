@@ -53,6 +53,7 @@ $recoverForm['pRecoverEmailCodeSendButton'].addEventListener('click', () => {
 
 $recoverForm['pRecoverEmailCodeVerifyButton'].addEventListener('click', () => {
     const $emailLabel = $recoverForm.querySelector('.-object-label:has(input[name="pRecoverEmail"])');
+    $emailLabel.setInValid(false);
     if ($recoverForm['pRecoverEmailCode'].validity.valueMissing) {
         $emailLabel.setInValid(true, '인증번호를 입력해주세요.');
     } else if (!$recoverForm['pRecoverEmailCode'].validity.valid) {
