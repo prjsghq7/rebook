@@ -1,15 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
-
     const $bestsellerTrack = document.querySelector('[data-type="bestseller"] .book-track');
-    const $categoryForm     = document.getElementById('categoryForm');
-    const $categoryTrack    = $categoryForm.querySelector('.book-track');
-    const $newBookTrack = document.querySelector('.new-book-cover .book-track');
+    const $categoryForm  = document.getElementById('categoryForm');
+    const $categoryTrack = $categoryForm ? $categoryForm.querySelector('.book-track') : null;
+    const $newBookTrack  = document.querySelector('.new-book-cover .book-track');
 
     function renderBookCard(book, $container) {
         const card = document.createElement('div');
         card.className = 'book-card';
         card.classList.add('id', book.id);
-
 
         const cover = document.createElement('div');
         cover.className = 'book-cover';
@@ -27,9 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         card.appendChild(title);
 
         card.addEventListener('click', () => {
-            if (book.id) {
-                location.href = `${window.origin}/book/?id=${book.id}`;
-            }
+            if (book.id) location.href = `${window.origin}/book/?id=${book.id}`;
         });
 
         $container.appendChild(card);
@@ -41,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('/api/aladin/bestseller');
             if (!res.ok) throw new Error('API 응답 오류');
             const books = await res.json();
-            books.forEach(book => renderBookCard(book, $bestsellerTrack));
+            if ($bestsellerTrack) books.forEach(book => renderBookCard(book, $bestsellerTrack));
         } catch (err) {
             console.error('베스트셀러 불러오기 실패', err);
         } finally {
@@ -50,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function fetchAndRendercategoryBooks() {
+        if (!$categoryForm || !$categoryTrack) return;
         const selected = $categoryForm.querySelector('input[name="categoryId"]:checked');
         if (!selected) return;
 
@@ -79,11 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    $categoryForm?.addEventListener('change', (e) => {
-        if (e.target.name === 'categoryId') {
-            fetchAndRendercategoryBooks();
-        }
-    });
+    if ($categoryForm) {
+        $categoryForm.addEventListener('change', (e) => {
+            if (e.target.name === 'categoryId') fetchAndRendercategoryBooks();
+        });
+    }
 
     async function fetchAndRenderNewBook() {
         try {
@@ -93,7 +90,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const books = await res.json(); // 그냥 배열임
+            const books = await res.json(); // 배열
+            if (!$newBookTrack) return;
             $newBookTrack.innerHTML = '';
 
             if (books.length === 0) {
@@ -102,7 +100,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 $newBookTrack.classList.remove('empty');
                 books.forEach(book => renderBookCard(book, $newBookTrack));
             }
-
         } catch (e) {
             console.log(e);
             dialog.showSimpleOk('오류', '책 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
@@ -112,24 +109,22 @@ document.addEventListener('DOMContentLoaded', () => {
     async function getUserPopularBooks() {
         try {
             const res = await fetch('/book/popular-book');
-            console.log(res);
             if (!res.ok) {
                 dialog.showSimpleOk('오류', '책 정보를 불러 올 수 없습니다. 잠시 후 다시 시도해주세요.');
                 return;
             }
 
             const books = await res.json();
-            console.log(books);
             const $root = document.querySelector('.user-book-cover');
+            if (!$root) return;
             $root.innerHTML = '';
 
-
+            // Left: 1~2위
             const $left = document.createElement('div');
             $left.className = 'left-column';
 
             books.slice(0, 2).forEach((book, idx) => {
                 const card = document.createElement('div');
-                console.log(card);
                 card.className = 'rank-book-featured';
                 card.dataset.bookId = book.bookId;
 
@@ -140,49 +135,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 const info = document.createElement('div');
                 info.className = 'rank-info';
 
-                info.innerHTML = `
-        <span class="rank-number">${idx + 1}</span>
-        <span class="rank-title">${book.title}</span>
-      `;
+                const num = document.createElement('span');
+                num.className = 'rank-number';
+                num.textContent = String(idx + 1);
 
+                const title = document.createElement('span');
+                title.className = 'rank-title';
+                title.textContent = book.title;
+
+                info.append(num, title);
                 card.append(img, info);
                 card.onclick = () => location.href = `${window.origin}/book/?id=${book.bookId}`;
                 $left.append(card);
             });
-            const $right   = document.createElement('div');
-            const $grid    = document.createElement('ul');
+
+            // Right grid: 3~10 (순차로 append)
+            const $right = document.createElement('div');
             $right.className = 'right-column';
-            $grid.className  = 'rank-grid';
+            const $grid = document.createElement('ul');
+            $grid.className = 'rank-grid';
 
-            const leftRanks  = books.slice(2, 6);
-            const rightRanks = books.slice(6, 10);
+            const rest = books.slice(2, Math.min(10, books.length)); // 최대 8개
+            rest.forEach((bk, i) => {
+                const li = document.createElement('li');
+                li.className = 'rank-book';
+                li.dataset.bookId = bk.bookId;
 
-            for (let i = 0; i < 4; i++) {
-                [leftRanks[i], rightRanks[i]].forEach((bk, colIdx) => {
-                    if (!bk) return;
-                    const li = document.createElement('li');
-                    li.className = 'rank-book';
-                    li.dataset.bookId = bk.bookId;
-                    li.innerHTML = `
-          <span class="rank-number">${bk.rank ?? (colIdx ? 7 + i : 3 + i)}</span>
-          <span class="rank-title">${bk.title}</span>
-        `;
-                    li.onclick = () => location.href = `${window.origin}/book/?id=${bk.bookId}`;
-                    $grid.append(li);
-                });
-            }
+                const num = document.createElement('span');
+                num.className = 'rank-number';
+                num.textContent = String(3 + i); // 3..10
+
+                const title = document.createElement('span');
+                title.className = 'rank-title';
+                title.textContent = bk.title;
+
+                li.append(num, title);
+                li.onclick = () => location.href = `${window.origin}/book/?id=${bk.bookId}`;
+                $grid.append(li);
+            });
 
             $right.append($grid);
             $root.append($left, $right);
-
         } catch (e) {
             dialog.showSimpleOk('오류', '책 정보를 불러올 수 없습니다. 잠시 후 다시 시도해주세요.');
         }
     }
-
-
-
-
 
     fetchAndRenderBestSeller();
     fetchAndRendercategoryBooks();
