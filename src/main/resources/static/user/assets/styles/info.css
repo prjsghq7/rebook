@@ -259,6 +259,8 @@
 #reviews-section > .review-list > .review-item > .header > .action {
     white-space: nowrap;
     font-weight: 500;
+
+    cursor: pointer;
 }
 
 #reviews-section > .review-list > .review-item > .header > .action:hover {

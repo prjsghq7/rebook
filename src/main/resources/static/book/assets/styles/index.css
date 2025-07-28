@@ -250,6 +250,8 @@
 
 #reviewContainer > .review  > .head > .info-wrapper > .info > .action {
     font-weight: 500;
+
+    cursor: pointer;
 }
 
 #reviewContainer > .review  > .head > .info-wrapper > .info > .action:hover {
