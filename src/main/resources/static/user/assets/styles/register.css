@@ -53,6 +53,9 @@ body {
 
 
 #registerForm {
+    min-height: calc(100vh - var(--header-height));
+    background-color: #ffffff;
+
     align-items: stretch;
     display: flex;
     flex-direction: column;

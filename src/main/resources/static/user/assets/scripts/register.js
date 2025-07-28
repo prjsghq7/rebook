@@ -286,7 +286,7 @@ const isSecondStepValid = () => {
     const $addressLabel = $registerForm.querySelector('.-object-label:has(input[name="addressPostal"])');
     const $categoryLabel = $registerForm.querySelector('.-object-label:has(input[name="categoryId"])');
 
-    const $labels = [$nicknameLabel, $birthLabel, $contactLabel, $addressLabel];
+    const $labels = [$nicknameLabel, $birthLabel, $contactLabel, $addressLabel, $categoryLabel];
     $labels.forEach(($label) => {
         $label.setInValid(false);
     });
@@ -298,10 +298,15 @@ const isSecondStepValid = () => {
         $contactLabel.setInValid(true, '연락처 중복 확인해 주세요.');
     }
 
+    const birthDate = new Date($registerForm['birth'].value);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
     if ($registerForm['birth'].validity.valueMissing) {
         $birthLabel.setInValid(true, '생년월일을 입력해 주세요.');
     } else if (!$registerForm['birth'].validity.valid) {
         $birthLabel.setInValid(true, '올바른 이름을 입력해 주세요.');
+    } else if (birthDate > today) {
+        $birthLabel.setInValid(true, '생년월일은 미래일 수 없습니다.');
     }
 
     if ($registerForm['addressPostal'].value.trim() === ''
