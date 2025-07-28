@@ -222,19 +222,24 @@
                 <th>판매가</th>
                 <td th:text="${#numbers.formatInteger(book.priceSales, 3, 'COMMA') + ' 원'}"></td>
             </tr>
-            <tr>
-                <th>구매처</th>
-                <td th:text="${book.mallType}"></td>
-            </tr>
-            <tr>
-                <th>책 링크</th>
-                <td><a class="link" th:href="${book.link}" target="_blank">책 자세히 보기</a></td>
-            </tr>
+<!--            <tr>-->
+<!--                <th>구매처</th>-->
+<!--                <td th:text="${book.mallType}"></td>-->
+<!--            </tr>-->
             <tr>
                 <th>책 소개</th>
                 <td th:text="${book.description}"></td>
             </tr>
             </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="2">
+                    <div class="link-area">
+                        <a class="link" th:href="${book.link}" target="_blank">책 자세히 보기</a>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
         </table>
     </div>
 
