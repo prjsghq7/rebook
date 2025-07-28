@@ -43,7 +43,6 @@
                     </div>
                     <div class="intro-help">
                         <p class="intro-title">안녕하세요 👋</p>
-                        <p th:if="${session.signedUser != null}" th:text="${session.signedUser.getNickname() + '님'}"></p>
                         <p class="intro-subtitle">무엇을 도와드릴까요?</p>
                     </div>
                     <button class="chat-close-button" aria-label="닫기">&times;</button>
