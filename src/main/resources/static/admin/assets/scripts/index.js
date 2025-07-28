@@ -19,7 +19,7 @@ const checkValidDate = (from, to) => {
     const fromDate = new Date(from);
     const toDate = new Date(to);
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setHours(24, 0, 0, 0);
 
     if (fromDate > toDate) {
         dialog.showSimpleOk('통계 기간 설정', 'From(시작) 날짜는 To(종료) 날짜보다 이후 날짜 일 수 없습니다.');
@@ -27,7 +27,7 @@ const checkValidDate = (from, to) => {
     }
 
     if (toDate > today) {
-        dialog.showSimpleOk('통계 기간 설정', 'From(시작) 날짜는 To(종료) 날짜보다 이후 날짜 일 수 없습니다.');
+        dialog.showSimpleOk('통계 기간 설정', '현재 날짜 이후 날짜는 선택할 수 없습니다.');
         return false;
     }
 
