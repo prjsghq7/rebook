@@ -143,7 +143,7 @@
     <div class="page-container">
         <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
            th:text="${reviewPage}"
-           th:href="@{/review/ (page = ${reviewPage}, sort=${reviewPageButtonVo.sort}, mine=${reviewPageButtonVo.mine})}"
+           th:href="@{/admin/user (page = ${reviewPage})}"
            th:classappend="${reviewPage == reviewPageVo.page}? '-selected'"></a>
     </div>
 </div>
