@@ -71,7 +71,9 @@ async function loadUsers() {
     const res = await fetch(`/admin/user/get?page=${page}`, { credentials: 'include' });
     const json = await res.json();
     if (json.result && json.result !== 'SUCCESS') {
-        dialog?.showSimpleOk?.('오류', '권한이 없거나 로그인 만료입니다.');
+        dialog.showSimpleOk('오류', '권한이 없거나 로그인 만료입니다.', () => {
+            location.href = `${window.origin}/user/login`;
+        });
         return;
     }
     const users = json.payload ?? [];
