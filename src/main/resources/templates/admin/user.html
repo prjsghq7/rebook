@@ -140,7 +140,7 @@
             </form>
         </div>
     </div>
-    <div class="page-container">
+    <div id="pageContainer" class="page-container">
         <a class="page" th:each="reviewPage : ${#numbers.sequence(1, reviewPageVo.maxPage)}"
            th:text="${reviewPage}"
            th:href="@{/admin/user (page = ${reviewPage})}"

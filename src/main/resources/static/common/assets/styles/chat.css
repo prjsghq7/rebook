@@ -57,31 +57,32 @@ p {
     overflow: hidden;
     font-size: 0.875rem;
     line-height: 1.5;
+    flex-direction: column;
 }
 
 #chatbot > .chatbot-layout[data-rb-visible] {
-    display: block;
+    display: flex;
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view {
     display: none;
+    flex-direction: column;
+    flex: 1 1 auto;
     height: 100%;
-    padding: 0;
+    padding-bottom: 5rem;
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view[data-rb-visible] {
-    display: block;
+    display: flex;
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-message {
     display: flex;
     flex-direction: column;
-    justify-content: stretch;
-    align-items: stretch;
-    height: 100%;
-    box-sizing: border-box;
-    text-align: center;
-    gap: 0.785rem;
+    flex: 1 1 auto;
+    padding: 1rem;
+    gap: 1rem;
+    min-height: 0;
 }
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-header {
     width: 100%;
@@ -139,7 +140,7 @@ p {
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-message > .intro-action {
-    padding-bottom: 31.875rem;
+    margin-top: auto;
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-message > .intro-action > .-object-button {
@@ -151,7 +152,7 @@ p {
     display: block;
     width: 100%;
     border-radius: 0.875rem;
-    margin-bottom: 5rem;
+    margin-bottom: 0;
 }
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-message > .intro-action > .-object-button.danger-text {
     padding: 0.75rem 1rem;
@@ -161,9 +162,7 @@ p {
     transition: background-color 0.2s ease-in-out;
     display: block;
     width: 100%;
-    margin-bottom: 1rem;
     border-radius: 0.875rem;
-    height: 4rem;
 }
 
 #chatbot > .chatbot-layout > .chat-intro-view > .intro-message > .-object-button:hover {

@@ -125,7 +125,6 @@
                     </div>
                     <div class="intro-help">
                         <p class="intro-title">안녕하세요 👋</p>
-                        <p th:if="${session.signedUser != null}" th:text="${session.signedUser.getNickname() + '님'}"></p>
                         <p class="intro-subtitle">무엇을 도와드릴까요?</p>
                     </div>
                     <button class="chat-close-button" aria-label="닫기">&times;</button>
@@ -152,7 +151,6 @@
                     </ul>
                 </div>
                 <div class="intro-message">
-                    <div class="-flex-stretch"></div>
                     <div class="intro-action">
                         <button id="startChatBtn" class="-object-button -color-blue"
                                 th:text="${session.signedUser != null} ? '메세지 입력 ㄱㄱ' : '로그인 후 이용 가능합니다.'"
