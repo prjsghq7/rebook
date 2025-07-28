@@ -29,56 +29,80 @@ import java.util.List;
 public class AdminController {
     private final DashboardService dashboardService;
     private final UserService userService;
-    private final ContactMvnoMapper contactMvnoMapper;
 
     public AdminController(DashboardService dashboardService, UserService userService, ContactMvnoMapper contactMvnoMapper) {
         this.dashboardService = dashboardService;
         this.userService = userService;
-        this.contactMvnoMapper = contactMvnoMapper;
     }
 
     @RequestMapping(value = "/dashboard/user-provider", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<ProviderStatsDto> getDashboardUserProvider() {
+    public List<ProviderStatsDto> getDashboardUserProvider(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getUserProviderStats();
     }
 
     @RequestMapping(value = "/dashboard/user-gender", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<GenderStatsDto> getDashboardUserGender() {
+    public List<GenderStatsDto> getDashboardUserGender(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getUserGenderStats();
     }
 
     @RequestMapping(value = "/dashboard/user-age-group", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<AgeGroupStatsDto> getDashboardUserAgeGroup() {
+    public List<AgeGroupStatsDto> getDashboardUserAgeGroup(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getUserAgeGroupStats();
     }
 
     @RequestMapping(value = "/dashboard/daily-user-login", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyLoginStatsEntity> getDailyUserLogin(@RequestParam(value = "from", required = false) LocalDate from,
+    public List<DailyLoginStatsEntity> getDailyUserLogin(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                                                         @RequestParam(value = "from", required = false) LocalDate from,
                                                          @RequestParam(value = "to", required = false) LocalDate to) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getDailUserLoginStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/daily-user-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyUserRegisterStatsDto> getDailyUserRegister(@RequestParam(value = "from", required = false) LocalDate from,
+    public List<DailyUserRegisterStatsDto> getDailyUserRegister(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                                                                @RequestParam(value = "from", required = false) LocalDate from,
                                                                 @RequestParam(value = "to", required = false) LocalDate to) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getDailUserRegisterStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/daily-review-register", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<DailyReviewRegisterStatsDto> getDailyReviewRegister(LocalDate from, LocalDate to) {
+    public List<DailyReviewRegisterStatsDto> getDailyReviewRegister(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                                                                    @RequestParam(value = "from", required = false) LocalDate from,
+                                                                    @RequestParam(value = "to", required = false) LocalDate to) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getDailyReviewRegisterStats(from, to);
     }
 
     @RequestMapping(value = "/dashboard/all", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public DashboardDto getDashboardAll(@RequestParam(value = "from", required = false) LocalDate from,
+    public DashboardDto getDashboardAll(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
+                                        @RequestParam(value = "from", required = false) LocalDate from,
                                         @RequestParam(value = "to", required = false) LocalDate to) {
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
         return this.dashboardService.getDashBoardAll(from, to);
     }
 
