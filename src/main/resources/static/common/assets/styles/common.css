@@ -134,7 +134,7 @@ body {
 
 #default-area {
     width: 70rem;
-    background-color: inherit;
+    background-color: white;
 
     align-self: center;
     box-sizing: border-box;

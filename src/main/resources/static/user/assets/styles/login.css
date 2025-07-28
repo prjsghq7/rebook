@@ -142,6 +142,7 @@ body {
 
 body > #default-area {
     align-items: center;
+    background-color: transparent;
     display: flex;
     flex-direction: column;
     justify-content: center;
