@@ -64,6 +64,7 @@ if (new URL(location.href).searchParams.get('registerType') === 'local') {
 
     $registerForm['emailCodeVerifyButton'].addEventListener('click', () => {
         const $emailLabel = $registerForm.querySelector('.-object-label:has(input[name="email"])');
+        $emailLabel.setInValid(false);
         if ($registerForm['emailCode'].validity.valueMissing) {
             $emailLabel.setInValid(true, '인증번호를 입력해주세요.');
         } else if (!$registerForm['emailCode'].validity.valid) {
