@@ -135,14 +135,10 @@ public class AdminController {
 
     @RequestMapping(value = "/user/edit", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public Result editUserInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser, UserDto userDto) {
-        if (signedUser == null || !signedUser.isAdmin()) {
-            return CommonResult.FAILURE_SESSION_EXPIRED;
-        }
+    public ResultTuple<Void> editUserInfo(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser, UserDto userDto) {
         Result result = this.userService.editUserInfo(signedUser, userDto);
         JSONObject response = new JSONObject();
         response.put("result", result);
-        System.out.println(result);
-        return result;
+        return ResultTuple.<Void>builder().result(CommonResult.SUCCESS).build();
     }
 }
