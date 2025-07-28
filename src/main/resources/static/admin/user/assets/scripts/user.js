@@ -42,7 +42,7 @@ function buildRow(user, index, baseNo) {
         <td>${createdAt}</td>
         ${flagCell(user.deleted)}
         ${flagCell(user.suspended)}
-        <td>${lastSignedAt}</td>
+        <td>${!lastSignedAt ? '로그인 이력없음' : lastSignedAt}</td>
     `;
 
     row.addEventListener('click', () => {
