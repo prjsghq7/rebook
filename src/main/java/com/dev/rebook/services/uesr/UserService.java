@@ -529,8 +529,8 @@ public class UserService {
         user.setSuspended(false);
         user.setCreatedAt(LocalDateTime.now());
         user.setModifiedAt(LocalDateTime.now());
-        user.setLastSignedAt(LocalDateTime.now());
-        user.setLastSignedUa(emailToken.getUserAgent());
+        user.setLastSignedAt(null);
+        user.setLastSignedUa(null);
 
         return this.userMapper.insert(user) > 0
                 ? CommonResult.SUCCESS
@@ -588,7 +588,6 @@ public class UserService {
 
     public Result updateLoginHistory(UserEntity user,
                                      String lastSignedUa) {
-        System.out.println("lastSignedAt: " + LocalDateTime.now());
         user.setLastSignedAt(LocalDateTime.now());
         user.setLastSignedUa(lastSignedUa);
 
