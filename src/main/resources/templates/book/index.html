@@ -220,7 +220,7 @@
             </tr>
             <tr>
                 <th>판매가</th>
-                <td th:text="${book.priceSales}"></td>
+                <td th:text="${#numbers.formatInteger(book.priceSales, 3, 'COMMA') + ' 원'}"></td>
             </tr>
             <tr>
                 <th>구매처</th>
