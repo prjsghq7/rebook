@@ -426,7 +426,6 @@ async function deleteChatRoom(roomId) {
             credentials: 'include'
         });
         const result = await res.json();
-        console.log(result);
         if (result.result === 'FAILURE_SESSION_EXPIRED') {
             dialog.showSimpleOk('오류', '로그인이 만료되었거나 권한이 없습니다. 잠시 후 다시 시도해주세요.', () => {
                 location.href = `${window.origin}/user/login`;

@@ -30,7 +30,7 @@ public class AdminController {
     private final DashboardService dashboardService;
     private final UserService userService;
 
-    public AdminController(DashboardService dashboardService, UserService userService, ContactMvnoMapper contactMvnoMapper) {
+    public AdminController(DashboardService dashboardService, UserService userService) {
         this.dashboardService = dashboardService;
         this.userService = userService;
     }
@@ -145,6 +145,10 @@ public class AdminController {
     public ResultTuple<List<UserDto>> getUserInfo(
             @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
             @RequestParam(value = "page", defaultValue = "1") int page) {
+
+        if (signedUser == null || !signedUser.isAdmin()) {
+            return null;
+        }
 
         ResultTuple<Pair<UserDto[], ReviewPageVo>> result = userService.getUserAll(signedUser, page);
 

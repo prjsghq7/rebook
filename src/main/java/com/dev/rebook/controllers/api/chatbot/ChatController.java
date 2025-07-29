@@ -105,7 +105,6 @@ public class ChatController {
     public ResponseEntity<ResultTuple<ChatMessageEntity[]>> handleChat(
             @SessionAttribute(value = "signedUser", required = false) UserEntity signedUser,
             @RequestBody ChatMessageEntity chat) {
-        System.out.println("[IN CONTROLLER] room=" + chat.getChatRoomId() + ", msg=" + chat.getMessage());
         ResultTuple<ChatMessageEntity[]> result = chatMessageService.registerChat(signedUser, chat);
         return ResponseEntity.ok(result);
     }

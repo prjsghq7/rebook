@@ -98,7 +98,6 @@ public class BookService {
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksFromAladin 예외처리");
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
@@ -143,9 +142,6 @@ public class BookService {
 //                booksList.add(this.bookMapper.selectById(book.getId()));
                 booksList.add(getAdultVerification(book.getId(), isAdult));
 
-            }
-            if (insertResult > 0) {
-                System.out.println("DB에 신규 추가된 책 개수 : " + insertResult);
             }
         } catch (Exception e) {
             throw new RuntimeException("XML 파싱 실패: " + e.getMessage());
@@ -216,7 +212,6 @@ public class BookService {
             return isbn13.trim();
         }
         if (isValidIsbn(isbn)) {
-            System.out.println("ISBN 10자리 등록됨");
             return isbn.trim();
         }
         throw new IllegalArgumentException("ISBN 정보가 없습니다.");
@@ -241,13 +236,12 @@ public class BookService {
 
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
-            System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            System.out.println("bookService : searchBooksBestSellerAlladin 예외처리");
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
@@ -266,13 +260,12 @@ public class BookService {
 
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
-            System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            System.out.println("bookService : searchBooksNewAlladin 예외처리");
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
@@ -296,14 +289,12 @@ public class BookService {
 
             // XML 응답을 BookEntity 배열로 파싱
             BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
-            System.out.println(books);
-            System.out.println(books[0].getTitle());
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksFromAladin 예외처리");
+            System.out.println("bookService : searchBooksFromUserCategory 예외처리");
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
