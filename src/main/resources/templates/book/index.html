@@ -17,7 +17,7 @@
     <script th:if="${!verification}" defer src="/book/assets/scripts/index-back.js"></script>
 </head>
 <body>
-<th:block th:replace="~{/fragments/header :: header}">
+<th:block th:replace="~{fragments/header :: header}">
 </th:block>
 <div id="verification-area" role="none" th:if="${!verification}">
     <img class="icon" src="/user/assets/images/login/login-fail-icon.png" alt="login-fail">
