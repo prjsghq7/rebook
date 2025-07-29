@@ -136,9 +136,7 @@ public class UserController {
         model.addAttribute("signedUser", signedUser);
         model.addAttribute("category", this.userService.getCategory(signedUser.getCategoryId()));
         model.addAttribute("recentReviews", this.reviewService.getRecentReviews(signedUser.getId()));
-        System.out.println(this.reviewService.getRecentReviews(signedUser.getId()) == null);
         RecentReviewDto[] reviews = this.reviewService.getRecentReviews(signedUser.getId());
-        System.out.println(reviews.length);
         model.addAttribute("reviewSummary", this.reviewService.getReviewSummary(signedUser.getId()));
         return "user/info";
     }

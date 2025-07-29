@@ -56,8 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const updateUserProvider = (providerStats) => {
-    console.log(providerStats);
-
     const labels = [];
     const series = [];
     for (const stat of providerStats) {
@@ -90,8 +88,6 @@ const updateUserProvider = (providerStats) => {
 }
 
 const updateUserGender = (genderStats) => {
-    console.log(genderStats);
-
     const labels = [];
     const series = [];
     for (const stat of genderStats) {
@@ -124,8 +120,6 @@ const updateUserGender = (genderStats) => {
 }
 
 const updateUserAgeGroup = (ageGroupStats) => {
-    console.log(ageGroupStats);
-
     const labels = [];
     const series = [];
     for (const stat of ageGroupStats) {
@@ -159,8 +153,6 @@ const updateUserAgeGroup = (ageGroupStats) => {
 }
 
 const updateDailyUserLogin = (dailyUserLoginStats) => {
-    console.log(dailyUserLoginStats);
-
     const dates = [];
     const counts = [];
     for (const stat of dailyUserLoginStats) {
@@ -226,8 +218,6 @@ const updateDailyUserLogin = (dailyUserLoginStats) => {
 }
 
 const updateDailyUserRegister = (dailyUserRegisterStats) => {
-    console.log(dailyUserRegisterStats);
-
     const dates = [];
     const counts = [];
     for (const stat of dailyUserRegisterStats) {
@@ -293,8 +283,6 @@ const updateDailyUserRegister = (dailyUserRegisterStats) => {
 }
 
 const updateDailyReviewRegister = (dailyReviewRegisterStats) => {
-    console.log(dailyReviewRegisterStats);
-
     const dates = [];
     const counts = [];
     for (const stat of dailyReviewRegisterStats) {

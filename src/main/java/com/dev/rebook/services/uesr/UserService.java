@@ -622,10 +622,7 @@ public class UserService {
             return CommonResult.FAILURE_SESSION_EXPIRED;
         }
         UserDto dbUser = this.userMapper.selectUserById(userDto.getId());
-        System.out.println("수정 요청된 ID: " + userDto.getId());
-        System.out.println(dbUser);
         if (dbUser == null) {
-            System.out.println("1");
             return CommonResult.FAILURE_ABSENT;
         }
         dbUser.setName(userDto.getName());
@@ -633,7 +630,6 @@ public class UserService {
         dbUser.setGender(userDto.getGender());
         dbUser.setBirth(userDto.getBirth());
         dbUser.setContactMvnoCode(userDto.getContactMvnoCode());
-        System.out.println("1" + userDto.getContactMvnoCode());
         dbUser.setContactFirst(userDto.getContactFirst());
         dbUser.setContactSecond(userDto.getContactSecond());
         dbUser.setContactThird(userDto.getContactThird());
