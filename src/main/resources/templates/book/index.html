@@ -190,57 +190,92 @@
         <img src="/chatbot/assets/images/chatbotIcon.png" alt="챗봇" class="icon">
     </span>
     </section>
-    <h1 class="title" th:text="${book.title}"></h1>
-
-    <div class="info-wrapper">
-        <img class="cover" th:src="${book.cover}" th:alt="${book.title}">
-        <table class="book-info -flex-stretch">
-            <thead>
-            <tr>
-                <td colspan="2">
-                    <div class="view-area">
-                        <img class="icon" src="/book/assets/images/book-views.png" alt="조회수">
-                        <span class="views" th:text="${book.view}"></span>
+    <div class="book-info-wrapper">
+        <div class="left-column">
+            <img th:alt="${book.title}" th:src="${book.cover}" class="left-img">
+            <div class="img-view">
+                <img src="/book/assets/images/book-views.png" alt="조회수" class="icon">
+                <span class="view" th:text="${book.view}"></span>
+            </div>
+            <div class="title">
+                <h2 class="title" th:text="${book.title}"></h2>
+                <div class="book-info-grid">
+                    <div class="info-item">
+                        <span class="caption">저자</span>
+                        <span th:text="${book.author}"></span>
                     </div>
-                </td>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th>저자</th>
-                <td th:text="${book.author}"></td>
-            </tr>
-            <tr>
-                <th>출판사</th>
-                <td th:text="${book.publisher}"></td>
-            </tr>
-            <tr>
-                <th>출간일</th>
-                <td th:text="${book.pubDate}"></td>
-            </tr>
-            <tr>
-                <th>판매가</th>
-                <td th:text="${#numbers.formatInteger(book.priceSales, 3, 'COMMA') + ' 원'}"></td>
-            </tr>
+                    <div class="info-item">
+                        <span class="caption">상품유형</span>
+                        <span th:text="${book.mallType}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="caption">출판사</span>
+                        <span th:text="${book.publisher}"></span>
+                    </div>
+                    <div class="info-item">
+                        <span class="caption">출간일</span>
+                        <span th:text="${book.pubDate}"></span>
+                    </div>
+                </div>
+                <div class="description">
+                    <div class="description-top">
+                        <h2 class="title">책 소개</h2>
+                        <a class="link" th:href="${book.link}" target="_blank"> ></a>
+                    </div>
+                    <div class="book-description">
+                        <span class="description-caption" th:text="${book.description}"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+<!--        <img class="cover" th:src="${book.cover}" th:alt="${book.title}">-->
+<!--        <table class="book-info -flex-stretch">-->
+<!--            <thead>-->
 <!--            <tr>-->
-<!--                <th>구매처</th>-->
-<!--                <td th:text="${book.mallType}"></td>-->
+<!--                <td colspan="2">-->
+<!--                    <div class="view-area">-->
+<!--                        <img class="icon" src="/book/assets/images/book-views.png" alt="조회수">-->
+<!--                        <span class="views" th:text="${book.view}"></span>-->
+<!--                    </div>-->
+<!--                </td>-->
 <!--            </tr>-->
-            <tr>
-                <th>책 소개</th>
-                <td th:text="${book.description}"></td>
-            </tr>
-            </tbody>
-            <tfoot>
-            <tr>
-                <td colspan="2">
-                    <div class="link-area">
-                        <a class="link" th:href="${book.link}" target="_blank">책 자세히 보기</a>
-                    </div>
-                </td>
-            </tr>
-            </tfoot>
-        </table>
+<!--            </thead>-->
+<!--            <tbody>-->
+<!--            <tr>-->
+<!--                <th>저자</th>-->
+<!--                <td th:text="${book.author}"></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <th>출판사</th>-->
+<!--                <td th:text="${book.publisher}"></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <th>출간일</th>-->
+<!--                <td th:text="${book.pubDate}"></td>-->
+<!--            </tr>-->
+<!--            <tr>-->
+<!--                <th>판매가</th>-->
+<!--                <td th:text="${#numbers.formatInteger(book.priceSales, 3, 'COMMA') + ' 원'}"></td>-->
+<!--            </tr>-->
+<!--&lt;!&ndash;            <tr>&ndash;&gt;-->
+<!--&lt;!&ndash;                <th>구매처</th>&ndash;&gt;-->
+<!--&lt;!&ndash;                <td th:text="${book.mallType}"></td>&ndash;&gt;-->
+<!--&lt;!&ndash;            </tr>&ndash;&gt;-->
+<!--            <tr>-->
+<!--                <th>책 소개</th>-->
+<!--                <td th:text="${book.description}"></td>-->
+<!--            </tr>-->
+<!--            </tbody>-->
+<!--            <tfoot>-->
+<!--            <tr>-->
+<!--                <td colspan="2">-->
+<!--                    <div class="link-area">-->
+<!--                        <a class="link" th:href="${book.link}" target="_blank">책 자세히 보기</a>-->
+<!--                    </div>-->
+<!--                </td>-->
+<!--            </tr>-->
+<!--            </tfoot>-->
+<!--        </table>-->
     </div>
 
 
