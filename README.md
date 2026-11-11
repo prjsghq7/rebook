@@ -2,7 +2,7 @@
 
 독서 경험을 리뷰로 나누고, 리뷰를 바탕으로 책을 찾아볼 수 있는 웹 플랫폼입니다. 알라딘 API로 도서 정보를 불러오고, 회원 · 리뷰 · 관리자 통계 기능을 갖췄습니다.
 
-- 사이트: https://rebook.kimgh.dev/
+- 사이트: https://rebook-kimgh.onrender.com/
 - 포트폴리오: https://prjsghq7.github.io/ (직접 코딩 › Re:Book)
 
 ## 주요 기능
