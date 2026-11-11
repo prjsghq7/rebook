@@ -14,8 +14,12 @@ import com.dev.rebook.vos.SearchVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -24,6 +28,8 @@ import org.xml.sax.InputSource;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.StringReader;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -37,8 +43,11 @@ public class BookService {
     private final CategoryMapper categoryMapper;
     private final ReviewMapper reviewMapper;
 
-    @Value("${api-aladin-api-key}")
-    private String aladinApiKey;
+    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+    private String naverClientId;
+
+    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+    private String naverClientSecret;
 
     @Autowired
     public BookService(BookMapper bookMapper, CategoryMapper categoryMapper, ReviewMapper reviewMapper) {
@@ -47,61 +56,143 @@ public class BookService {
         this.reviewMapper = reviewMapper;
     }
 
-    public ResultTuple<BookEntity[]> searchBooksFromAladin(boolean isAdult, String keyword, SearchVo searchVo) {
-        if (keyword == null || keyword.isEmpty()) {
+    /*
+     * 알라딘 OpenAPI 종료(2026-10-30)로 네이버 책 검색 API로 교체.
+     * 흐름은 그대로: 검색 → books에 없으면 insert → DB에서 꺼내 반환. DB 구조 변경 없음.
+     * 키는 Re:Book 네이버 로그인 앱의 client-id / secret을 같이 사용 (네이버 앱에 '검색' API 추가 필요).
+     */
+    private static final String NAVER_BOOK_URL = "https://openapi.naver.com/v1/search/book.xml";
+    private static final String NAVER_BOOK_ADV_URL = "https://openapi.naver.com/v1/search/book_adv.xml";
+    private static final int SEARCH_SIZE = 12;
+
+    public ResultTuple<BookEntity[]> searchBooks(boolean isAdult, String keyword, SearchVo searchVo) {
+        if (keyword == null || keyword.isBlank()) {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
 
         try {
-            // 키워드 URL 인코딩
-//            String encodedKeyword = URLEncoder.encode(keyword, StandardCharsets.UTF_8);
+            String searchType = searchVo == null || searchVo.getSearchType() == null ? "-1" : searchVo.getSearchType();
+            String sort = searchVo == null || searchVo.getSort() == null ? "-1" : searchVo.getSort();
 
-            // 알라딘 API URL 생성
-            /*String aladinUrl = String.format(
-                    "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=%s&Query=%s&QueryType=Title&MaxResults=10&Cover=Big&start=1&SearchTarget=Book&output=xml&Version=20131101",
-                    aladinApiKey, keyword);*/
+            // 제목 / 저자 / 출판사 검색은 상세검색 API, 그 외(제목+저자, 미선택)는 기본 검색 API
+            String advParam = switch (searchType.toLowerCase()) {
+                case "title" -> "d_titl";
+                case "author" -> "d_auth";
+                case "publisher" -> "d_publ";
+                default -> null;
+            };
 
-            StringBuilder aladinUrl = new StringBuilder();
-            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemSearch.aspx?ttbkey=")
-                    .append(aladinApiKey); // API 키
-            aladinUrl.append("&MaxResults=12&Cover=Big&start=1&output=xml&Version=20131101");
-            aladinUrl.append("&Query=")
-                    .append(keyword); // 검색어 키워드
+            UriComponentsBuilder uri = UriComponentsBuilder
+                    .fromHttpUrl(advParam == null ? NAVER_BOOK_URL : NAVER_BOOK_ADV_URL)
+                    .queryParam(advParam == null ? "query" : advParam, keyword.trim())
+                    .queryParam("display", SEARCH_SIZE)
+                    .queryParam("start", 1)
+                    // 네이버는 관련도(sim) / 출간일(date)만 지원. 제목·판매량 정렬은 관련도로 대체
+                    .queryParam("sort", "publishTime".equals(sort) ? "date" : "sim");
+            // searchTarget(도서/외국도서/전자책)은 네이버에 해당 옵션이 없어 무시
 
-            /*
-             * 아래 QueryType, SearchTarget, Sort 없어도 기본으로 값 들어감
-             * QueryType : 제목+저자
-             * SearchTarget : 도서
-             * Sort : 관련도
-             * */
-            if (!searchVo.getSearchType().equals("-1")) {
-                aladinUrl.append("&QueryType=")
-                        .append(searchVo.getSearchType()); // 검색어 종류 ( 제목 + 저자, 저자, 제목 등 )
-            }
-            if (!searchVo.getSearchTarget().equals("-1")) {
-                aladinUrl.append("&SearchTarget=")
-                        .append(searchVo.getSearchTarget()); // 검색 대상 Mall ( 도서, 외국도서, eBook 등 )
-            }
-            if (!searchVo.getSort().equals("-1")) {
-                aladinUrl.append("&Sort=")
-                        .append(searchVo.getSort()); // 정렬순서 ( 출간일, 판매량, 제목 등 )
-            }
-
-
-            // RestTemplate으로 API 호출
-            RestTemplate restTemplate = new RestTemplate();
-            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-            // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
+            BookEntity[] books = parseNaverXmlToBookArray(requestNaver(uri), isAdult);
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
+            log.warn("네이버 책 검색 실패: {}", e.getMessage());
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
 
+    private String requestNaver(UriComponentsBuilder uri) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Naver-Client-Id", naverClientId);
+        headers.set("X-Naver-Client-Secret", naverClientSecret);
+        URI target = uri.encode(StandardCharsets.UTF_8).build().toUri();
+        return new RestTemplate()
+                .exchange(target, HttpMethod.GET, new HttpEntity<>(headers), String.class)
+                .getBody();
+    }
+
+    private BookEntity[] parseNaverXmlToBookArray(String xml, boolean isAdult) throws Exception {
+        List<BookEntity> booksList = new ArrayList<>();
+        Document document = DocumentBuilderFactory.newInstance()
+                .newDocumentBuilder()
+                .parse(new InputSource(new StringReader(xml)));
+        NodeList items = document.getElementsByTagName("item");
+
+        for (int i = 0; i < items.getLength(); i++) {
+            Element item = (Element) items.item(i);
+            String isbn = pickIsbn(getElementText(item, "isbn", true));
+            if (isbn == null) {
+                continue; // ISBN 없는 항목은 id를 만들 수 없어 건너뜀
+            }
+
+            if (this.bookMapper.selectCountById(isbn) <= 0) {
+                BookEntity book = new BookEntity();
+                book.setId(isbn);
+                book.setTitle(stripTags(getElementText(item, "title", false)));
+                String author = stripTags(getElementText(item, "author", true));
+                book.setAuthor(author == null ? null : author.replace("^", ", ")); // 네이버는 저자 구분자가 ^
+                book.setPubDate(parseNaverPubDate(getElementText(item, "pubdate", true)));
+                book.setCover(getElementText(item, "image", true));
+                book.setLink(getElementText(item, "link", false));
+                book.setDescription(stripTags(getElementText(item, "description", true)));
+                book.setPriceSales(getElementInt(item, "discount", true));
+                book.setMallType("BOOK");
+                book.setPublisher(stripTags(getElementText(item, "publisher", false)));
+                book.setAdult(false); // 네이버 응답에 성인 여부 없음
+                book.setView(0);
+                this.bookMapper.insert(book);
+            }
+            booksList.add(getAdultVerification(isbn, isAdult));
+        }
+        return booksList.toArray(new BookEntity[0]);
+    }
+
+    // 네이버 isbn: "13자리" 또는 "10자리 13자리" → 13자리 우선
+    private String pickIsbn(String raw) {
+        if (raw == null) {
+            return null;
+        }
+        String fallback = null;
+        for (String token : raw.trim().split("\\s+")) {
+            String digits = token.replaceAll("[^0-9Xx]", "");
+            if (digits.length() == 13) {
+                return digits;
+            }
+            if (digits.length() == 10 && fallback == null) {
+                fallback = digits;
+            }
+        }
+        return fallback;
+    }
+
+    private LocalDate parseNaverPubDate(String raw) {
+        if (raw == null || !raw.trim().matches("\\d{8}")) {
+            return null;
+        }
+        try {
+            return LocalDate.parse(raw.trim(), DateTimeFormatter.BASIC_ISO_DATE);
+        } catch (DateTimeParseException e) {
+            return null;
+        }
+    }
+
+    private String stripTags(String value) {
+        return value == null ? null : value.replaceAll("<[^>]+>", "").trim();
+    }
+
+    private BookEntity[] maskAdult(BookEntity[] books, boolean isAdult) {
+        if (!isAdult) {
+            for (BookEntity book : books) {
+                if (book.isAdult()) {
+                    book.setCover("/book/assets/images/adult-limit.png");
+                }
+            }
+        }
+        return books;
+    }
+
+    // ---- 아래는 알라딘 XML 파서 (API 종료로 현재 미사용, 기존 데이터 형식 참고용으로 보존) ----
     private BookEntity[] parseXmlToBookArray(String xml, boolean isAdult) {
         List<BookEntity> booksList = new ArrayList<>();
 
@@ -222,81 +313,44 @@ public class BookService {
         return isbn != null && !isbn.trim().isEmpty() && !"0".equals(isbn.trim());
     }
 
-    public ResultTuple<BookEntity[]> searchBooksBestSellerAlladin(boolean isAdult) {
+    // 베스트셀러: 알라딘 대신 우리 DB의 조회수 + 리뷰 수 기준
+    public ResultTuple<BookEntity[]> searchBooksBestSeller(boolean isAdult) {
         try {
-            StringBuilder aladinUrl = new StringBuilder();
-            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
-                    .append(aladinApiKey); // API 키
-            aladinUrl.append("&QueryType=BestSeller&Cover=Big&MaxResults=12&start=1&SearchTarget=Book&output=xml&Version=20131101");
-
-
-            // RestTemplate으로 API 호출
-            RestTemplate restTemplate = new RestTemplate();
-            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-
-            // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             return ResultTuple.<BookEntity[]>builder()
-                    .payload(books)
+                    .payload(maskAdult(this.bookMapper.selectMostPopular(SEARCH_SIZE), isAdult))
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksBestSellerAlladin 예외처리");
+            log.warn("베스트셀러 조회 실패: {}", e.getMessage());
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
 
-    public ResultTuple<BookEntity[]> searchBooksNewAlladin(boolean isAdult) {
+    // 신간: 알라딘 대신 우리 DB의 출간일 최신순
+    public ResultTuple<BookEntity[]> searchBooksNew(boolean isAdult) {
         try {
-            StringBuilder aladinUrl = new StringBuilder();
-            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
-                    .append(aladinApiKey); // API 키
-            aladinUrl.append("&QueryType=ItemNewAll&Cover=Big&MaxResults=4&start=1&SearchTarget=Book&output=xml&Version=20131101");
-
-
-            // RestTemplate으로 API 호출
-            RestTemplate restTemplate = new RestTemplate();
-            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-
-            // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
             return ResultTuple.<BookEntity[]>builder()
-                    .payload(books)
+                    .payload(maskAdult(this.bookMapper.selectNewest(4), isAdult))
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            System.out.println("bookService : searchBooksNewAlladin 예외처리");
+            log.warn("신간 조회 실패: {}", e.getMessage());
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
 
+    // 카테고리: 네이버에 카테고리 필터가 없어 카테고리 이름("경제/투자" → "경제 투자")으로 검색
     public ResultTuple<BookEntity[]> searchBooksFromUserCategory(String categoryId, UserEntity signedUser) {
-        try {
-
-            StringBuilder aladinUrl = new StringBuilder();
-            aladinUrl.append("http://www.aladin.co.kr/ttb/api/ItemList.aspx?ttbkey=")
-                    .append(aladinApiKey);
-            aladinUrl.append("&QueryType=BestSeller");
-            aladinUrl.append("&CategoryId=").append(categoryId);
-            aladinUrl.append("&MaxResults=12&Cover=Big&start=1&output=xml&Version=20131101");
-
-
-            // RestTemplate으로 API 호출
-            RestTemplate restTemplate = new RestTemplate();
-            String xmlResponse = restTemplate.getForObject(aladinUrl.toString(), String.class);
-
-            boolean isAdult = Utils.isAdult(signedUser);
-
-            // XML 응답을 BookEntity 배열로 파싱
-            BookEntity[] books = parseXmlToBookArray(xmlResponse, isAdult);
-            return ResultTuple.<BookEntity[]>builder()
-                    .payload(books)
-                    .result(CommonResult.SUCCESS)
-                    .build();
-        } catch (Exception e) {
-            System.out.println("bookService : searchBooksFromUserCategory 예외처리");
+        String keyword = this.categoryMapper.selectAll().stream()
+                .filter(c -> c.getId().equals(categoryId))
+                .map(c -> c.getDisplayText().replace("/", " "))
+                .findFirst()
+                .orElse(null);
+        if (keyword == null) {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
+        SearchVo searchVo = new SearchVo("-1", "-1", "-1");
+        return searchBooks(Utils.isAdult(signedUser), keyword, searchVo);
     }
 
     public PopularBookDto[] selectPopularUserBooks(boolean isAdult) {

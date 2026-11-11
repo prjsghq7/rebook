@@ -18,5 +18,11 @@ public interface BookMapper {
     // DB에 저장된 전체 책 검색
     BookEntity[] selectAll();
 
+    // 조회수 + 리뷰 수 기준 인기 도서 (알라딘 베스트셀러 대체)
+    BookEntity[] selectMostPopular(@Param("limit") int limit);
+
+    // 출간일 최신순 도서 (알라딘 신간 대체)
+    BookEntity[] selectNewest(@Param("limit") int limit);
+
     int increaseView(@Param("id") String id);
 }

@@ -54,7 +54,7 @@ public class HomeController {
     public BookEntity[] getBooksBestSeller(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
         boolean isAdult = Utils.isAdult(signedUser);
 
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksBestSellerAlladin(isAdult);
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksBestSeller(isAdult);
         if (result.getResult() != CommonResult.SUCCESS) {
             return new BookEntity[0];
         }
@@ -73,7 +73,7 @@ public class HomeController {
     @ResponseBody
     public BookEntity[] getBooksNewTopBooks(@SessionAttribute(value = "signedUser", required = false) UserEntity signedUser) {
         boolean isAdult = Utils.isAdult(signedUser);
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksNewAlladin(isAdult);
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooksNew(isAdult);
         if (result.getResult() != CommonResult.SUCCESS) {
             return new BookEntity[0];
         }

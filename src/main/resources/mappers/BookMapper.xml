@@ -51,6 +51,50 @@
         FROM `rebook`.`books`
     </select>
 
+    <!-- 알라딘 베스트셀러 대체: 조회수 + 리뷰 수 기준 -->
+    <select id="selectMostPopular" resultType="com.dev.rebook.entities.BookEntity">
+        SELECT `B`.`id`          AS 'id',
+               `B`.`title`       AS 'title',
+               `B`.`link`        AS 'link',
+               `B`.`author`      AS 'author',
+               `B`.`pub_date`    AS 'pubDate',
+               `B`.`description` AS 'description',
+               `B`.`price_sales` AS 'priceSales',
+               `B`.`mallType`    AS 'mallType',
+               `B`.`cover`       AS 'cover',
+               `B`.`publisher`   AS 'publisher',
+               `B`.`adult`       AS 'adult',
+               `B`.`view`        AS 'view'
+        FROM `rebook`.`books` AS `B`
+                 LEFT JOIN (SELECT `book_id`, COUNT(0) AS `cnt`
+                            FROM `rebook`.`reviews`
+                            WHERE `is_deleted` = FALSE
+                            GROUP BY `book_id`) AS `R` ON `R`.`book_id` = `B`.`id`
+        ORDER BY (`B`.`view` + IFNULL(`R`.`cnt`, 0) * 10) DESC, `B`.`pub_date` DESC
+        LIMIT #{limit}
+    </select>
+
+    <!-- 알라딘 신간 대체: 출간일 최신순 (미래 출간일 제외) -->
+    <select id="selectNewest" resultType="com.dev.rebook.entities.BookEntity">
+        SELECT `id`          AS 'id',
+               `title`       AS 'title',
+               `link`        AS 'link',
+               `author`      AS 'author',
+               `pub_date`    AS 'pubDate',
+               `description` AS 'description',
+               `price_sales` AS 'priceSales',
+               `mallType`    AS 'mallType',
+               `cover`       AS 'cover',
+               `publisher`   AS 'publisher',
+               `adult`       AS 'adult',
+               `view`        AS 'view'
+        FROM `rebook`.`books`
+        WHERE `pub_date` IS NOT NULL
+          AND `pub_date` &lt;= CURDATE()
+        ORDER BY `pub_date` DESC
+        LIMIT #{limit}
+    </select>
+
     <update id="increaseView">
         UPDATE `rebook`.`books`
         SET `view` = `view` + 1

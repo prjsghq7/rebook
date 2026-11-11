@@ -51,7 +51,7 @@ public class BookController {
 
         boolean isAdult = Utils.isAdult(signedUser);
 
-        ResultTuple<BookEntity[]> result = this.bookService.searchBooksFromAladin(isAdult, keyword, searchVo);
+        ResultTuple<BookEntity[]> result = this.bookService.searchBooks(isAdult, keyword, searchVo);
 
         if (result.getResult() != CommonResult.SUCCESS) {
             model.addAttribute("books", null);
