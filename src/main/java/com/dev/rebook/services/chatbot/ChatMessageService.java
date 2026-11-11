@@ -93,7 +93,7 @@ public class ChatMessageService {
                     searchVo.setSearchTarget("book");
                     searchVo.setSort("accuracy");
 
-                    // 네이버 책 검색 API 호출 -> 내부에서 insert 혹은 select
+                    // 카카오 책 검색 API 호출 -> 내부에서 insert 혹은 select
                     ResultTuple<BookEntity[]> r = this.bookService.searchBooks(false, bookDto.getTitle(), searchVo);
 
                     // 검색 성공 시 첫 권을 DB 리스트에 추가

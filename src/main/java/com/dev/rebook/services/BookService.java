@@ -12,11 +12,14 @@ import com.dev.rebook.results.ResultTuple;
 import com.dev.rebook.utils.Utils;
 import com.dev.rebook.vos.SearchVo;
 import lombok.extern.slf4j.Slf4j;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,6 +38,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -43,11 +47,9 @@ public class BookService {
     private final CategoryMapper categoryMapper;
     private final ReviewMapper reviewMapper;
 
-    @Value("${spring.security.oauth2.client.registration.naver.client-id}")
-    private String naverClientId;
-
-    @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
-    private String naverClientSecret;
+    // 카카오(Daum) 책 검색 REST 키 = 카카오 로그인 앱의 REST API 키와 동일 (Render 환경변수 KAKAO_CLIENT_ID)
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
+    private String kakaoRestApiKey;
 
     @Autowired
     public BookService(BookMapper bookMapper, CategoryMapper categoryMapper, ReviewMapper reviewMapper) {
@@ -57,13 +59,35 @@ public class BookService {
     }
 
     /*
-     * 알라딘 OpenAPI 종료(2026-10-30)로 네이버 책 검색 API로 교체.
+     * 알라딘 OpenAPI 종료(2026-10-30), 네이버 책 검색 API 종료(2026-07-31)로 카카오(Daum) 책 검색 API 사용.
      * 흐름은 그대로: 검색 → books에 없으면 insert → DB에서 꺼내 반환. DB 구조 변경 없음.
-     * 키는 Re:Book 네이버 로그인 앱의 client-id / secret을 같이 사용 (네이버 앱에 '검색' API 추가 필요).
+     * 쿼터: 책 검색 일 30,000건.
      */
-    private static final String NAVER_BOOK_URL = "https://openapi.naver.com/v1/search/book.xml";
-    private static final String NAVER_BOOK_ADV_URL = "https://openapi.naver.com/v1/search/book_adv.xml";
+    private static final String KAKAO_BOOK_URL = "https://dapi.kakao.com/v3/search/book";
     private static final int SEARCH_SIZE = 12;
+    private static final String NO_COVER = "/book/assets/images/no-cover.svg";
+    private static final int VARCHAR_MAX = 255; // books의 title / link / author / cover / publisher 길이
+
+    // 카테고리 이름 그대로 검색하면 0건인 경우가 많아("가정 요리 뷰티" 등) 카테고리별 대표 키워드로 검색 (categories.id 기준)
+    private static final Map<String, String> CATEGORY_KEYWORDS = Map.ofEntries(
+            Map.entry("8416", "심리학"),
+            Map.entry("48828", "자기계발"),
+            Map.entry("656", "인문학"),
+            Map.entry("97202", "로맨스 소설"),
+            Map.entry("6545", "공포 소설"),
+            Map.entry("6684", "판타지 소설"),
+            Map.entry("177", "창업"),
+            Map.entry("51312", "천문학"),
+            Map.entry("53533", "식물 키우기"),
+            Map.entry("55890", "취미"),
+            Map.entry("53486", "인테리어"),
+            Map.entry("53534", "반려동물"),
+            Map.entry("51660", "사주"),
+            Map.entry("51667", "철학"),
+            Map.entry("51767", "건강"),
+            Map.entry("1230", "요리"),
+            Map.entry("2225", "재테크")
+    );
 
     public ResultTuple<BookEntity[]> searchBooks(boolean isAdult, String keyword, SearchVo searchVo) {
         if (keyword == null || keyword.isBlank()) {
@@ -74,81 +98,115 @@ public class BookService {
             String searchType = searchVo == null || searchVo.getSearchType() == null ? "-1" : searchVo.getSearchType();
             String sort = searchVo == null || searchVo.getSort() == null ? "-1" : searchVo.getSort();
 
-            // 제목 / 저자 / 출판사 검색은 상세검색 API, 그 외(제목+저자, 미선택)는 기본 검색 API
-            String advParam = switch (searchType.toLowerCase()) {
-                case "title" -> "d_titl";
-                case "author" -> "d_auth";
-                case "publisher" -> "d_publ";
+            // 검색어 종류: 제목 / 저자(person) / 출판사. 제목+저자·미선택은 전체 검색
+            String target = switch (searchType.toLowerCase()) {
+                case "title" -> "title";
+                case "author" -> "person";
+                case "publisher" -> "publisher";
                 default -> null;
             };
 
             UriComponentsBuilder uri = UriComponentsBuilder
-                    .fromHttpUrl(advParam == null ? NAVER_BOOK_URL : NAVER_BOOK_ADV_URL)
-                    .queryParam(advParam == null ? "query" : advParam, keyword.trim())
-                    .queryParam("display", SEARCH_SIZE)
-                    .queryParam("start", 1)
-                    // 네이버는 관련도(sim) / 출간일(date)만 지원. 제목·판매량 정렬은 관련도로 대체
-                    .queryParam("sort", "publishTime".equals(sort) ? "date" : "sim");
-            // searchTarget(도서/외국도서/전자책)은 네이버에 해당 옵션이 없어 무시
+                    .fromHttpUrl(KAKAO_BOOK_URL)
+                    .queryParam("query", keyword.trim())
+                    .queryParam("size", SEARCH_SIZE)
+                    // 카카오는 정확도(accuracy) / 발간일(latest)만 지원. 제목·판매량 정렬은 정확도로 대체
+                    .queryParam("sort", "publishTime".equals(sort) ? "latest" : "accuracy");
+            if (target != null) {
+                uri.queryParam("target", target);
+            }
+            // searchTarget(도서/외국도서/전자책)은 카카오에 해당 옵션이 없어 무시
 
-            BookEntity[] books = parseNaverXmlToBookArray(requestNaver(uri), isAdult);
+            BookEntity[] books = parseKakaoJsonToBookArray(requestKakao(uri), isAdult);
             return ResultTuple.<BookEntity[]>builder()
                     .payload(books)
                     .result(CommonResult.SUCCESS)
                     .build();
         } catch (Exception e) {
-            log.warn("네이버 책 검색 실패: {}", e.getMessage());
+            log.warn("카카오 책 검색 실패: {}", e.getMessage());
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }
     }
 
-    private String requestNaver(UriComponentsBuilder uri) {
+    private String requestKakao(UriComponentsBuilder uri) {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(3000); // 외부 API가 느려도 페이지가 무한 대기하지 않도록
+        factory.setReadTimeout(5000);
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-Naver-Client-Id", naverClientId);
-        headers.set("X-Naver-Client-Secret", naverClientSecret);
+        headers.set("Authorization", "KakaoAK " + kakaoRestApiKey);
         URI target = uri.encode(StandardCharsets.UTF_8).build().toUri();
-        return new RestTemplate()
+        return new RestTemplate(factory)
                 .exchange(target, HttpMethod.GET, new HttpEntity<>(headers), String.class)
                 .getBody();
     }
 
-    private BookEntity[] parseNaverXmlToBookArray(String xml, boolean isAdult) throws Exception {
+    private BookEntity[] parseKakaoJsonToBookArray(String json, boolean isAdult) {
         List<BookEntity> booksList = new ArrayList<>();
-        Document document = DocumentBuilderFactory.newInstance()
-                .newDocumentBuilder()
-                .parse(new InputSource(new StringReader(xml)));
-        NodeList items = document.getElementsByTagName("item");
+        JSONArray documents = new JSONObject(json).getJSONArray("documents");
 
-        for (int i = 0; i < items.getLength(); i++) {
-            Element item = (Element) items.item(i);
-            String isbn = pickIsbn(getElementText(item, "isbn", true));
+        for (int i = 0; i < documents.length(); i++) {
+            JSONObject doc = documents.getJSONObject(i);
+            String isbn = pickIsbn(doc.optString("isbn", null));
             if (isbn == null) {
                 continue; // ISBN 없는 항목은 id를 만들 수 없어 건너뜀
             }
 
             if (this.bookMapper.selectCountById(isbn) <= 0) {
-                BookEntity book = new BookEntity();
-                book.setId(isbn);
-                book.setTitle(stripTags(getElementText(item, "title", false)));
-                String author = stripTags(getElementText(item, "author", true));
-                book.setAuthor(author == null ? null : author.replace("^", ", ")); // 네이버는 저자 구분자가 ^
-                book.setPubDate(parseNaverPubDate(getElementText(item, "pubdate", true)));
-                book.setCover(getElementText(item, "image", true));
-                book.setLink(getElementText(item, "link", false));
-                book.setDescription(stripTags(getElementText(item, "description", true)));
-                book.setPriceSales(getElementInt(item, "discount", true));
-                book.setMallType("BOOK");
-                book.setPublisher(stripTags(getElementText(item, "publisher", false)));
-                book.setAdult(false); // 네이버 응답에 성인 여부 없음
-                book.setView(0);
-                this.bookMapper.insert(book);
+                try {
+                    this.bookMapper.insert(toBookEntity(isbn, doc));
+                } catch (Exception e) {
+                    // 한 권 저장 실패로 검색 결과 전체가 비지 않도록 해당 책만 건너뜀
+                    log.warn("도서 저장 실패 ({}): {}", isbn, e.getMessage());
+                    continue;
+                }
             }
             booksList.add(getAdultVerification(isbn, isAdult));
         }
         return booksList.toArray(new BookEntity[0]);
     }
 
-    // 네이버 isbn: "13자리" 또는 "10자리 13자리" → 13자리 우선
+    private BookEntity toBookEntity(String isbn, JSONObject doc) {
+        BookEntity book = new BookEntity();
+        book.setId(isbn);
+        book.setTitle(limit(doc.optString("title", "").trim()));
+
+        List<String> authors = new ArrayList<>();
+        JSONArray authorArray = doc.optJSONArray("authors");
+        if (authorArray != null) {
+            for (int j = 0; j < authorArray.length(); j++) {
+                String name = authorArray.optString(j, "").trim();
+                if (!name.isEmpty()) {
+                    authors.add(name);
+                }
+            }
+        }
+        book.setAuthor(authors.isEmpty() ? null : limit(String.join(", ", authors)));
+
+        // datetime: "2009-01-20T00:00:00.000+09:00"
+        String datetime = doc.optString("datetime", "");
+        book.setPubDate(datetime.length() >= 10 ? parsePubDate(datetime.substring(0, 10)) : null);
+
+        // 썸네일은 120x174라 작음 → 같은 썸네일 서버에서 너비 300 버전 사용. 없으면 기본 표지
+        String thumbnail = doc.optString("thumbnail", "").trim();
+        String cover = thumbnail.isEmpty() ? NO_COVER : thumbnail.replace("/thumb/R120x174", "/thumb/R300x0");
+        book.setCover(cover.length() > VARCHAR_MAX ? NO_COVER : cover);
+
+        // 상세 URL은 검색어(&q=...)가 붙어 255자를 넘을 수 있음 → bookId까지만 저장
+        String url = doc.optString("url", "");
+        int q = url.indexOf("&q=");
+        book.setLink(limit(q >= 0 ? url.substring(0, q) : url));
+
+        book.setDescription(doc.optString("contents", null));
+        int salePrice = doc.optInt("sale_price", -1); // 판매가 없으면 -1 (price_sales는 음수 불가)
+        book.setPriceSales(salePrice >= 0 ? salePrice : null);
+        book.setMallType("BOOK");
+        book.setPublisher(limit(doc.optString("publisher", "").trim()));
+        book.setAdult(false); // 카카오 응답에 성인 여부 없음
+        book.setView(0);
+        return book;
+    }
+
+    // isbn: "10자리 13자리" / "13자리" / " 13자리" → 13자리 우선, 없으면 10자리
     private String pickIsbn(String raw) {
         if (raw == null) {
             return null;
@@ -166,19 +224,8 @@ public class BookService {
         return fallback;
     }
 
-    private LocalDate parseNaverPubDate(String raw) {
-        if (raw == null || !raw.trim().matches("\\d{8}")) {
-            return null;
-        }
-        try {
-            return LocalDate.parse(raw.trim(), DateTimeFormatter.BASIC_ISO_DATE);
-        } catch (DateTimeParseException e) {
-            return null;
-        }
-    }
-
-    private String stripTags(String value) {
-        return value == null ? null : value.replaceAll("<[^>]+>", "").trim();
+    private String limit(String value) {
+        return value.length() > VARCHAR_MAX ? value.substring(0, VARCHAR_MAX) : value;
     }
 
     private BookEntity[] maskAdult(BookEntity[] books, boolean isAdult) {
@@ -339,13 +386,16 @@ public class BookService {
         }
     }
 
-    // 카테고리: 네이버에 카테고리 필터가 없어 카테고리 이름("경제/투자" → "경제 투자")으로 검색
+    // 카테고리: 카카오에 카테고리 필터가 없어 카테고리별 대표 키워드로 검색 (없으면 카테고리 이름의 첫 단어)
     public ResultTuple<BookEntity[]> searchBooksFromUserCategory(String categoryId, UserEntity signedUser) {
-        String keyword = this.categoryMapper.selectAll().stream()
-                .filter(c -> c.getId().equals(categoryId))
-                .map(c -> c.getDisplayText().replace("/", " "))
-                .findFirst()
-                .orElse(null);
+        String keyword = CATEGORY_KEYWORDS.get(categoryId);
+        if (keyword == null) {
+            keyword = this.categoryMapper.selectAll().stream()
+                    .filter(c -> c.getId().equals(categoryId))
+                    .map(c -> c.getDisplayText().split("/")[0])
+                    .findFirst()
+                    .orElse(null);
+        }
         if (keyword == null) {
             return ResultTuple.<BookEntity[]>builder().result(CommonResult.FAILURE).build();
         }

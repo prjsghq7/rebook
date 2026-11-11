@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="436" viewBox="0 0 300 436">
+  <rect width="300" height="436" fill="#eceae6"/>
+  <rect x="24" y="24" width="252" height="388" fill="none" stroke="#c9c5bd" stroke-width="2"/>
+  <path d="M120 180h60v76h-60z" fill="none" stroke="#a9a49a" stroke-width="4"/>
+  <path d="M132 198h36M132 214h36M132 230h24" stroke="#a9a49a" stroke-width="4" stroke-linecap="round"/>
+  <text x="150" y="300" text-anchor="middle" font-family="sans-serif" font-size="20" fill="#8c877d">표지 없음</text>
+</svg>
